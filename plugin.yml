@@ -1,0 +1,14 @@
+name: Spawner
+main: me.ryvix.spawner.Main
+version: 1.0
+website: http://dev.bukkit.org/server-mods/spawner/
+author: ryvix
+description: Gather spawners with silk touch enchanted tools. Provides the ability to change mob types.
+commands:
+  spawner:
+    description: Allows switching of spawner types with /spawner <type>
+    usage: "/spawner <type>"
+permissions:
+  spawner.set:
+    description: Gives access to use /spawner <type>
+    default: op
