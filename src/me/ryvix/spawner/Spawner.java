@@ -24,16 +24,16 @@ package me.ryvix.spawner;
 import java.util.ArrayList;
 
 import me.ryvix.spawner.Main;
-import net.minecraft.server.EntityItem;
-import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.NBTTagList;
-import net.minecraft.server.NBTTagString;
+import net.minecraft.server.v1_4_5.EntityItem;
+import net.minecraft.server.v1_4_5.NBTTagCompound;
+import net.minecraft.server.v1_4_5.NBTTagList;
+import net.minecraft.server.v1_4_5.NBTTagString;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.block.CraftCreatureSpawner;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.block.CraftCreatureSpawner;
+import org.bukkit.craftbukkit.v1_4_5.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,7 +41,7 @@ import org.bukkit.inventory.ItemStack;
 public class Spawner {
 
 	private static CraftItemStack craftStack;
-	private static net.minecraft.server.ItemStack itemStack;
+	private static net.minecraft.server.v1_4_5.ItemStack itemStack;
 
 	private Main plugin;
 
@@ -177,7 +177,7 @@ public class Spawner {
 		return lores;
 	}
 
-	public void dropItem(net.minecraft.server.ItemStack mItem, Location loc) {
+	public void dropItem(net.minecraft.server.v1_4_5.ItemStack mItem, Location loc) {
 
 		double xs = plugin.gen.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
 		double ys = plugin.gen.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
