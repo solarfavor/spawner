@@ -19,5 +19,4 @@
  *
  */
 
-This Bukkit plugin uses bergerkiller's BKCommonLib.
-It also uses various bits of code I found all over on the Bukkit forums.
+This plugin may use various bits of code I found on the Bukkit forums.
