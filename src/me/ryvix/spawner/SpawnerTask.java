@@ -45,7 +45,6 @@ public class SpawnerTask implements Runnable {
 	}
 
 	public void run() {
-		// try {
 
 		EntityType spawnerType = EntityType.fromId(d);
 
@@ -53,18 +52,13 @@ public class SpawnerTask implements Runnable {
 			return;
 		}
 
-		Spawner spawner = new Spawner(plugin);
+		Spawner spawner = new Spawner();
 
 		if (spawner.setSpawner(block, spawnerType.getName())) {
 			player.sendMessage(ChatColor.GREEN + "Placed " + spawnerType.getName() + " spawner");
 		} else {
 			player.sendMessage(ChatColor.RED + "It was not possible to change that spawner.");
 		}
-
-		// } catch (Exception e) {
-		// System.out.println(e.getMessage());
-		// player.sendMessage(ChatColor.RED + "It was not possible to change that spawner.");
-		// }
 	}
 
 }

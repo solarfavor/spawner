@@ -25,7 +25,6 @@ import java.util.Random;
 
 import me.ryvix.spawner.SpawnerCommands;
 
-import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -36,9 +35,6 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 
 		getServer().getPluginManager().registerEvents(new me.ryvix.spawner.SpawnerEvents(this), this);
-
-		// don't allow mob spawners to stack
-		com.bergerkiller.bukkit.common.reflection.SafeField.set(net.minecraft.server.v1_4_5.Item.byId[Material.MOB_SPAWNER.getId()], "maxStackSize", 1);
 
 		// spawner
 		getCommand("spawner").setExecutor(new SpawnerCommands(this));

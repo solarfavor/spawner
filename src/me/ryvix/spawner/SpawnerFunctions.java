@@ -21,19 +21,10 @@
 
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.Main;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
-
 public class SpawnerFunctions {
-
-	private static Main plugin;
-
-	public SpawnerFunctions(Main plugin) {
-		SpawnerFunctions.plugin = plugin;
-	}
 
 	/**
 	 * Format name
@@ -46,16 +37,20 @@ public class SpawnerFunctions {
 	}
 
 	/**
-	 * Set the Lore to the spawner name
+	 * Set the name to the spawner type
 	 * 
 	 * @param spawner
 	 * @param name
 	 * @return
 	 */
-	public static ItemStack setSpawnerLore(ItemStack spawner, String name) {
-		Spawner newSpawnerStack = new Spawner(plugin);
-		ItemStack newSpawner = newSpawnerStack.setName(spawner, "Spawner");
-		newSpawner = newSpawnerStack.setLore(newSpawner, name);
+	public static ItemStack setSpawnerName(ItemStack spawner, String name) {
+		Spawner newSpawnerStack = new Spawner();
+		ItemStack newSpawner = newSpawnerStack.setName(spawner, name + " Spawner");
+
+		// currently just to remove the old lore line
+		if (newSpawnerStack.getLore(newSpawner) != null) {
+			newSpawner = newSpawnerStack.setLore(newSpawner, "");
+		}
 
 		return newSpawner;
 	}

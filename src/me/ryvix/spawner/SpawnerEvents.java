@@ -26,11 +26,11 @@ import java.util.Iterator;
 import me.ryvix.spawner.Main;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_4_5.block.CraftCreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -41,12 +41,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -69,7 +66,7 @@ public class SpawnerEvents implements Listener {
 
 			Player player = event.getPlayer();
 
-			if (player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) {
+			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
 
 				// cancel event
 				event.setCancelled(true);
@@ -78,7 +75,7 @@ public class SpawnerEvents implements Listener {
 				player.getItemInHand().setDurability((short) (player.getItemInHand().getDurability() + 1));
 
 				// get spawner block
-				CraftCreatureSpawner csBlock = new CraftCreatureSpawner(event.getBlock());
+				CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
 
 				// durability for safe keeping
 				short durability = csBlock.getSpawnedType().getTypeId();
@@ -93,7 +90,7 @@ public class SpawnerEvents implements Listener {
 				String name = SpawnerFunctions.formatName(csBlock.getSpawnedType().getName().toLowerCase());
 
 				// set lore
-				ItemStack newSpawner = SpawnerFunctions.setSpawnerLore(dropSpawner, name);
+				ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, name);
 
 				// set durability
 				newSpawner.setDurability(durability);
@@ -203,7 +200,7 @@ public class SpawnerEvents implements Listener {
 			String spawnerName = SpawnerFunctions.nameFromDurability(durability);
 
 			// set lore
-			iStack = SpawnerFunctions.setSpawnerLore(iStack, spawnerName);
+			iStack = SpawnerFunctions.setSpawnerName(iStack, spawnerName);
 
 			// set durability
 			iStack.setDurability(durability);
@@ -219,7 +216,7 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * @param event Block place event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+/*	@EventHandler(priority = EventPriority.NORMAL)
 	private void onPlayerDropItem(PlayerDropItemEvent event) {
 		if (!event.isCancelled() && event.getItemDrop().getItemStack().getType() == Material.MOB_SPAWNER) {
 
@@ -227,7 +224,7 @@ public class SpawnerEvents implements Listener {
 			event.setCancelled(true);
 		}
 	}
-
+*/
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void OnPlayerItemHeld(PlayerItemHeldEvent event) {
 
@@ -250,7 +247,7 @@ public class SpawnerEvents implements Listener {
 		String spawnerName = SpawnerFunctions.nameFromDurability(iStack.getDurability());
 
 		// set lore
-		SpawnerFunctions.setSpawnerLore(iStack, spawnerName);
+		SpawnerFunctions.setSpawnerName(iStack, spawnerName);
 
 		// event.getPlayer().updateInventory();
 
@@ -267,97 +264,13 @@ public class SpawnerEvents implements Listener {
 		if (clicked.getType().equals(Material.MOB_SPAWNER)) {
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-				CraftCreatureSpawner csBlock = new CraftCreatureSpawner(clicked);
+				CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
 
 				// formatted name
 				String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
 
 				event.getPlayer().sendMessage(ChatColor.GREEN + "Spawner type: " + spawnerName);
 			}
-		}
-	}
-
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void InventoryClick(InventoryClickEvent event) {
-
-		Player player = (Player) event.getWhoClicked();
-
-		// event is cancelled or in creative return
-		if (event.isCancelled() || player.getGameMode() == GameMode.CREATIVE) {
-			return;
-		}
-
-		// the slot they clicked
-		int slot = event.getSlot();
-		int rawSlot = event.getRawSlot();
-
-		// inventory slot sizes
-		int topSlots = 0;
-		int botSlots = 0;
-
-		// check for top inventory
-		Inventory topInv = event.getView().getTopInventory();
-		if (topInv != null) {
-			topSlots = topInv.getSize();
-		}
-
-		// check for bottom inventory
-		Inventory botInv = event.getView().getBottomInventory();
-		if (botInv != null) {
-			botSlots = botInv.getSize();
-		}
-
-		// clicked outside the inventory window or a bad slot #
-		if (slot < 0 /* || slot > (topSlots + botSlots) */) {
-			event.setCancelled(true);
-			return;
-		}
-
-		// ItemStack in clicked slot when picked up
-		ItemStack pickup = null;
-		if (event.isShiftClick()) {
-
-			// which inv was clicked
-			if (rawSlot <= topSlots) {
-				pickup = topInv.getItem(slot);
-
-			} else if (rawSlot > botSlots) {
-				pickup = botInv.getItem(slot);
-
-			}
-		}
-
-		// ItemStack in clicked slot now in players hand on putdown
-		ItemStack putdown = player.getItemOnCursor();
-
-		// check action
-		if (pickup != null && pickup.getType() == Material.MOB_SPAWNER) {
-			// took an item from the inventory
-
-			// check for shift click on spawner
-			if (event.isShiftClick()) {
-				event.setCancelled(true);
-				return;
-			}
-
-		} else if (putdown != null && putdown.getType() == Material.MOB_SPAWNER) {
-			// put an item into the inventory
-
-			// check for shift click on spawner
-			if (event.isShiftClick()) {
-				event.setCancelled(true);
-				return;
-			}
-
-			// if put on another spawner
-			if (pickup != null && pickup.getType() == Material.MOB_SPAWNER) {
-				player.getInventory().setItem(slot, pickup);
-				player.setItemOnCursor(putdown);
-			}
-
-		} else {
-			// something else so return
-			return;
 		}
 	}
 }

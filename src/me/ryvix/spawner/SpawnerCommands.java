@@ -72,7 +72,7 @@ public class SpawnerCommands implements CommandExecutor {
 					if (target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
 
-						Spawner spawner = new Spawner(plugin);
+						Spawner spawner = new Spawner();
 						if (spawner.setSpawner(target, args[0])) {
 							String spawnerName = args[0].toLowerCase().replaceFirst(args[0].substring(0, 1), args[0].substring(0, 1).toUpperCase());
 
@@ -96,13 +96,13 @@ public class SpawnerCommands implements CommandExecutor {
 						String spawnerName = spawnerType.getName();
 
 						// make an ItemStack
-						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
 
 						// formatted name
 						String name = SpawnerFunctions.formatName(spawnerName);
 
 						// set lore
-						newSpawner = SpawnerFunctions.setSpawnerLore(newSpawner, name);
+						newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
 
 						// set durability
 						newSpawner.setDurability(durability);
@@ -122,7 +122,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				if (target.getType() == Material.MOB_SPAWNER) {
 
-					Spawner spawner = new Spawner(plugin);
+					Spawner spawner = new Spawner();
 					String type = spawner.getSpawner(target).getName();
 					type = type.toLowerCase().replaceFirst(type.substring(0, 1), type.substring(0, 1).toUpperCase());
 					sender.sendMessage(ChatColor.GREEN + type + " spawner.");
