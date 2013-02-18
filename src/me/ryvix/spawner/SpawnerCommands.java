@@ -34,7 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
+import org.bukkit.inventory.PlayerInventory;
 
 public class SpawnerCommands implements CommandExecutor {
 
@@ -62,10 +62,32 @@ public class SpawnerCommands implements CommandExecutor {
 				return true;
 			}
 
-			// set spawner type
-			if (args.length > 0) {
+			if (args.length == 0) {
+				// get spawner type
 
-				if (sender.hasPermission("spawner.set")) {
+				if (sender.hasPermission("spawner.get")) {
+					Player player = (Player) sender;
+					Block target = player.getTargetBlock(null, 20);
+
+					if (target.getType() == Material.MOB_SPAWNER) {
+						Spawner spawner = new Spawner();
+						String type = spawner.getSpawner(target).getName();
+						type = type.toLowerCase().replaceFirst(type.substring(0, 1), type.substring(0, 1).toUpperCase());
+						sender.sendMessage(ChatColor.GREEN + type + " spawner.");
+
+					} else {
+						sender.sendMessage(ChatColor.RED + "Look at a spawner to see what kind it is!");
+					}
+
+				} else {
+					sender.sendMessage(ChatColor.RED + "You don't have permission to do that!");
+					return true;
+				}
+
+			} else if (args.length == 1) {
+				// set spawner type
+
+				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + args[0].toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = player.getTargetBlock(null, 20);
 
@@ -112,23 +134,121 @@ public class SpawnerCommands implements CommandExecutor {
 
 						sender.sendMessage(ChatColor.GREEN + "Spawner type changed to " + spawnerName);
 					}
+				} else {
+					sender.sendMessage(ChatColor.RED + "You don't have permission to do that!");
 				}
 
 				return true;
 
-			} else if (args.length == 0) {
-				Player player = (Player) sender;
-				Block target = player.getTargetBlock(null, 20);
+			} else if (args.length == 2) {
+				// give a spawner
 
-				if (target.getType() == Material.MOB_SPAWNER) {
+				if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
+					Player player = (Player) sender;
 
-					Spawner spawner = new Spawner();
-					String type = spawner.getSpawner(target).getName();
-					type = type.toLowerCase().replaceFirst(type.substring(0, 1), type.substring(0, 1).toUpperCase());
-					sender.sendMessage(ChatColor.GREEN + type + " spawner.");
+					EntityType spawnerType = EntityType.fromName(args[1]);
+
+					if (spawnerType == null) {
+						sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
+						return true;
+					}
+
+					short durability = spawnerType.getTypeId();
+					String spawnerName = spawnerType.getName();
+
+					// make an ItemStack
+					ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+
+					// formatted name
+					String name = SpawnerFunctions.formatName(spawnerName);
+
+					// set lore
+					newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+
+					// set durability
+					newSpawner.setDurability(durability);
+
+					// drop spawner at player location or add it to their inv if they have space
+					PlayerInventory inventory = player.getInventory();
+					if (inventory.firstEmpty() == -1) {
+						player.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+					} else {
+						int invSlot = inventory.firstEmpty();
+						inventory.setItem(invSlot, newSpawner);
+					}
+
+					sender.sendMessage(ChatColor.GREEN + "You were given a " + spawnerName + " spawner.");
 				} else {
-					sender.sendMessage(ChatColor.RED + "Look at a spawner to see what kind it is!");
+					sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
 				}
+
+				return true;
+
+			} else if (args.length == 3) {
+				// give a spawner to others
+
+				if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
+					// give a spawner
+					Player player = (Player) sender;
+
+					EntityType spawnerType = EntityType.fromName(args[1]);
+
+					if (spawnerType == null) {
+						sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
+						return true;
+					}
+
+					short durability = spawnerType.getTypeId();
+					String spawnerName = spawnerType.getName();
+
+					// make an ItemStack
+					ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+
+					// formatted name
+					String name = SpawnerFunctions.formatName(spawnerName);
+
+					// set lore
+					newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+
+					// set durability
+					newSpawner.setDurability(durability);
+
+					Player targetPlayer = plugin.getServer().getPlayer(args[2]);
+					if (targetPlayer != null) {
+
+						PlayerInventory inventory = targetPlayer.getInventory();
+						int invSlot = inventory.firstEmpty();
+
+						// drop spawner at player location or add it to their inv if they have space
+						if (invSlot == -1) {
+
+							// if target player is online drop it at their feet and tell them
+							targetPlayer.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+							targetPlayer.sendMessage(ChatColor.GREEN + "A " + spawnerName + " spawner was dropped at your feet because your inventory is full.");
+
+						} else {
+
+							inventory.setItem(invSlot, newSpawner);
+
+							if (targetPlayer != null) {
+								targetPlayer.sendMessage(ChatColor.GREEN + "You were given a " + spawnerName + " spawner.");
+							}
+
+							sender.sendMessage(ChatColor.GREEN + "You gave a " + spawnerName + " spawner to " + args[2] + ".");
+						}
+
+						return true;
+
+					} else {
+						// tell sender the target didn't get the spawner
+						sender.sendMessage(ChatColor.RED + "The spawner was not delivered because " + args[2] + " is offline.");
+					}
+
+				} else {
+					sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+				}
+
+				return true;
 
 			} else {
 				sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");

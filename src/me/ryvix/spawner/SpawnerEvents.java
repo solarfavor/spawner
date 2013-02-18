@@ -46,7 +46,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-
 public class SpawnerEvents implements Listener {
 
 	private Main plugin;
@@ -66,7 +65,22 @@ public class SpawnerEvents implements Listener {
 
 			Player player = event.getPlayer();
 
-			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
+			// if they can't mine it just let them break it normally
+			if (!player.hasPermission("spawner.mine")) {
+				
+				// if they can't break then cancel the event
+				if (!player.hasPermission("spawner.break")) {
+					
+					// cancel event
+					event.setCancelled(true);
+				}
+				
+				return;
+
+			}
+
+			// if they are in creative or have silk touch and not holding a spawner and they are allowed to mine it
+			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52 && player.hasPermission("spawner.mine")) {
 
 				// cancel event
 				event.setCancelled(true);
@@ -216,15 +230,12 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * @param event Block place event
 	 */
-/*	@EventHandler(priority = EventPriority.NORMAL)
-	private void onPlayerDropItem(PlayerDropItemEvent event) {
-		if (!event.isCancelled() && event.getItemDrop().getItemStack().getType() == Material.MOB_SPAWNER) {
-
-			// cancel event
-			event.setCancelled(true);
-		}
-	}
-*/
+	/*
+	 * @EventHandler(priority = EventPriority.NORMAL) private void onPlayerDropItem(PlayerDropItemEvent event) { if (!event.isCancelled() && event.getItemDrop().getItemStack().getType() ==
+	 * Material.MOB_SPAWNER) {
+	 * 
+	 * // cancel event event.setCancelled(true); } }
+	 */
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void OnPlayerItemHeld(PlayerItemHeldEvent event) {
 
@@ -263,13 +274,15 @@ public class SpawnerEvents implements Listener {
 		Block clicked = event.getClickedBlock();
 		if (clicked.getType().equals(Material.MOB_SPAWNER)) {
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if (event.getPlayer().hasPermission("spawner.get")) {
 
-				CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
+					CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
 
-				// formatted name
-				String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
+					// formatted name
+					String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
 
-				event.getPlayer().sendMessage(ChatColor.GREEN + "Spawner type: " + spawnerName);
+					event.getPlayer().sendMessage(ChatColor.GREEN + "Spawner type: " + spawnerName);
+				}
 			}
 		}
 	}

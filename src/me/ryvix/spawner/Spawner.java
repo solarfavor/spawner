@@ -89,8 +89,12 @@ public class Spawner {
 		if (type == null) {
 			return false;
 		}
-
-		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
+		CreatureSpawner testSpawner = null;
+		try {
+			testSpawner = (CreatureSpawner) target.getState();
+		} catch (Exception e) {
+			return false;
+		}
 		testSpawner.setSpawnedType(type);
 		target.getState().update();
 
