@@ -57,10 +57,6 @@ public class SpawnerCommands implements CommandExecutor {
 		String cName = cmd.getName();
 
 		if (cName.equalsIgnoreCase("spawner")) {
-			if (!(sender instanceof Player)) {
-				plugin.getLogger().info("This command can only be run by a player!");
-				return true;
-			}
 
 			if (args.length == 0) {
 				// get spawner type
@@ -86,6 +82,11 @@ public class SpawnerCommands implements CommandExecutor {
 
 			} else if (args.length == 1) {
 				// set spawner type
+
+				if (!(sender instanceof Player)) {
+					plugin.getLogger().info("This command can only be run by a player!");
+					return true;
+				}
 
 				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + args[0].toLowerCase())) {
 					Player player = (Player) sender;
@@ -143,6 +144,11 @@ public class SpawnerCommands implements CommandExecutor {
 			} else if (args.length == 2) {
 				// give a spawner
 
+				if (!(sender instanceof Player)) {
+					plugin.getLogger().info("This command can only be run by a player!");
+					return true;
+				}
+
 				if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
 					Player player = (Player) sender;
 
@@ -189,7 +195,6 @@ public class SpawnerCommands implements CommandExecutor {
 
 				if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
 					// give a spawner
-					Player player = (Player) sender;
 
 					EntityType spawnerType = EntityType.fromName(args[1]);
 
@@ -223,7 +228,7 @@ public class SpawnerCommands implements CommandExecutor {
 						if (invSlot == -1) {
 
 							// if target player is online drop it at their feet and tell them
-							targetPlayer.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+							targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
 							targetPlayer.sendMessage(ChatColor.GREEN + "A " + spawnerName + " spawner was dropped at your feet because your inventory is full.");
 
 						} else {
