@@ -2,7 +2,7 @@
  *   Spawner - Gather mob spawners with silk touch enchanted tools and the
  *   ability to change mob types.
  *
- *   Copyright (C) 2012 Ryan Rhode - rrhode@gmail.com
+ *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -65,31 +65,43 @@ public class SpawnerEvents implements Listener {
 
 			Player player = event.getPlayer();
 
+			// get spawner block
+			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
+			String spawnerName = csBlock.getSpawnedType().getName().toLowerCase();
+
 			// if they can't mine it just let them break it normally
-			if (!player.hasPermission("spawner.mine")) {
-				
-				// if they can't break then cancel the event
-				if (!player.hasPermission("spawner.break")) {
-					
-					// cancel event
+			boolean canMine = false;
+			if (player.hasPermission("spawner.mine.*") || player.hasPermission("spawner.mine." + spawnerName)) {
+				canMine = true;
+			}
+
+			// if they can't break then cancel the event
+			boolean canBreak = false;
+			if (player.hasPermission("spawner.break.*") || player.hasPermission("spawner.break." + spawnerName)) {
+				canBreak = true;
+			}
+
+			// check if they can mine
+			if (!canMine) {
+
+				// check if they can break
+				if (!canBreak) {
+					// don't let them break it
 					event.setCancelled(true);
 				}
-				
-				return;
 
+				// just let them break it
+				return;
 			}
 
 			// if they are in creative or have silk touch and not holding a spawner and they are allowed to mine it
-			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52 && player.hasPermission("spawner.mine")) {
+			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
 
 				// cancel event
 				event.setCancelled(true);
 
 				// set item damage in players hand
 				player.getItemInHand().setDurability((short) (player.getItemInHand().getDurability() + 1));
-
-				// get spawner block
-				CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
 
 				// durability for safe keeping
 				short durability = csBlock.getSpawnedType().getTypeId();
@@ -101,7 +113,7 @@ public class SpawnerEvents implements Listener {
 				ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
 
 				// formatted name
-				String name = SpawnerFunctions.formatName(csBlock.getSpawnedType().getName().toLowerCase());
+				String name = SpawnerFunctions.formatName(spawnerName);
 
 				// set lore
 				ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, name);

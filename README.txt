@@ -2,7 +2,7 @@
  *   Spawner - Gather mob spawners with silk touch enchanted tools and the
  *   ability to change mob types.
  *
- *   Copyright (C) 2012 Ryan Rhode - rrhode@gmail.com
+ *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,4 +19,72 @@
  *
  */
 
+Bukkit plugin page: http://dev.bukkit.org/server-mods/spawner/
+Source: https://github.com/ty2u/spawner
+
+This plugin allows you to gather mob spawners with a Silk Touch enchanted tool.
+You also can change the type of spawner you are looking at or holding by using
+the /spawner command. For example /spawner creeper will change the spawner to a
+creeper spawner.
+
+It will tell you what kind of spawner you interact with.
+
+This plugin may be able to replace other plugins that store mob spawner types
+as the item durability. It will also attempt to remove the Silk Touch enchant
+from the spawner that some plugins add otherwise players can use them as a Silk
+Touch enchanted tool.
+
+It will also prevent explosions from destroying spawners because players were
+complaining about this on my server. Preventing them from being destroyed saves
+staff work from having to replace them when they are accidentally destroyed by
+creepers, etc.
+
 This plugin may use various bits of code I found on the Bukkit forums.
+
+Entities
+
+You can make spawners any of the entity names listed here:
+http://jd.bukkit.org/apidocs/src-html/org/bukkit/entity/EntityType.html#line.9
+Generally you would use the name that appears inside the quotes in the
+brackets. For example PigZombie will work while PIG_ZOMBIE will not.
+
+
+Commands
+
+/spawner <entity>
+Switch the spawner you're looking at or holding to the given mob entity type.
+
+/spawner give <entity> [player]
+Give a spawner to yourself or another player.
+
+
+Permissions
+
+spawner.get
+Gives access to right-click a spawner or use /spawner to get the spawner entity
+type.
+Default: op
+
+spawner.break
+Allows players to break spawners as normal.
+Default: op
+
+spawner.mine
+Allows players to mine spawners with a silk touch enchanted tool.
+Default: op
+
+spawner.set.<entity>
+Gives access to use /spawner <entity>
+Use spawner.set.* to allow all spawner entity types.
+Default: op
+
+spawner.give.<entity>
+Gives access to use /spawner give <entity>
+Use spawner.give.* to allow all spawner entity types.
+Default: op
+
+spawner.give.others.<entity>
+Gives access to use /spawner give <entity> <player>
+Use spawner.give.others.* to allow all spawner entity types.
+This can also be run from console.
+Default: op

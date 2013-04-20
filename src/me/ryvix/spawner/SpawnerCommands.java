@@ -2,7 +2,7 @@
  *   Spawner - Gather mob spawners with silk touch enchanted tools and the
  *   ability to change mob types.
  *
- *   Copyright (C) 2012 Ryan Rhode - rrhode@gmail.com
+ *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -59,8 +59,14 @@ public class SpawnerCommands implements CommandExecutor {
 		if (cName.equalsIgnoreCase("spawner")) {
 
 			if (args.length == 0) {
-				// get spawner type
 
+				// catch console
+				if (!(sender instanceof Player)) {
+					sender.sendMessage("Usage: spawner give <entity> <player>");
+					return true;
+				}
+
+				// get spawner type
 				if (sender.hasPermission("spawner.get")) {
 					Player player = (Player) sender;
 					Block target = player.getTargetBlock(null, 20);
@@ -81,13 +87,22 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 			} else if (args.length == 1) {
-				// set spawner type
-
-				if (!(sender instanceof Player)) {
-					plugin.getLogger().info("This command can only be run by a player!");
-					return true;
+				
+				// spawner help
+				if(args[0] == "help") {
+					sender.sendMessage(ChatColor.GREEN + "=== Spawner Help ===");
+					//TODO: add help
+					sender.sendMessage(ChatColor.RED + "Coming soon...");
+				}
+				
+				// list entities
+				if(args[0] == "list") {
+					sender.sendMessage(ChatColor.RED + "=== Spawner List ===");
+					//TODO: add entities
+					sender.sendMessage(ChatColor.RED + "Coming soon...");
 				}
 
+				// set spawner type
 				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + args[0].toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = player.getTargetBlock(null, 20);
