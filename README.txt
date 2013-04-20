@@ -65,12 +65,14 @@ Gives access to right-click a spawner or use /spawner to get the spawner entity
 type.
 Default: op
 
-spawner.break
+spawner.break.<entity>
 Allows players to break spawners as normal.
+Use spawner.break.* to allow all spawner entity types.
 Default: op
 
-spawner.mine
+spawner.mine.<entity>
 Allows players to mine spawners with a silk touch enchanted tool.
+Use spawner.mine.* to allow all spawner entity types.
 Default: op
 
 spawner.set.<entity>

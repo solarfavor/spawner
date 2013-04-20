@@ -94,7 +94,7 @@ public class SpawnerEvents implements Listener {
 				return;
 			}
 
-			// if they are in creative or have silk touch and not holding a spawner and they are allowed to mine it
+			// if they are in creative or have silk touch and not holding a spawner and not holding a spawner
 			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
 
 				// cancel event
