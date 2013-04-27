@@ -59,9 +59,9 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * @param event Block break event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onBlockBreak(BlockBreakEvent event) {
-		if (!event.isCancelled() && event.getBlock().getType() == Material.MOB_SPAWNER) {
+		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
 
 			Player player = event.getPlayer();
 
@@ -98,7 +98,7 @@ public class SpawnerEvents implements Listener {
 			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
 
 				// cancel event
-				event.setCancelled(true);
+				event.setExpToDrop(0);
 
 				// set item damage in players hand
 				player.getItemInHand().setDurability((short) (player.getItemInHand().getDurability() + 1));
@@ -123,9 +123,6 @@ public class SpawnerEvents implements Listener {
 
 				// drop item
 				csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
-
-				// set block to air
-				event.getBlock().setType(Material.AIR);
 			}
 		}
 	}
@@ -135,7 +132,7 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * @param event Block place event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 
@@ -148,7 +145,7 @@ public class SpawnerEvents implements Listener {
 		// return;
 		// }
 
-		if (!event.isCancelled() && event.getBlock().getType() == Material.MOB_SPAWNER) {
+		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
 
 			int itemId = player.getInventory().getHeldItemSlot();
 			ItemStack iStack = player.getInventory().getItem(itemId);
@@ -186,32 +183,30 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * @param event Entity explode event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
-		if (!event.isCancelled()) {
-			if (event.blockList().isEmpty()) {
+		if (event.blockList().isEmpty()) {
+			return;
+		}
+
+		// check if explosion causes a spawner to be broken
+		Iterator<Block> iterator = event.blockList().iterator();
+		while (iterator.hasNext()) {
+
+			// if block was a spawner cancel explosion event
+			// this gives a natural protection around spawners
+			if (iterator.next().getType() == Material.MOB_SPAWNER) {
+				event.setCancelled(true);
+
+				// return since we already found a spawner
 				return;
-			}
-
-			// check if explosion causes a spawner to be broken
-			Iterator<Block> iterator = event.blockList().iterator();
-			while (iterator.hasNext()) {
-
-				// if block was a spawner cancel explosion event
-				// this gives a natural protection around spawners
-				if (iterator.next().getType() == Material.MOB_SPAWNER) {
-					event.setCancelled(true);
-
-					// return since we already found a spawner
-					return;
-				}
 			}
 		}
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
-		if (!event.isCancelled() && event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
+		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
 			ItemStack iStack = event.getItem().getItemStack();
 			iStack.removeEnchantment(Enchantment.SILK_TOUCH);
@@ -248,7 +243,7 @@ public class SpawnerEvents implements Listener {
 	 * 
 	 * // cancel event event.setCancelled(true); } }
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void OnPlayerItemHeld(PlayerItemHeldEvent event) {
 
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
@@ -277,7 +272,7 @@ public class SpawnerEvents implements Listener {
 		event.getPlayer().sendMessage(ChatColor.GREEN + "You are holding a " + spawnerName + " spawner.");
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void OnPlayerInteract(PlayerInteractEvent event) {
 		if (!event.hasBlock() || event.isCancelled()) {
 			return;

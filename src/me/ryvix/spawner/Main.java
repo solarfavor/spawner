@@ -21,15 +21,12 @@
 
 package me.ryvix.spawner;
 
-import java.util.Random;
-
 import me.ryvix.spawner.SpawnerCommands;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class Main extends JavaPlugin {
-	public Random gen = new Random();
 
 	@Override
 	public void onEnable() {

@@ -32,6 +32,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class Spawner {
 
+	/**
+	 * Set display name
+	 * @param item
+	 * @param name
+	 * @return
+	 */
 	public ItemStack setName(ItemStack item, String name) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
@@ -41,6 +47,11 @@ public class Spawner {
 		return item;
 	}
 
+	/**
+	 * Get display name
+	 * @param item
+	 * @return
+	 */
 	public String getName(ItemStack item) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
@@ -48,6 +59,12 @@ public class Spawner {
 		return im.getDisplayName();
 	}
 
+	/**
+	 * Set lore
+	 * @param item
+	 * @param lore
+	 * @return
+	 */
 	public ItemStack setLore(ItemStack item, String lore) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
@@ -61,6 +78,12 @@ public class Spawner {
 		return item;
 	}
 
+	/**
+	 * Add lore
+	 * @param item
+	 * @param lore
+	 * @return
+	 */
 	public ItemStack addLore(ItemStack item, String lore) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
@@ -72,6 +95,11 @@ public class Spawner {
 		return item;
 	}
 
+	/**
+	 * Get lore
+	 * @param item
+	 * @return
+	 */
 	public List<String> getLore(ItemStack item) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
@@ -79,11 +107,22 @@ public class Spawner {
 		return null;
 	}
 
+	/**
+	 * Get spawner type
+	 * @param target
+	 * @return
+	 */
 	public EntityType getSpawner(Block target) {
 		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
 		return testSpawner.getSpawnedType();
 	}
 
+	/**
+	 * Set spawner type
+	 * @param target
+	 * @param arg
+	 * @return
+	 */
 	public boolean setSpawner(Block target, String arg) {
 		EntityType type = EntityType.fromName(arg);
 		if (type == null) {

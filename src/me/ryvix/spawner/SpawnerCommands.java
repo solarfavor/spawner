@@ -87,18 +87,18 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 			} else if (args.length == 1) {
-				
+
 				// spawner help
-				if(args[0] == "help") {
+				if (args[0] == "help") {
 					sender.sendMessage(ChatColor.GREEN + "=== Spawner Help ===");
-					//TODO: add help
+					// TODO: add help
 					sender.sendMessage(ChatColor.RED + "Coming soon...");
 				}
-				
+
 				// list entities
-				if(args[0] == "list") {
+				if (args[0] == "list") {
 					sender.sendMessage(ChatColor.RED + "=== Spawner List ===");
-					//TODO: add entities
+					// TODO: add entities
 					sender.sendMessage(ChatColor.RED + "Coming soon...");
 				}
 
