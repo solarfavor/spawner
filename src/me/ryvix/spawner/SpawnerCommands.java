@@ -24,6 +24,7 @@ package me.ryvix.spawner;
 import me.ryvix.spawner.Main;
 import me.ryvix.spawner.Spawner;
 import me.ryvix.spawner.SpawnerFunctions;
+import me.ryvix.spawner.language.Keys;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -62,7 +63,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				// catch console
 				if (!(sender instanceof Player)) {
-					sender.sendMessage("Usage: spawner give <entity> <player>");
+					sender.sendMessage(Main.language.getText(Keys.ConsoleUsageGive));
 					return true;
 				}
 
@@ -78,28 +79,47 @@ public class SpawnerCommands implements CommandExecutor {
 						sender.sendMessage(ChatColor.GREEN + type + " spawner.");
 
 					} else {
-						sender.sendMessage(ChatColor.RED + "Look at a spawner to see what kind it is!");
+						sender.sendMessage(Main.language.getText(Keys.LookAtASpawner));
 					}
 
 				} else {
-					sender.sendMessage(ChatColor.RED + "You don't have permission to do that!");
+					sender.sendMessage(Main.language.getText(Keys.NoPermission));
 					return true;
 				}
 
 			} else if (args.length == 1) {
 
+				// spawner reload
+				if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("spawner.reload")) {
+					plugin.getServer().getPluginManager().disablePlugin(plugin);
+					plugin.getServer().getPluginManager().enablePlugin(plugin);
+					plugin.getLogger().info("Reloaded");
+					if ((sender instanceof Player)) {
+						sender.sendMessage(ChatColor.GREEN + "Spawner has been reloaded.");
+					}
+					return true;
+				}
+
 				// spawner help
-				if (args[0] == "help") {
+				if (args[0].equalsIgnoreCase("help")) {
 					sender.sendMessage(ChatColor.GREEN + "=== Spawner Help ===");
 					// TODO: add help
 					sender.sendMessage(ChatColor.RED + "Coming soon...");
+					return true;
 				}
 
 				// list entities
-				if (args[0] == "list") {
+				if (args[0].equalsIgnoreCase("list")) {
 					sender.sendMessage(ChatColor.RED + "=== Spawner List ===");
 					// TODO: add entities
 					sender.sendMessage(ChatColor.RED + "Coming soon...");
+					return true;
+				}
+
+				// catch console
+				if (!(sender instanceof Player)) {
+					sender.sendMessage(Main.language.getText(Keys.ConsoleUsageGive));
+					return true;
 				}
 
 				// set spawner type
@@ -114,10 +134,10 @@ public class SpawnerCommands implements CommandExecutor {
 						if (spawner.setSpawner(target, args[0])) {
 							String spawnerName = args[0].toLowerCase().replaceFirst(args[0].substring(0, 1), args[0].substring(0, 1).toUpperCase());
 
-							sender.sendMessage(ChatColor.GREEN + "Spawner type changed to " + spawnerName);
+							sender.sendMessage(Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 
 						} else {
-							sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
+							sender.sendMessage(Main.language.getText(Keys.InvalidSpawner));
 						}
 
 					} else if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
@@ -126,7 +146,7 @@ public class SpawnerCommands implements CommandExecutor {
 						EntityType spawnerType = EntityType.fromName(args[0]);
 
 						if (spawnerType == null) {
-							sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
+							sender.sendMessage(Main.language.getText(Keys.InvalidSpawner));
 							return true;
 						}
 
@@ -148,10 +168,10 @@ public class SpawnerCommands implements CommandExecutor {
 						// set item in players hand
 						player.setItemInHand(newSpawner);
 
-						sender.sendMessage(ChatColor.GREEN + "Spawner type changed to " + spawnerName);
+						sender.sendMessage(Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 					}
 				} else {
-					sender.sendMessage(ChatColor.RED + "You don't have permission to do that!");
+					sender.sendMessage(Main.language.getText(Keys.NoPermission));
 				}
 
 				return true;
@@ -159,119 +179,128 @@ public class SpawnerCommands implements CommandExecutor {
 			} else if (args.length == 2) {
 				// give a spawner
 
+				// catch console
 				if (!(sender instanceof Player)) {
-					plugin.getLogger().info("This command can only be run by a player!");
+					sender.sendMessage(Main.language.getText(Keys.ConsoleUsageGive));
 					return true;
 				}
 
-				if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
-					Player player = (Player) sender;
+				if (args[0].equalsIgnoreCase("give")) {
+					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
+						Player player = (Player) sender;
 
-					EntityType spawnerType = EntityType.fromName(args[1]);
+						EntityType spawnerType = EntityType.fromName(args[1]);
 
-					if (spawnerType == null) {
-						sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
-						return true;
-					}
+						if (spawnerType == null) {
+							sender.sendMessage(Main.language.getText(Keys.InvalidSpawner));
+							return true;
+						}
 
-					short durability = spawnerType.getTypeId();
-					String spawnerName = spawnerType.getName();
+						short durability = spawnerType.getTypeId();
+						String spawnerName = spawnerType.getName();
 
-					// make an ItemStack
-					ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+						// make an ItemStack
+						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
 
-					// formatted name
-					String name = SpawnerFunctions.formatName(spawnerName);
+						// formatted name
+						String name = SpawnerFunctions.formatName(spawnerName);
 
-					// set lore
-					newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+						// set lore
+						newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
 
-					// set durability
-					newSpawner.setDurability(durability);
+						// set durability
+						newSpawner.setDurability(durability);
 
-					// drop spawner at player location or add it to their inv if they have space
-					PlayerInventory inventory = player.getInventory();
-					if (inventory.firstEmpty() == -1) {
-						player.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+						// drop spawner at player location or add it to their inv if they have space
+						PlayerInventory inventory = player.getInventory();
+						if (inventory.firstEmpty() == -1) {
+							player.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+						} else {
+							int invSlot = inventory.firstEmpty();
+							inventory.setItem(invSlot, newSpawner);
+						}
+
+						sender.sendMessage(Main.language.getText(Keys.GivenSpawner, spawnerName));
 					} else {
-						int invSlot = inventory.firstEmpty();
-						inventory.setItem(invSlot, newSpawner);
+						sender.sendMessage(Main.language.getText(Keys.NoPermission));
 					}
 
-					sender.sendMessage(ChatColor.GREEN + "You were given a " + spawnerName + " spawner.");
-				} else {
-					sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+					return true;
 				}
-
-				return true;
 
 			} else if (args.length == 3) {
 				// give a spawner to others
 
-				if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
-					// give a spawner
+				if (args[0].equalsIgnoreCase("give")) {
 
-					EntityType spawnerType = EntityType.fromName(args[1]);
+					if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
+						// give a spawner
 
-					if (spawnerType == null) {
-						sender.sendMessage(ChatColor.RED + "Invalid spawner type!");
-						return true;
-					}
+						EntityType spawnerType = EntityType.fromName(args[1]);
 
-					short durability = spawnerType.getTypeId();
-					String spawnerName = spawnerType.getName();
-
-					// make an ItemStack
-					ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
-
-					// formatted name
-					String name = SpawnerFunctions.formatName(spawnerName);
-
-					// set lore
-					newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
-
-					// set durability
-					newSpawner.setDurability(durability);
-
-					Player targetPlayer = plugin.getServer().getPlayer(args[2]);
-					if (targetPlayer != null) {
-
-						PlayerInventory inventory = targetPlayer.getInventory();
-						int invSlot = inventory.firstEmpty();
-
-						// drop spawner at player location or add it to their inv if they have space
-						if (invSlot == -1) {
-
-							// if target player is online drop it at their feet and tell them
-							targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-							targetPlayer.sendMessage(ChatColor.GREEN + "A " + spawnerName + " spawner was dropped at your feet because your inventory is full.");
-
-						} else {
-
-							inventory.setItem(invSlot, newSpawner);
-
-							if (targetPlayer != null) {
-								targetPlayer.sendMessage(ChatColor.GREEN + "You were given a " + spawnerName + " spawner.");
-							}
-
-							sender.sendMessage(ChatColor.GREEN + "You gave a " + spawnerName + " spawner to " + args[2] + ".");
+						if (spawnerType == null) {
+							sender.sendMessage(Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 
-						return true;
+						short durability = spawnerType.getTypeId();
+						String spawnerName = spawnerType.getName();
+
+						// make an ItemStack
+						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+
+						// formatted name
+						String name = SpawnerFunctions.formatName(spawnerName);
+
+						// set lore
+						newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+
+						// set durability
+						newSpawner.setDurability(durability);
+
+						Player targetPlayer = plugin.getServer().getPlayer(args[2]);
+						if (targetPlayer != null) {
+
+							PlayerInventory inventory = targetPlayer.getInventory();
+							int invSlot = inventory.firstEmpty();
+
+							// drop spawner at player location or add it to their inv if they have space
+							if (invSlot == -1) {
+
+								// if target player is online drop it at their feet and tell them
+								targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
+								targetPlayer.sendMessage(Main.language.getText(Keys.SpawnerDropped, spawnerName));
+
+							} else {
+
+								inventory.setItem(invSlot, newSpawner);
+
+								if (targetPlayer != null) {
+									targetPlayer.sendMessage(Main.language.getText(Keys.GivenSpawner, spawnerName));
+								}
+
+								String[] vars = new String[2];
+								vars[0] = spawnerName;
+								vars[1] = targetPlayer.getName();
+								sender.sendMessage(Main.language.getText(Keys.YouGaveSpawner, vars));
+							}
+
+							return true;
+
+						} else {
+							// tell sender the target didn't get the spawner
+							sender.sendMessage(Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+						}
 
 					} else {
-						// tell sender the target didn't get the spawner
-						sender.sendMessage(ChatColor.RED + "The spawner was not delivered because " + args[2] + " is offline.");
+						sender.sendMessage(Main.language.getText(Keys.NoPermission));
 					}
 
-				} else {
-					sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+					return true;
 				}
 
-				return true;
-
 			} else {
-				sender.sendMessage(ChatColor.RED + "You don't have permission to use that command!");
+				sender.sendMessage(Main.language.getText(Keys.NoPermission));
 				return true;
 			}
 		}

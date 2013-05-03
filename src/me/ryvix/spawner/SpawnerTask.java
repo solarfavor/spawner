@@ -22,12 +22,11 @@
 package me.ryvix.spawner;
 
 import me.ryvix.spawner.Main;
+import me.ryvix.spawner.language.Keys;
 
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-
 
 public class SpawnerTask implements Runnable {
 	short entityID;
@@ -55,9 +54,9 @@ public class SpawnerTask implements Runnable {
 		Spawner spawner = new Spawner();
 
 		if (spawner.setSpawner(block, spawnerType.getName())) {
-			player.sendMessage(ChatColor.GREEN + "Placed " + spawnerType.getName() + " spawner");
+			player.sendMessage(Main.language.getText(Keys.PlacedSpawner, spawnerType.getName()));
 		} else {
-			player.sendMessage(ChatColor.RED + "It was not possible to change that spawner.");
+			player.sendMessage(Main.language.getText(Keys.NotPossible));
 		}
 	}
 

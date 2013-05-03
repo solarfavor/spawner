@@ -9,6 +9,19 @@ commands:
     description: Allows switching of spawner entity types with /spawner <entity>
     usage: "/spawner <entity>"
 permissions:
+  spawner.*:
+    description: Gives all Spawner permissions.
+    children:
+      spawner.reload: true
+      spawner.set.*: true
+      spawner.give.*: true
+      spawner.give.others.*: true
+      spawner.get: true
+      spawner.break.*: true
+      spawner.mine.*: true
+  spawner.reload:
+    description: Gives access to use /spawner reload to reload the plugin.
+    default: op
   spawner.set.*:
     description: Gives access to use /spawner <entity> to set the spawner entity type.
     default: op

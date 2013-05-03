@@ -21,16 +21,44 @@
 
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.SpawnerCommands;
+import java.io.File;
 
+import me.ryvix.spawner.SpawnerCommands;
+import me.ryvix.spawner.language.Language;
+
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
 public class Main extends JavaPlugin {
+	public Configuration config;
+	public static Language language;
 
 	@Override
 	public void onEnable() {
+		language = new Language(this, "language.yml");
+		language.loadText();
 
+		// create config file
+		try {
+			File configFile = new File(getDataFolder(), "config.yml");
+			if (!configFile.exists()) {
+				getDataFolder().mkdir();
+				this.getConfig().options().copyDefaults(true);
+				this.getConfig().options().header("Spawner config file\n");
+				this.getConfig().options().copyHeader(true);
+				this.saveConfig();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// load config file
+		loadConfig();
+
+		// register events
 		getServer().getPluginManager().registerEvents(new me.ryvix.spawner.SpawnerEvents(this), this);
 
 		// spawner
@@ -39,5 +67,44 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		config = null;
+		language = null;
+	}
+
+	/**
+	 * Load config values
+	 * 
+	 */
+	public void loadConfig() {
+
+		// get config file
+		FileConfiguration getConfig = getConfig();
+		File configFile = new File(this.getDataFolder() + "/config.yml");
+		config = YamlConfiguration.loadConfiguration(configFile);
+
+		// add defaults
+		if (!config.contains("protect_from_explosions")) {
+			getConfig().addDefault("protect_from_explosions", "true");
+		}
+		if (!config.contains("limit")) {
+			getConfig().addDefault("limit.members", "members");
+			getConfig().addDefault("limit.vip", "vip");
+			getConfig().addDefault("limit.elite", "elite");
+			getConfig().addDefault("limit.godlike", "godlike");
+		}
+		if (!config.contains("allow_baby")) {
+			getConfig().addDefault("allow_baby", "false");
+		}
+		if (!config.contains("allow_armour")) {
+			getConfig().addDefault("allow_armour", "true");
+		}
+		getConfig.options().copyDefaults(true);
+
+		// add header
+		getConfig().options().header("Spawner config file\n\n");
+		getConfig().options().copyHeader(true);
+
+		// save file
+		saveConfig();
 	}
 }

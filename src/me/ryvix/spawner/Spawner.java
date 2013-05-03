@@ -34,6 +34,7 @@ public class Spawner {
 
 	/**
 	 * Set display name
+	 * 
 	 * @param item
 	 * @param name
 	 * @return
@@ -49,6 +50,7 @@ public class Spawner {
 
 	/**
 	 * Get display name
+	 * 
 	 * @param item
 	 * @return
 	 */
@@ -61,6 +63,7 @@ public class Spawner {
 
 	/**
 	 * Set lore
+	 * 
 	 * @param item
 	 * @param lore
 	 * @return
@@ -80,6 +83,7 @@ public class Spawner {
 
 	/**
 	 * Add lore
+	 * 
 	 * @param item
 	 * @param lore
 	 * @return
@@ -97,18 +101,21 @@ public class Spawner {
 
 	/**
 	 * Get lore
+	 * 
 	 * @param item
 	 * @return
 	 */
 	public List<String> getLore(ItemStack item) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
-		if (im.hasLore()) return im.getLore();
+		if (im.hasLore())
+			return im.getLore();
 		return null;
 	}
 
 	/**
 	 * Get spawner type
+	 * 
 	 * @param target
 	 * @return
 	 */
@@ -119,6 +126,7 @@ public class Spawner {
 
 	/**
 	 * Set spawner type
+	 * 
 	 * @param target
 	 * @param arg
 	 * @return

@@ -24,11 +24,11 @@ package me.ryvix.spawner;
 import java.util.Iterator;
 
 import me.ryvix.spawner.Main;
+import me.ryvix.spawner.language.Keys;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -136,15 +136,6 @@ public class SpawnerEvents implements Listener {
 	private void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
 
-		// onPlayerHoldItem will remove silk touch
-		// some mob spawner plugins add silk touch to mob spawners
-		// so we dont let them break blocks when holding a spawner
-		// ItemStack heldItem = player.getItemInHand();
-		// if (heldItem != null && heldItem.getType() == Material.MOB_SPAWNER) {
-		// event.setCancelled(true);
-		// return;
-		// }
-
 		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
 
 			int itemId = player.getInventory().getHeldItemSlot();
@@ -185,6 +176,10 @@ public class SpawnerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
+		if (!plugin.config.getBoolean("protect_from_explosions")) {
+			return;
+		}
+
 		if (event.blockList().isEmpty()) {
 			return;
 		}
@@ -226,23 +221,12 @@ public class SpawnerEvents implements Listener {
 			// set durability
 			iStack.setDurability(durability);
 
-			event.getPlayer().sendMessage(ChatColor.GREEN + "You picked up a " + spawnerName + " spawner.");
+			event.getPlayer().sendMessage(Main.language.getText(Keys.YouPickedUp, spawnerName));
 
 			// event.getPlayer().updateInventory();
 		}
 	}
 
-	/**
-	 * When a spawner is taken from the inventory and dropped on the ground make it drop. If we don't do this it will just disappear.
-	 * 
-	 * @param event Block place event
-	 */
-	/*
-	 * @EventHandler(priority = EventPriority.NORMAL) private void onPlayerDropItem(PlayerDropItemEvent event) { if (!event.isCancelled() && event.getItemDrop().getItemStack().getType() ==
-	 * Material.MOB_SPAWNER) {
-	 * 
-	 * // cancel event event.setCancelled(true); } }
-	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void OnPlayerItemHeld(PlayerItemHeldEvent event) {
 
@@ -269,7 +253,7 @@ public class SpawnerEvents implements Listener {
 
 		// event.getPlayer().updateInventory();
 
-		event.getPlayer().sendMessage(ChatColor.GREEN + "You are holding a " + spawnerName + " spawner.");
+		event.getPlayer().sendMessage(Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -288,7 +272,7 @@ public class SpawnerEvents implements Listener {
 					// formatted name
 					String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
 
-					event.getPlayer().sendMessage(ChatColor.GREEN + "Spawner type: " + spawnerName);
+					event.getPlayer().sendMessage(Main.language.getText(Keys.SpawnerType, spawnerName));
 				}
 			}
 		}
