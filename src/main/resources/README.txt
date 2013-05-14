@@ -51,6 +51,12 @@ brackets. For example PigZombie will work while PIG_ZOMBIE will not.
 
 Commands
 
+/spawner help
+List Spawner command help.
+
+/spawner list
+List valid entity types. The list is editable.
+
 /spawner <entity>
 Switch the spawner you're looking at or holding to the given mob entity type.
 
@@ -59,6 +65,19 @@ Give a spawner to yourself or another player.
 
 
 Permissions
+
+spawner.*
+Gives all Spawner permissions.
+Default: op
+
+spawner.reload
+Gives access to use /spawner reload to reload the plugin.
+Default: op
+
+spawner.set.<entity>
+Gives access to use /spawner <entity> to set the spawner entity type.
+Use spawner.set.* to allow all spawner entity types.
+Default: op
 
 spawner.get
 Gives access to right-click a spawner or use /spawner to get the spawner entity

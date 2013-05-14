@@ -1,29 +1,27 @@
 /**
- *   Spawner - Gather mob spawners with silk touch enchanted tools and the
- *   ability to change mob types.
+ * Spawner - Gather mob spawners with silk touch enchanted tools and the
+ * ability to change mob types.
  *
- *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package me.ryvix.spawner;
 
 import java.io.File;
 
-import me.ryvix.spawner.SpawnerCommands;
 import me.ryvix.spawner.language.Language;
 
 import org.bukkit.configuration.Configuration;
@@ -32,12 +30,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
+
 	public Configuration config;
 	public static Language language;
+	public static Main instance;
 
 	@Override
 	public void onEnable() {
-		language = new Language(this, "language.yml");
+		instance = this;
+		language = new Language("language.yml");
 		language.loadText();
 
 		// create config file
@@ -52,17 +53,30 @@ public class Main extends JavaPlugin {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		// load config file
 		loadConfig();
 
+		// create help and list files
+		try {
+			File file = new File(getDataFolder(), "help.txt");
+			if (!file.exists()) {
+				saveResource("help.txt", false);
+			}
+			file = new File(getDataFolder(), "list.txt");
+			if (!file.exists()) {
+				saveResource("list.txt", false);
+			}
+		} catch (Exception e) {
+		}
+
+
 		// register events
-		getServer().getPluginManager().registerEvents(new me.ryvix.spawner.SpawnerEvents(this), this);
+		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
 
 		// spawner
-		getCommand("spawner").setExecutor(new SpawnerCommands(this));
+		getCommand("spawner").setExecutor(new SpawnerCommands());
 	}
 
 	@Override
@@ -73,7 +87,7 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Load config values
-	 * 
+	 *
 	 */
 	public void loadConfig() {
 
@@ -83,6 +97,9 @@ public class Main extends JavaPlugin {
 		config = YamlConfiguration.loadConfiguration(configFile);
 
 		// add defaults
+		if (!config.contains("bad_entities")) {
+			getConfig().addDefault("bad_entities", "[Item,XPOrb,Painting,Arrow,Snowball,Fireball,SmallFireball,ThrownEnderpearl,EyeOfEnderSignal,ThrownExpBottle,ItemFrame,WitherSkull,PrimedTnt,FallingSand,FireworksRocketEntity,Minecart,Boat,EnderCrystal]");
+		}
 		if (!config.contains("protect_from_explosions")) {
 			getConfig().addDefault("protect_from_explosions", "true");
 		}

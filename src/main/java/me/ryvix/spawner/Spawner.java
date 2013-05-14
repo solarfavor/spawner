@@ -1,24 +1,23 @@
 /**
- *   Spawner - Gather mob spawners with silk touch enchanted tools and the
- *   ability to change mob types.
+ * Spawner - Gather mob spawners with silk touch enchanted tools and the
+ * ability to change mob types.
  *
- *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package me.ryvix.spawner;
 
 import java.util.Arrays;
@@ -34,7 +33,7 @@ public class Spawner {
 
 	/**
 	 * Set display name
-	 * 
+	 *
 	 * @param item
 	 * @param name
 	 * @return
@@ -50,7 +49,7 @@ public class Spawner {
 
 	/**
 	 * Get display name
-	 * 
+	 *
 	 * @param item
 	 * @return
 	 */
@@ -63,7 +62,7 @@ public class Spawner {
 
 	/**
 	 * Set lore
-	 * 
+	 *
 	 * @param item
 	 * @param lore
 	 * @return
@@ -83,7 +82,7 @@ public class Spawner {
 
 	/**
 	 * Add lore
-	 * 
+	 *
 	 * @param item
 	 * @param lore
 	 * @return
@@ -101,21 +100,22 @@ public class Spawner {
 
 	/**
 	 * Get lore
-	 * 
+	 *
 	 * @param item
 	 * @return
 	 */
 	public List<String> getLore(ItemStack item) {
 
 		ItemMeta im = (ItemMeta) item.getItemMeta();
-		if (im.hasLore())
+		if (im.hasLore()) {
 			return im.getLore();
+		}
 		return null;
 	}
 
 	/**
 	 * Get spawner type
-	 * 
+	 *
 	 * @param target
 	 * @return
 	 */
@@ -126,26 +126,39 @@ public class Spawner {
 
 	/**
 	 * Set spawner type
-	 * 
+	 *
 	 * @param target
 	 * @param arg
 	 * @return
 	 */
 	public boolean setSpawner(Block target, String arg) {
+		// filter out bad spawner types
+		List<String> badEntities = Main.instance.config.getStringList("bad_entities");
+		for (String entity : badEntities) {
+			if (entity.equalsIgnoreCase(arg)) {
+				return false;
+			}
+		}
+
 		EntityType type = EntityType.fromName(arg);
 		if (type == null) {
 			return false;
 		}
-		CreatureSpawner testSpawner = null;
+
+		CreatureSpawner testSpawner;
 		try {
 			testSpawner = (CreatureSpawner) target.getState();
 		} catch (Exception e) {
 			return false;
 		}
-		testSpawner.setSpawnedType(type);
-		target.getState().update();
 
-		return true;
+		if (testSpawner != null) {
+			testSpawner.setSpawnedType(type);
+			target.getState().update();
+
+			return true;
+		}
+
+		return false;
 	}
-
 }

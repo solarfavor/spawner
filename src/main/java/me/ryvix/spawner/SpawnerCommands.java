@@ -1,29 +1,25 @@
 /**
- *   Spawner - Gather mob spawners with silk touch enchanted tools and the
- *   ability to change mob types.
+ * Spawner - Gather mob spawners with silk touch enchanted tools and the
+ * ability to change mob types.
  *
- *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.Main;
-import me.ryvix.spawner.Spawner;
-import me.ryvix.spawner.SpawnerFunctions;
 import me.ryvix.spawner.language.Keys;
 
 import org.bukkit.ChatColor;
@@ -39,21 +35,16 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class SpawnerCommands implements CommandExecutor {
 
-	private Main plugin;
-
-	public SpawnerCommands(Main plugin) {
-		this.plugin = plugin;
-	}
-
 	/**
-	 * '/command' command controller.
-	 * 
+	 * "/command" command controller.
+	 *
 	 * @param sender Command sender
 	 * @param cmd Command
 	 * @param label Command alias
-	 * @param args Other params
+	 * @param args Other parameters
 	 * @return boolean
 	 */
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		String cName = cmd.getName();
 
@@ -91,9 +82,9 @@ public class SpawnerCommands implements CommandExecutor {
 
 				// spawner reload
 				if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("spawner.reload")) {
-					plugin.getServer().getPluginManager().disablePlugin(plugin);
-					plugin.getServer().getPluginManager().enablePlugin(plugin);
-					plugin.getLogger().info("Reloaded");
+					Main.instance.getServer().getPluginManager().disablePlugin(Main.instance);
+					Main.instance.getServer().getPluginManager().enablePlugin(Main.instance);
+					Main.instance.getLogger().info("Reloaded");
 					if ((sender instanceof Player)) {
 						sender.sendMessage(ChatColor.GREEN + "Spawner has been reloaded.");
 					}
@@ -102,17 +93,19 @@ public class SpawnerCommands implements CommandExecutor {
 
 				// spawner help
 				if (args[0].equalsIgnoreCase("help")) {
-					sender.sendMessage(ChatColor.GREEN + "=== Spawner Help ===");
-					// TODO: add help
-					sender.sendMessage(ChatColor.RED + "Coming soon...");
+
+					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "help.txt");
+
+					sender.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), contents));
 					return true;
 				}
 
 				// list entities
 				if (args[0].equalsIgnoreCase("list")) {
-					sender.sendMessage(ChatColor.RED + "=== Spawner List ===");
-					// TODO: add entities
-					sender.sendMessage(ChatColor.RED + "Coming soon...");
+
+					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "list.txt");
+
+					sender.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), contents));
 					return true;
 				}
 
@@ -258,7 +251,7 @@ public class SpawnerCommands implements CommandExecutor {
 						// set durability
 						newSpawner.setDurability(durability);
 
-						Player targetPlayer = plugin.getServer().getPlayer(args[2]);
+						Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 						if (targetPlayer != null) {
 
 							PlayerInventory inventory = targetPlayer.getInventory();
@@ -277,6 +270,8 @@ public class SpawnerCommands implements CommandExecutor {
 
 								if (targetPlayer != null) {
 									targetPlayer.sendMessage(Main.language.getText(Keys.GivenSpawner, spawnerName));
+								} else {
+									sender.sendMessage(Main.language.getText(Keys.NotDeliveredOffline, args[2]));
 								}
 
 								String[] vars = new String[2];

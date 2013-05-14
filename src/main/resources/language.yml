@@ -1,0 +1,16 @@
+# Spawner Language
+Language:
+    - ConsoleUsageGive: 'Usage: spawner give <entity> <player>'
+    - LookAtASpawner: '&4Look at a spawner to see what kind it is!'
+    - NoPermission: '&4You don''t have permission to do that!'
+    - SpawnerChangedTo: '&aSpawner type changed to {0}'
+    - InvalidSpawner: '&4Invalid spawner type!'
+    - GivenSpawner: '&aYou were given a {0} spawner.'
+    - SpawnerDropped: '&aA {0} spawner was dropped at your feet because your inventory is full.'
+    - YouGaveSpawner: '&aYou gave a {0} spawner to {1}.'
+    - NotDeliveredOffline: '&4The spawner was not delivered because {0} is offline.'
+    - YouPickedUp: '&aYou picked up a {0} spawner.'
+    - HoldingSpawner: '&aYou are holding a {0} spawner.'
+    - SpawnerType: '&aSpawner type: {0}'
+    - PlacedSpawner: '&aPlaced {0} spawner'
+    - NotPossible: '&4It was not possible to change that spawner.'

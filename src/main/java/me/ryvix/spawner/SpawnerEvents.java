@@ -1,29 +1,27 @@
 /**
- *   Spawner - Gather mob spawners with silk touch enchanted tools and the
- *   ability to change mob types.
+ * Spawner - Gather mob spawners with silk touch enchanted tools and the
+ * ability to change mob types.
  *
- *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package me.ryvix.spawner;
 
 import java.util.Iterator;
 
-import me.ryvix.spawner.Main;
 import me.ryvix.spawner.language.Keys;
 
 import org.bukkit.block.Block;
@@ -48,15 +46,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class SpawnerEvents implements Listener {
 
-	private Main plugin;
-
-	public SpawnerEvents(Main plugin) {
-		this.plugin = plugin;
-	}
-
 	/**
 	 * When a spawner is broken set the Lore to the spawner type.
-	 * 
+	 *
 	 * @param event Block break event
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -129,7 +121,7 @@ public class SpawnerEvents implements Listener {
 
 	/**
 	 * When a spawner is placed set the type to the lore.
-	 * 
+	 *
 	 * @param event Block place event
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -148,7 +140,7 @@ public class SpawnerEvents implements Listener {
 			EntityType spawnerType = EntityType.fromId(durability);
 
 			short spawnerId = 90;
-			String name = "";
+			String name;
 			if (spawnerType == null) {
 				name = "Pig";
 				durability = 90;
@@ -158,25 +150,21 @@ public class SpawnerEvents implements Listener {
 			}
 
 			if (name.isEmpty()) {
-				name = "Pig";
 				durability = 90;
-			} else {
-				String f = name.substring(0, 1);
-				name = name.toLowerCase().replaceFirst(f, f.toUpperCase());
 			}
 
-			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new SpawnerTask(spawnerId, durability, event.getBlock(), plugin, player), 0);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new SpawnerTask(spawnerId, durability, event.getBlock(), player), 0);
 		}
 	}
 
 	/**
 	 * When a spawner is exploded set the Lore to the spawner type.
-	 * 
+	 *
 	 * @param event Entity explode event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
-		if (!plugin.config.getBoolean("protect_from_explosions")) {
+		if (!Main.instance.config.getBoolean("protect_from_explosions")) {
 			return;
 		}
 
