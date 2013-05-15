@@ -20,6 +20,8 @@ permissions:
       spawner.get: true
       spawner.break.*: true
       spawner.mine.*: true
+      spawner.list: true
+      spawner.help: true
   spawner.reload:
     description: Gives access to use /spawner reload to reload the plugin.
     default: op
@@ -40,4 +42,10 @@ permissions:
     default: op
   spawner.mine.*:
     description: Allows players to mine spawners with a silk touch enchanted tool.
+    default: op
+  spawner.help:
+    description: Gives access to use /spawner help
+    default: op
+  spawner.list:
+    description: Gives access to use /spawner list
     default: op

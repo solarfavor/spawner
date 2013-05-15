@@ -92,7 +92,7 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 				// spawner help
-				if (args[0].equalsIgnoreCase("help")) {
+				if (args[0].equalsIgnoreCase("help") && sender.hasPermission("spawner.help")) {
 
 					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "help.txt");
 
@@ -101,7 +101,7 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 				// list entities
-				if (args[0].equalsIgnoreCase("list")) {
+				if (args[0].equalsIgnoreCase("list") && sender.hasPermission("spawner.list")) {
 
 					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "list.txt");
 
