@@ -29,8 +29,10 @@ import java.util.logging.Level;
 import me.ryvix.spawner.Main;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 public class Language {
 
@@ -50,7 +52,33 @@ public class Language {
 	}
 
 	/**
-	 * Get text - supports color codes, i.e. &4Red text
+	 * Send a message to a Player if it isn't empty
+	 * Supports color codes, i.e. &4Red text
+	 *
+	 * @param player
+	 * @param text
+	 */
+	public void sendMessage(Player player, String text) {
+		if (!text.isEmpty()) {
+			player.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
+		}
+	}
+
+	/**
+	 * Send a message to a CommandSender if it isn't empty
+	 * Supports color codes, i.e. &4Red text
+	 *
+	 * @param sender
+	 * @param text
+	 */
+	public void sendMessage(CommandSender sender, String text) {
+		if (!text.isEmpty()) {
+			sender.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
+		}
+	}
+
+	/**
+	 * Get text
 	 *
 	 * @param key
 	 * @param vars
@@ -59,11 +87,17 @@ public class Language {
 	public String getText(Keys key, String... vars) {
 		Map<?, ?> entry = entries.get(key.ordinal());
 		String text = (String) entry.get(key.toString());
+
+		// check for empty text
+		if (text.isEmpty()) {
+			return "";
+		}
+
 		for (int x = 0; x < vars.length; x++) {
 			text = text.replace("{" + x + "}", vars[x]);
 		}
 
-		return ChatColor.translateAlternateColorCodes("&".charAt(0), text);
+		return text;
 	}
 
 	/**

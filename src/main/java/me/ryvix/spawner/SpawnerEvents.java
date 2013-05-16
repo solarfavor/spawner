@@ -209,7 +209,7 @@ public class SpawnerEvents implements Listener {
 			// set durability
 			iStack.setDurability(durability);
 
-			event.getPlayer().sendMessage(Main.language.getText(Keys.YouPickedUp, spawnerName));
+			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawnerName));
 
 			// event.getPlayer().updateInventory();
 		}
@@ -241,7 +241,7 @@ public class SpawnerEvents implements Listener {
 
 		// event.getPlayer().updateInventory();
 
-		event.getPlayer().sendMessage(Main.language.getText(Keys.HoldingSpawner, spawnerName));
+		Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -260,7 +260,7 @@ public class SpawnerEvents implements Listener {
 					// formatted name
 					String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
 
-					event.getPlayer().sendMessage(Main.language.getText(Keys.SpawnerType, spawnerName));
+					Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.SpawnerType, spawnerName));
 				}
 			}
 		}
