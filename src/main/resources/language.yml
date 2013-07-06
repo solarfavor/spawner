@@ -14,3 +14,7 @@ Language:
     - SpawnerType: '&aSpawner type: {0}'
     - PlacedSpawner: '&aPlaced {0} spawner'
     - NotPossible: '&4It was not possible to change that spawner.'
+    - InvalidRadius: '&4You entered an invalid radius.'
+    - InvalidEntity: '&4You entered an invalid entity.'
+    - ErrorRemovingEntities: '&4There was an error removing entities. Some may not have been removed.'
+    - EntitiesRemoved: '&a{0} {1} removed.'

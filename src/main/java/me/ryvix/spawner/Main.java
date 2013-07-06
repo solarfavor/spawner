@@ -103,6 +103,9 @@ public class Main extends JavaPlugin {
 		if (!config.contains("protect_from_explosions")) {
 			getConfig().addDefault("protect_from_explosions", "true");
 		}
+		if (!config.contains("remove_radius")) {
+			getConfig().addDefault("remove_radius", 10);
+		}
 		if (!config.contains("limit")) {
 			getConfig().addDefault("limit.members", "members");
 			getConfig().addDefault("limit.vip", "vip");

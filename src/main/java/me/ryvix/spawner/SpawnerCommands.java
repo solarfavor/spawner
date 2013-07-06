@@ -1,21 +1,21 @@
 /**
- * Spawner - Gather mob spawners with silk touch enchanted tools and the
- * ability to change mob types.
+ * Spawner - Gather mob spawners with silk touch enchanted tools and the ability
+ * to change mob types.
  *
  * Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package me.ryvix.spawner;
@@ -170,15 +170,16 @@ public class SpawnerCommands implements CommandExecutor {
 				return true;
 
 			} else if (args.length == 2) {
-				// give a spawner
-
-				// catch console
-				if (!(sender instanceof Player)) {
-					Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
-					return true;
-				}
 
 				if (args[0].equalsIgnoreCase("give")) {
+					// give a spawner
+
+					// catch console
+					if (!(sender instanceof Player)) {
+						Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+						return true;
+					}
+
 					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
 						Player player = (Player) sender;
 
@@ -219,6 +220,14 @@ public class SpawnerCommands implements CommandExecutor {
 					}
 
 					return true;
+
+				} else if (args[0].equalsIgnoreCase("remove")) {
+
+					// /spawner remove <entity>
+					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
+						int radius = Main.instance.config.getInt("remove_radius");
+						SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
+					}
 				}
 
 			} else if (args.length == 3) {
@@ -292,6 +301,21 @@ public class SpawnerCommands implements CommandExecutor {
 					}
 
 					return true;
+
+				} else if (args[0].equalsIgnoreCase("remove")) {
+
+					// /spawner remove <entity> <radius>
+					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
+						int radius;
+						try {
+							radius = Integer.parseInt(args[2]);
+						} catch (Exception e) {
+							Main.language.sendMessage(sender, ChatColor.RED + Main.language.getText(Keys.InvalidRadius));
+							return false;
+						}
+
+						SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
+					}
 				}
 
 			} else {

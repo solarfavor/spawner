@@ -2,11 +2,14 @@
 
 # Bad entity types to prevent using
 # If you change this be sure to update list.txt
-# Warning: In 1.5.2 a Painting spawner will crash the client
+# Warning: A Painting spawner may crash the client
 bad_entities: [Item,XPOrb,Painting,Arrow,Snowball,Fireball,SmallFireball,ThrownEnderpearl,EyeOfEnderSignal,ThrownExpBottle,ItemFrame,WitherSkull,PrimedTnt,FallingSand,FireworksRocketEntity,Minecart,Boat,EnderCrystal]
 
 # Preventing spawners being destroyed by explosions.
 protect_from_explosions: true
+
+# Default radius when removing entities with /spawner remove <entity>
+remove_radius: 10
 
 # Adds ability to limit the number of spawners a player can give/change.
 limit:
