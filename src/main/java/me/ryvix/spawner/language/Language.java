@@ -46,7 +46,6 @@ public class Language {
 	/**
 	 * Constructor
 	 *
-	 * @param main
 	 * @param fileName
 	 */
 	public Language(String fileName) {
