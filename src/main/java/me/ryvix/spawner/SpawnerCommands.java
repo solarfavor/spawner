@@ -309,7 +309,7 @@ public class SpawnerCommands implements CommandExecutor {
 						int radius;
 						try {
 							radius = Integer.parseInt(args[2]);
-						} catch (Exception e) {
+						} catch (NumberFormatException e) {
 							Main.language.sendMessage(sender, ChatColor.RED + Main.language.getText(Keys.InvalidRadius));
 							return false;
 						}
