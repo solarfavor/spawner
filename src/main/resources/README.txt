@@ -2,7 +2,7 @@
  *   Spawner - Gather mob spawners with silk touch enchanted tools and the
  *   ability to change mob types.
  *
- *   Copyright (C) 2012-2013 Ryan Rhode - rrhode@gmail.com
+ *   Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  *
  */
 
-Bukkit plugin page: http://dev.bukkit.org/server-mods/spawner/
+Bukkit plugin page: http://dev.bukkit.org/bukkit-plugins/spawner/
 Source: https://github.com/ty2u/spawner
 
 This plugin allows you to gather mob spawners with a Silk Touch enchanted tool.
@@ -44,7 +44,7 @@ This plugin may use various bits of code I found on the Bukkit forums.
 Entities
 
 You can make spawners any of the entity names listed here:
-http://jd.bukkit.org/apidocs/src-html/org/bukkit/entity/EntityType.html#line.9
+http://jd.bukkit.org/rb/apidocs/src-html/org/bukkit/entity/EntityType.html#line.16
 Generally you would use the name that appears inside the quotes in the
 brackets. For example PigZombie will work while PIG_ZOMBIE will not.
 
