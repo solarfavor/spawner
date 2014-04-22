@@ -21,9 +21,9 @@
 package me.ryvix.spawner;
 
 import java.io.File;
-
+import java.util.Arrays;
+import java.util.List;
 import me.ryvix.spawner.language.Language;
-
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -98,7 +98,11 @@ public class Main extends JavaPlugin {
 
 		// add defaults
 		if (!config.contains("valid_entities")) {
-			getConfig().addDefault("valid_entities", "[Creeper,Skeleton,Spider,Giant,Zombie,Slime,Ghast,PigZombie,Enderman,CaveSpider,Silverfish,Blaze,LavaSlime,EnderDragon,WitherBoss,Bat,Witch,Pig,Sheep,Cow,Chicken,Squid,Wolf,MushroomCow,SnowMan,Ozelot,VillagerGolem,EntityHorse,Villager]");
+			List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager");
+			getConfig().addDefault("valid_entities", validEntities);
+		}
+		if (config.contains("bad_entities")) {
+			getConfig().set("bad_entities", null);
 		}
 		if (!config.contains("protect_from_explosions")) {
 			getConfig().addDefault("protect_from_explosions", "true");
@@ -106,7 +110,7 @@ public class Main extends JavaPlugin {
 		if (!config.contains("remove_radius")) {
 			getConfig().addDefault("remove_radius", 10);
 		}
-		if (!config.contains("limit")) {
+		/*if (!config.contains("limit")) {
 			getConfig().addDefault("limit.members", "members");
 			getConfig().addDefault("limit.vip", "vip");
 			getConfig().addDefault("limit.elite", "elite");
@@ -117,7 +121,7 @@ public class Main extends JavaPlugin {
 		}
 		if (!config.contains("allow_armour")) {
 			getConfig().addDefault("allow_armour", "true");
-		}
+		}*/
 		getConfig.options().copyDefaults(true);
 
 		// add header
