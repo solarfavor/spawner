@@ -47,6 +47,9 @@ permissions:
   spawner.mine.*:
     description: Allows players to mine spawners with a silk touch enchanted tool.
     default: op
+  spawner.noplace.*:
+    description: Players with this permission will be prevented from placing spawners.
+    default: op
   spawner.help:
     description: Gives access to use /spawner help
     default: op

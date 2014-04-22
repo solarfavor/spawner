@@ -130,6 +130,17 @@ public class SpawnerEvents implements Listener {
 
 		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
 
+			// get spawner block
+			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
+			String spawnerName = csBlock.getSpawnedType().getName().toLowerCase();
+
+			// if they can't mine it just let them break it normally
+			if (player.hasPermission("spawner.noplace.*") || player.hasPermission("spawner.noplace." + spawnerName)) {
+				event.setCancelled(true);
+				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerName));
+				return;
+			}
+
 			int itemId = player.getInventory().getHeldItemSlot();
 			ItemStack iStack = player.getInventory().getItem(itemId);
 			short durability = iStack.getDurability();
@@ -216,7 +227,7 @@ public class SpawnerEvents implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void OnPlayerItemHeld(PlayerItemHeldEvent event) {
+	public void onPlayerItemHeld(PlayerItemHeldEvent event) {
 
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
 			return;
@@ -245,7 +256,7 @@ public class SpawnerEvents implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void OnPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!event.hasBlock() || event.isCancelled()) {
 			return;
 		}
