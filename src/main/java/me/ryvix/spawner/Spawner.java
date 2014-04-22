@@ -132,12 +132,19 @@ public class Spawner {
 	 * @return
 	 */
 	public boolean setSpawner(Block target, String arg) {
-		// filter out bad spawner types
-		List<String> badEntities = Main.instance.config.getStringList("bad_entities");
-		for (String entity : badEntities) {
+
+		// allow only valid entity types
+		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
+		boolean isValidEntity = false;
+		for (String entity : validEntities) {
 			if (entity.equalsIgnoreCase(arg)) {
-				return false;
+				isValidEntity = true;
+				break;
 			}
+		}
+
+		if (!isValidEntity) {
+			return false;
 		}
 
 		EntityType type = EntityType.fromName(arg);

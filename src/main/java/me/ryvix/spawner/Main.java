@@ -97,8 +97,8 @@ public class Main extends JavaPlugin {
 		config = YamlConfiguration.loadConfiguration(configFile);
 
 		// add defaults
-		if (!config.contains("bad_entities")) {
-			getConfig().addDefault("bad_entities", "[Item,XPOrb,Painting,Arrow,Snowball,Fireball,SmallFireball,ThrownEnderpearl,EyeOfEnderSignal,ThrownExpBottle,ItemFrame,WitherSkull,PrimedTnt,FallingSand,FireworksRocketEntity,Minecart,Boat,EnderCrystal]");
+		if (!config.contains("valid_entities")) {
+			getConfig().addDefault("valid_entities", "[Creeper,Skeleton,Spider,Giant,Zombie,Slime,Ghast,PigZombie,Enderman,CaveSpider,Silverfish,Blaze,LavaSlime,EnderDragon,WitherBoss,Bat,Witch,Pig,Sheep,Cow,Chicken,Squid,Wolf,MushroomCow,SnowMan,Ozelot,VillagerGolem,EntityHorse,Villager]");
 		}
 		if (!config.contains("protect_from_explosions")) {
 			getConfig().addDefault("protect_from_explosions", "true");
