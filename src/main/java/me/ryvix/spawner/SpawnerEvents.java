@@ -135,7 +135,7 @@ public class SpawnerEvents implements Listener {
 			String spawnerName = csBlock.getSpawnedType().getName().toLowerCase();
 
 			// if they can't mine it just let them break it normally
-			if (!player.hasPermission("spawner.place.*") || !player.hasPermission("spawner.place." + spawnerName)) {
+			if (!player.hasPermission("spawner.place.*") && !player.hasPermission("spawner.place." + spawnerName)) {
 				event.setCancelled(true);
 				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerName));
 				return;
