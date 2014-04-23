@@ -47,7 +47,6 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static String formatName(String name) {
-		System.out.println(name);
 		String f = name.substring(0, 1);
 		return name.replaceFirst(f, f.toUpperCase());
 	}
