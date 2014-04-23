@@ -63,6 +63,8 @@ Switch the spawner you're looking at or holding to the given mob entity type.
 /spawner give <entity> [player]
 Give a spawner to yourself or another player.
 
+/spawner remove <entity> [radius]
+Removes entities of the specified type within a given radius.
 
 Permissions
 
@@ -108,4 +110,8 @@ spawner.give.others.<entity>
 Gives access to use /spawner give <entity> <player>
 Use spawner.give.others.* to allow all spawner entity types.
 This can also be run from console.
+Default: op
+
+spawner.remove
+Gives access to use /spawner remove <entity> [radius]
 Default: op
