@@ -23,23 +23,27 @@ package me.ryvix.spawner;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ryvix.spawner.language.Keys;
-import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
 
 public class SpawnerFunctions {
 
 	/**
 	 * Format name
 	 *
-	 * @param block
+	 * @param name
+	 * @return
 	 */
 	public static String formatName(String name) {
 		String f = name.substring(0, 1);
@@ -73,7 +77,7 @@ public class SpawnerFunctions {
 	 */
 	public static String nameFromDurability(short durability) {
 
-		EntityType spawnerType = EntityType.fromId(durability);
+		EntityType spawnerType = getSpawnerType(durability);
 		String spawnerName = "Pig";
 		if (spawnerType != null) {
 			spawnerName = spawnerType.getName();
@@ -108,7 +112,7 @@ public class SpawnerFunctions {
 			}
 			contents = sb.toString();
 			in.close();
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Logger.getLogger(SpawnerFunctions.class.getName()).log(Level.SEVERE, null, e);
 		}
 
@@ -125,7 +129,7 @@ public class SpawnerFunctions {
 	 */
 	public static boolean removeEntities(Player player, String entityArg, int radius) {
 		int count = 0;
-		EntityType type = EntityType.fromName(entityArg);
+		EntityType type = getSpawnerType(entityArg);
 		if (type == null) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.InvalidEntity));
 			return false;
@@ -150,5 +154,58 @@ public class SpawnerFunctions {
 		Main.language.sendMessage(player, Main.language.getText(Keys.EntitiesRemoved, vars));
 
 		return true;
+	}
+
+	/**
+	 * Try to find a spawner block targeted by the player.
+	 *
+	 * @param player
+	 * @param distance
+	 * @return
+	 */
+	public static Block findSpawnerBlock(Player player, int distance) {
+		BlockIterator bit = new BlockIterator(player, distance);
+		Block blockToCheck = null;
+		while (bit.hasNext()) {
+			blockToCheck = bit.next();
+			if (blockToCheck.getType() == Material.MOB_SPAWNER && blockToCheck.getType() != Material.AIR) {
+				return blockToCheck;
+			}
+		}
+
+		return blockToCheck;
+	}
+
+	/**
+	 * Return the EntityType of the given string.
+	 * 
+	 * @param arg
+	 * @return 
+	 */
+	public static EntityType getSpawnerType(String arg) {
+
+		/*
+		EntityType[] types = EntityType.values();
+		for (EntityType type : types) {
+			if(type.name().equalsIgnoreCase(arg)) {
+				return type;
+			}
+		}
+		return null;
+		*/
+
+		EntityType type = EntityType.fromName(arg);
+		return type;
+	}
+
+	/**
+	 * Return the EntityType of the given id/durability.
+	 * 
+	 * @param d
+	 * @return 
+	 */
+	static EntityType getSpawnerType(short d) {
+		EntityType type = EntityType.fromId(d);
+		return type;
 	}
 }

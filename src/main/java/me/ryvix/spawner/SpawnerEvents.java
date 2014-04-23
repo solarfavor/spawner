@@ -148,7 +148,7 @@ public class SpawnerEvents implements Listener {
 				durability = 90;
 			}
 
-			EntityType spawnerType = EntityType.fromId(durability);
+			EntityType spawnerType = SpawnerFunctions.getSpawnerType(durability);
 
 			short spawnerId = 90;
 			String name;

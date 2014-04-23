@@ -147,7 +147,7 @@ public class Spawner {
 			return false;
 		}
 
-		EntityType type = EntityType.fromName(arg);
+		EntityType type = SpawnerFunctions.getSpawnerType(arg);
 		if (type == null) {
 			return false;
 		}

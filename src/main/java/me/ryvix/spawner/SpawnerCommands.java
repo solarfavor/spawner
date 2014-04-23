@@ -61,7 +61,7 @@ public class SpawnerCommands implements CommandExecutor {
 				// get spawner type
 				if (sender.hasPermission("spawner.get")) {
 					Player player = (Player) sender;
-					Block target = player.getTargetBlock(null, 20);
+					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
 					if (target.getType() == Material.MOB_SPAWNER) {
 						Spawner spawner = new Spawner();
@@ -118,7 +118,7 @@ public class SpawnerCommands implements CommandExecutor {
 				// set spawner type
 				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + args[0].toLowerCase())) {
 					Player player = (Player) sender;
-					Block target = player.getTargetBlock(null, 20);
+					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
 					if (target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
@@ -136,8 +136,7 @@ public class SpawnerCommands implements CommandExecutor {
 					} else if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
 						// otherwise set type of spawner in players hand
 
-						EntityType spawnerType = EntityType.fromName(args[0]);
-
+						EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[0]);
 						if (spawnerType == null) {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							return true;
@@ -183,8 +182,7 @@ public class SpawnerCommands implements CommandExecutor {
 					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
 						Player player = (Player) sender;
 
-						EntityType spawnerType = EntityType.fromName(args[1]);
-
+						EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 						if (spawnerType == null) {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							return true;
@@ -238,8 +236,7 @@ public class SpawnerCommands implements CommandExecutor {
 					if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
 						// give a spawner
 
-						EntityType spawnerType = EntityType.fromName(args[1]);
-
+						EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 						if (spawnerType == null) {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							return true;

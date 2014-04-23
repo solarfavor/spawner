@@ -43,7 +43,7 @@ public class SpawnerTask implements Runnable {
 	@Override
 	public void run() {
 
-		EntityType spawnerType = EntityType.fromId(d);
+		EntityType spawnerType = SpawnerFunctions.getSpawnerType(d);
 
 		if (spawnerType == null) {
 			return;
