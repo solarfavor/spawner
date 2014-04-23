@@ -65,9 +65,9 @@ public class SpawnerCommands implements CommandExecutor {
 
 					if (target.getType() == Material.MOB_SPAWNER) {
 						Spawner spawner = new Spawner();
-						String type = spawner.getSpawner(target).getName();
-						type = type.toLowerCase().replaceFirst(type.substring(0, 1), type.substring(0, 1).toUpperCase());
-						Main.language.sendMessage(sender, ChatColor.GREEN + type + " spawner.");
+						String type = SpawnerType.getTextFromType(spawner.getSpawner(target));
+						String name = SpawnerFunctions.formatName(type);
+						Main.language.sendMessage(sender, name + " spawner.");
 
 					} else {
 						Main.language.sendMessage(sender, Main.language.getText(Keys.LookAtASpawner));
@@ -125,9 +125,9 @@ public class SpawnerCommands implements CommandExecutor {
 
 						Spawner spawner = new Spawner();
 						if (spawner.setSpawner(target, args[0])) {
-							String spawnerName = args[0].toLowerCase().replaceFirst(args[0].substring(0, 1), args[0].substring(0, 1).toUpperCase());
-
-							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
+							String type = SpawnerType.getTextFromName(args[0]);
+							String name = SpawnerFunctions.formatName(type);
+							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
 
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -160,7 +160,7 @@ public class SpawnerCommands implements CommandExecutor {
 						// set item in players hand
 						player.setItemInHand(newSpawner);
 
-						Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
+						Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
 					}
 				} else {
 					Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
@@ -212,7 +212,7 @@ public class SpawnerCommands implements CommandExecutor {
 							inventory.setItem(invSlot, newSpawner);
 						}
 
-						Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, spawnerName));
+						Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, name));
 					} else {
 						Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
 					}
@@ -268,20 +268,20 @@ public class SpawnerCommands implements CommandExecutor {
 
 								// if target player is online drop it at their feet and tell them
 								targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-								Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, spawnerName));
+								Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, name));
 
 							} else {
 
 								inventory.setItem(invSlot, newSpawner);
 
 								if (targetPlayer != null) {
-									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, spawnerName));
+									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, name));
 								} else {
 									Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
 								}
 
 								String[] vars = new String[2];
-								vars[0] = spawnerName;
+								vars[0] = name;
 								vars[1] = targetPlayer.getName();
 								Main.language.sendMessage(sender, Main.language.getText(Keys.YouGaveSpawner, vars));
 							}
