@@ -233,7 +233,7 @@ public class Language {
 			getConfig().addDefault("Entities.MinecartChest", "&eMinecartChest");
 		}
 		if (!getConfig().contains("Entities.MinecartFurnace")) {
-			getConfig().addDefault("Entities.", "&eMinecartFurnace");
+			getConfig().addDefault("Entities.MinecartFurnace", "&eMinecartFurnace");
 		}
 		if (!getConfig().contains("Entities.MinecartTNT")) {
 			getConfig().addDefault("Entities.MinecartTNT", "&eMinecartTNT");
