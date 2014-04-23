@@ -143,7 +143,7 @@ public class SpawnerCommands implements CommandExecutor {
 						}
 
 						short durability = spawnerType.getTypeId();
-						String spawnerName = spawnerType.getName();
+						String spawnerName = SpawnerType.getTextFromName(args[0]);
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
@@ -189,7 +189,7 @@ public class SpawnerCommands implements CommandExecutor {
 						}
 
 						short durability = spawnerType.getTypeId();
-						String spawnerName = spawnerType.getName();
+						String spawnerName = SpawnerType.getTextFromName(args[1]);
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
@@ -243,7 +243,7 @@ public class SpawnerCommands implements CommandExecutor {
 						}
 
 						short durability = spawnerType.getTypeId();
-						String spawnerName = spawnerType.getName();
+						String spawnerName = SpawnerType.getTextFromName(args[1]);
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);

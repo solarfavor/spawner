@@ -59,7 +59,7 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			String spawnerName = csBlock.getSpawnedType().getName().toLowerCase();
+			String spawnerName = SpawnerType.getTextFromType(csBlock.getSpawnedType());
 
 			// if they can't mine it just let them break it normally
 			boolean canMine = false;

@@ -80,7 +80,7 @@ public class SpawnerFunctions {
 		EntityType spawnerType = getSpawnerType(durability);
 		String spawnerName = "Pig";
 		if (spawnerType != null) {
-			spawnerName = spawnerType.getName();
+			spawnerName = SpawnerType.getTextFromType(spawnerType);
 		}
 
 		return formatName(spawnerName);

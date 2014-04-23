@@ -23,6 +23,7 @@ package me.ryvix.spawner;
 import java.util.HashMap;
 import java.util.Map;
 import me.ryvix.spawner.language.Entities;
+import org.bukkit.entity.EntityType;
 
 /**
  * Originally from Bukkit EntityType enum.
@@ -96,6 +97,7 @@ public enum SpawnerType {
 	private static final Map<Short, SpawnerType> ID_MAP = new HashMap<Short, SpawnerType>();
 	private static final Map<String, String> TEXT_NAME_MAP = new HashMap<String, String>();
 	private static final Map<Short, String> TEXT_ID_MAP = new HashMap<Short, String>();
+	private static final Map<String, String> TEXT_TYPE_MAP = new HashMap<String, String>();
 
 	static {
 		for (SpawnerType type : values()) {
@@ -110,6 +112,9 @@ public enum SpawnerType {
 			}
 			if (type.text != null) {
 				TEXT_ID_MAP.put(type.typeId, type.text.toLowerCase());
+			}
+			if (type.text != null) {
+				TEXT_TYPE_MAP.put(type.name(), type.text.toLowerCase());
 			}
 		}
 	}
@@ -164,6 +169,19 @@ public enum SpawnerType {
 			return null;
 		}
 		return TEXT_ID_MAP.get((short) id);
+	}
+
+	/**
+	 * Get text from type
+	 *
+	 * @param type
+	 * @return
+	 */
+	public static String getTextFromType(EntityType type) {
+		if (type == null) {
+			return null;
+		}
+		return TEXT_NAME_MAP.get(type.name().toLowerCase());
 	}
 
 }
