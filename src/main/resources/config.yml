@@ -43,14 +43,14 @@ protect_from_explosions: true
 remove_radius: 10
 
 # Adds ability to limit the number of spawners a player can give/change.
-limit:
-    members: 0
-    vip: 3
-    elite: 6
-    godlike: 10
+#limit:
+#    members: 0
+#    vip: 3
+#    elite: 6
+#    godlike: 10
 
 # Allow baby spawners (not yet implemented)
-allow_baby: false
+#allow_baby: false
 
 # Allow mobs to wear armour (not yet implemented)
-allow_armour: true
+#allow_armour: true
