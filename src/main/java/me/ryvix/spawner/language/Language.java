@@ -206,19 +206,19 @@ public class Language {
 			getConfig().addDefault("Entities.ThrownEnderpearl", "&eThrownEnderpearl");
 		}
 		if (!getConfig().contains("Entities.EyeOfEnderSignal")) {
-			getConfig().addDefault("Entities.", "&eEyeOfEnderSignal");
+			getConfig().addDefault("Entities.EyeOfEnderSignal", "&eEyeOfEnderSignal");
 		}
 		if (!getConfig().contains("Entities.ThrownExpBottle")) {
-			getConfig().addDefault("Entities.", "&eThrownExpBottle");
+			getConfig().addDefault("Entities.ThrownExpBottle", "&eThrownExpBottle");
 		}
 		if (!getConfig().contains("Entities.ItemFrame")) {
 			getConfig().addDefault("Entities.ItemFrame", "&eItemFrame");
 		}
 		if (!getConfig().contains("Entities.WitherSkull")) {
-			getConfig().addDefault("Entities.", "&eWitherSkull");
+			getConfig().addDefault("Entities.WitherSkull", "&eWitherSkull");
 		}
 		if (!getConfig().contains("Entities.PrimedTnt")) {
-			getConfig().addDefault("Entities.", "&ePrimedTnt");
+			getConfig().addDefault("Entities.PrimedTnt", "&ePrimedTnt");
 		}
 		if (!getConfig().contains("Entities.MinecartCommandBlock")) {
 			getConfig().addDefault("Entities.MinecartCommandBlock", "&eMinecartCommandBlock");
@@ -254,7 +254,7 @@ public class Language {
 			getConfig().addDefault("Entities.Spider", "&eSpider");
 		}
 		if (!getConfig().contains("Entities.Giant")) {
-			getConfig().addDefault("Entities.", "&eGiant");
+			getConfig().addDefault("Entities.Giant", "&eGiant");
 		}
 		if (!getConfig().contains("Entities.Zombie")) {
 			getConfig().addDefault("Entities.Zombie", "&eZombie");
@@ -263,13 +263,13 @@ public class Language {
 			getConfig().addDefault("Entities.Slime", "&eSlime");
 		}
 		if (!getConfig().contains("Entities.Ghast")) {
-			getConfig().addDefault("Entities.", "&eGhast");
+			getConfig().addDefault("Entities.Ghast", "&eGhast");
 		}
 		if (!getConfig().contains("Entities.PigZombie")) {
 			getConfig().addDefault("Entities.PigZombie", "&ePigZombie");
 		}
 		if (!getConfig().contains("Entities.Enderman")) {
-			getConfig().addDefault("Entities.", "&eEnderman");
+			getConfig().addDefault("Entities.Enderman", "&eEnderman");
 		}
 		if (!getConfig().contains("Entities.CaveSpider")) {
 			getConfig().addDefault("Entities.CaveSpider", "&eCaveSpider");
@@ -287,7 +287,7 @@ public class Language {
 			getConfig().addDefault("Entities.EnderDragon", "&eEnderDragon");
 		}
 		if (!getConfig().contains("Entities.WitherBoss")) {
-			getConfig().addDefault("Entities.", "&eWitherBoss");
+			getConfig().addDefault("Entities.WitherBoss", "&eWitherBoss");
 		}
 		if (!getConfig().contains("Entities.Bat")) {
 			getConfig().addDefault("Entities.Bat", "&eBat");
@@ -299,7 +299,7 @@ public class Language {
 			getConfig().addDefault("Entities.Pig", "&ePig");
 		}
 		if (!getConfig().contains("Entities.Sheep")) {
-			getConfig().addDefault("Entities.", "&eSheep");
+			getConfig().addDefault("Entities.Sheep", "&eSheep");
 		}
 		if (!getConfig().contains("Entities.Cow")) {
 			getConfig().addDefault("Entities.Cow", "&eCow");
