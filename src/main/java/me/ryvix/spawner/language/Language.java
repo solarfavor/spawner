@@ -107,6 +107,7 @@ public class Language {
 	 * @return
 	 */
 	public String getEntity(Entities entity) {
+		
 		Map<?, ?> entry = entities.get(entity.ordinal());
 		String text = (String) entry.get(entity.toString());
 
@@ -142,28 +143,28 @@ public class Language {
 			getConfig().addDefault("Language.InvalidSpawner", "&4Invalid spawner type!");
 		}
 		if (!getConfig().contains("Language.GivenSpawner")) {
-			getConfig().addDefault("Language.GivenSpawner", "&aYou were given a {0} spawner.");
+			getConfig().addDefault("Language.GivenSpawner", "&aYou were given a {0} &aspawner.");
 		}
 		if (!getConfig().contains("Language.SpawnerDropped")) {
 			getConfig().addDefault("Language.SpawnerDropped", "&aA {0} spawner was dropped at your feet because your inventory is full.");
 		}
 		if (!getConfig().contains("Language.YouGaveSpawner")) {
-			getConfig().addDefault("Language.YouGaveSpawner", "&aYou gave a {0} spawner to {1}.");
+			getConfig().addDefault("Language.YouGaveSpawner", "&aYou gave a {0} &aspawner to {1}.");
 		}
 		if (!getConfig().contains("Language.NotDeliveredOffline")) {
-			getConfig().addDefault("Language.NotDeliveredOffline", "&4The spawner was not delivered because {0} is offline.");
+			getConfig().addDefault("Language.NotDeliveredOffline", "&4The spawner was not delivered because &e{0} &ais offline.");
 		}
 		if (!getConfig().contains("Language.YouPickedUp")) {
-			getConfig().addDefault("Language.YouPickedUp", "&aYou picked up a {0} spawner.");
+			getConfig().addDefault("Language.YouPickedUp", "&aYou picked up a {0} &aspawner.");
 		}
 		if (!getConfig().contains("Language.HoldingSpawner")) {
-			getConfig().addDefault("Language.HoldingSpawner", "&aYou are holding a {0} spawner.");
+			getConfig().addDefault("Language.HoldingSpawner", "&aYou are holding a {0} &aspawner.");
 		}
 		if (!getConfig().contains("Language.SpawnerType")) {
 			getConfig().addDefault("Language.SpawnerType", "&aSpawner type: {0}");
 		}
 		if (!getConfig().contains("Language.PlacedSpawner")) {
-			getConfig().addDefault("Language.PlacedSpawner", "&aPlaced {0} spawner");
+			getConfig().addDefault("Language.PlacedSpawner", "&aPlaced {0} &aspawner");
 		}
 		if (!getConfig().contains("Language.NotPossible")) {
 			getConfig().addDefault("Language.NotPossible", "&4It was not possible to change that spawner.");
@@ -178,7 +179,10 @@ public class Language {
 			getConfig().addDefault("Language.ErrorRemovingEntities", "&4There was an error removing entities. Some may not have been removed.");
 		}
 		if (!getConfig().contains("Language.EntitiesRemoved")) {
-			getConfig().addDefault("Language.EntitiesRemoved", "&a{0} {1} removed.");
+			getConfig().addDefault("Language.EntitiesRemoved", "&a{0} {1} &aremoved.");
+		}
+		if (!getConfig().contains("Language.Spawner")) {
+			getConfig().addDefault("Language.Spawner", "spawner");
 		}
 
 		if (!getConfig().contains("Entities.XPOrb")) {
@@ -363,6 +367,12 @@ public class Language {
 		}
 		if (!configFile.exists()) {
 			Main.instance.saveResource(name, false);
+		}
+		getConfig().options().copyDefaults(true);
+		try {
+			getConfig().save(configFile);
+		} catch (IOException ex) {
+			Logger.getLogger(Language.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 

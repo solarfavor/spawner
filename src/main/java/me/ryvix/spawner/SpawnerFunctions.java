@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ryvix.spawner.language.Keys;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -46,6 +47,7 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static String formatName(String name) {
+		System.out.println(name);
 		String f = name.substring(0, 1);
 		return name.replaceFirst(f, f.toUpperCase());
 	}
@@ -59,7 +61,7 @@ public class SpawnerFunctions {
 	 */
 	public static ItemStack setSpawnerName(ItemStack spawner, String name) {
 		Spawner newSpawnerStack = new Spawner();
-		ItemStack newSpawner = newSpawnerStack.setName(spawner, name + " Spawner");
+		ItemStack newSpawner = newSpawnerStack.setName(spawner, ChatColor.translateAlternateColorCodes('&', name) + ChatColor.GREEN + " " + Main.language.getText(Keys.Spawner));
 
 		// currently just to remove the old lore line
 		if (newSpawnerStack.getLore(newSpawner) != null) {

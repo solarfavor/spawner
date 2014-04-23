@@ -38,8 +38,6 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		language = new Language("language.yml");
-		language.loadText();
 
 		// create config file
 		try {
@@ -57,6 +55,9 @@ public class Main extends JavaPlugin {
 
 		// load config file
 		loadConfig();
+
+		language = new Language("language.yml");
+		language.loadText();
 
 		// create help and list files
 		try {

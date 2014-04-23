@@ -25,5 +25,5 @@ package me.ryvix.spawner.language;
  */
 public enum Keys {
 
-	ConsoleUsageGive, LookAtASpawner, NoPermission, SpawnerChangedTo, InvalidSpawner, GivenSpawner, SpawnerDropped, YouGaveSpawner, NotDeliveredOffline, YouPickedUp, HoldingSpawner, SpawnerType, PlacedSpawner, NotPossible, InvalidRadius, InvalidEntity, ErrorRemovingEntities, EntitiesRemoved
+	ConsoleUsageGive, LookAtASpawner, NoPermission, SpawnerChangedTo, InvalidSpawner, GivenSpawner, SpawnerDropped, YouGaveSpawner, NotDeliveredOffline, YouPickedUp, HoldingSpawner, SpawnerType, PlacedSpawner, NotPossible, InvalidRadius, InvalidEntity, ErrorRemovingEntities, EntitiesRemoved, Spawner
 }

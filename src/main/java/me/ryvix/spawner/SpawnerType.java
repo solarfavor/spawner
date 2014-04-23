@@ -108,16 +108,42 @@ public enum SpawnerType {
 				ID_MAP.put(type.typeId, type);
 			}
 			if (type.text != null) {
-				TEXT_NAME_MAP.put(type.name, type.text.toLowerCase());
+				TEXT_NAME_MAP.put(type.name.toLowerCase(), type.text);
 			}
 			if (type.text != null) {
-				TEXT_ID_MAP.put(type.typeId, type.text.toLowerCase());
+				TEXT_ID_MAP.put(type.typeId, type.text);
 			}
 			if (type.text != null) {
-				TEXT_TYPE_MAP.put(type.name(), type.text.toLowerCase());
+				TEXT_TYPE_MAP.put(type.name().toLowerCase(), type.text);
 			}
 		}
 	}
+
+	/**
+	 * Get name
+	 * @return 
+	 */
+    public String getName() {
+        return name;
+    }
+
+	/**
+	 * Get text
+	 * @return 
+	 */
+    public String getText() {
+        return text;
+    }
+
+	/**
+	 * Get typeId
+	 * @return 
+	 */
+    public short getTypeId() {
+        return typeId;
+    }
+
+
 
 	/**
 	 * Get type from name

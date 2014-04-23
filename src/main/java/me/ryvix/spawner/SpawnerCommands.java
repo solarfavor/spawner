@@ -126,6 +126,10 @@ public class SpawnerCommands implements CommandExecutor {
 						Spawner spawner = new Spawner();
 						if (spawner.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
+							if (type == null) {
+								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								return true;
+							}
 							String name = SpawnerFunctions.formatName(type);
 							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
 
@@ -144,6 +148,10 @@ public class SpawnerCommands implements CommandExecutor {
 
 						short durability = spawnerType.getTypeId();
 						String spawnerName = SpawnerType.getTextFromName(args[0]);
+						if (spawnerName == null) {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
+						}
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
@@ -190,6 +198,10 @@ public class SpawnerCommands implements CommandExecutor {
 
 						short durability = spawnerType.getTypeId();
 						String spawnerName = SpawnerType.getTextFromName(args[1]);
+						if (spawnerName == null) {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
+						}
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
@@ -244,6 +256,10 @@ public class SpawnerCommands implements CommandExecutor {
 
 						short durability = spawnerType.getTypeId();
 						String spawnerName = SpawnerType.getTextFromName(args[1]);
+						if (spawnerName == null) {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
+						}
 
 						// make an ItemStack
 						ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
