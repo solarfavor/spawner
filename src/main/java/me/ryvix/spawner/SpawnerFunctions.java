@@ -178,31 +178,30 @@ public class SpawnerFunctions {
 
 	/**
 	 * Return the EntityType of the given string.
-	 * 
+	 *
 	 * @param arg
-	 * @return 
+	 * @return
 	 */
 	public static EntityType getSpawnerType(String arg) {
 
 		/*
-		EntityType[] types = EntityType.values();
-		for (EntityType type : types) {
-			if(type.name().equalsIgnoreCase(arg)) {
-				return type;
-			}
-		}
-		return null;
-		*/
-
+		 EntityType[] types = EntityType.values();
+		 for (EntityType type : types) {
+		 if(type.name().equalsIgnoreCase(arg)) {
+		 return type;
+		 }
+		 }
+		 return null;
+		 */
 		EntityType type = EntityType.fromName(arg);
 		return type;
 	}
 
 	/**
 	 * Return the EntityType of the given id/durability.
-	 * 
+	 *
 	 * @param d
-	 * @return 
+	 * @return
 	 */
 	static EntityType getSpawnerType(short d) {
 		EntityType type = EntityType.fromId(d);

@@ -71,7 +71,6 @@ public class Main extends JavaPlugin {
 		} catch (Exception e) {
 		}
 
-
 		// register events
 		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
 
@@ -111,17 +110,17 @@ public class Main extends JavaPlugin {
 			getConfig().addDefault("remove_radius", 10);
 		}
 		/*if (!config.contains("limit")) {
-			getConfig().addDefault("limit.members", "members");
-			getConfig().addDefault("limit.vip", "vip");
-			getConfig().addDefault("limit.elite", "elite");
-			getConfig().addDefault("limit.godlike", "godlike");
-		}
-		if (!config.contains("allow_baby")) {
-			getConfig().addDefault("allow_baby", "false");
-		}
-		if (!config.contains("allow_armour")) {
-			getConfig().addDefault("allow_armour", "true");
-		}*/
+		 getConfig().addDefault("limit.members", "members");
+		 getConfig().addDefault("limit.vip", "vip");
+		 getConfig().addDefault("limit.elite", "elite");
+		 getConfig().addDefault("limit.godlike", "godlike");
+		 }
+		 if (!config.contains("allow_baby")) {
+		 getConfig().addDefault("allow_baby", "false");
+		 }
+		 if (!config.contains("allow_armour")) {
+		 getConfig().addDefault("allow_armour", "true");
+		 }*/
 		getConfig.options().copyDefaults(true);
 
 		// add header

@@ -251,7 +251,6 @@ public class SpawnerEvents implements Listener {
 		SpawnerFunctions.setSpawnerName(iStack, spawnerName);
 
 		// event.getPlayer().updateInventory();
-
 		Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
