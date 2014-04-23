@@ -49,7 +49,7 @@ permissions:
     default: op
   spawner.place.*:
     description: Players with this permission will be prevented from placing spawners.
-    default: true
+    default: op
   spawner.help:
     description: Gives access to use /spawner help
     default: op
