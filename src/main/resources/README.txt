@@ -96,6 +96,11 @@ Allows players to mine spawners with a silk touch enchanted tool.
 Use spawner.mine.* to allow all spawner entity types.
 Default: op
 
+spawner.place.<entity>
+Allows players to place spawners.
+Use spawner.place.* to allow all spawner entity types.
+Default: op
+
 spawner.set.<entity>
 Gives access to use /spawner <entity>
 Use spawner.set.* to allow all spawner entity types.
