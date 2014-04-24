@@ -144,7 +144,26 @@ public enum SpawnerType {
         return typeId;
     }
 
+	/**
+	 * Get EntityType
+	 * @return 
+	 */
+    public EntityType getEntityType() {
+        return EntityType.valueOf(name());
+    }
 
+	/**
+	 * Get SpawnerType from EntityType
+	 *
+	 * @param entityType
+	 * @return
+	 */
+	public static SpawnerType fromEntityType(EntityType entityType) {
+		if (entityType == null) {
+			return null;
+		}
+		return SpawnerType.valueOf(entityType.name());
+	}
 
 	/**
 	 * Get type from name
@@ -204,11 +223,11 @@ public enum SpawnerType {
 	 * @param type
 	 * @return
 	 */
-	public static String getTextFromType(EntityType type) {
+	public static String getTextFromType(SpawnerType type) {
 		if (type == null) {
 			return null;
 		}
-		return TEXT_NAME_MAP.get(type.name().toLowerCase());
+		return TEXT_NAME_MAP.get(type.getName().toLowerCase());
 	}
 
 	public static boolean isValidEntity(String entity) {

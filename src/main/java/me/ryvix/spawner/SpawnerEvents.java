@@ -30,7 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,7 +58,13 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			String spawnerName = SpawnerType.getTextFromType(csBlock.getSpawnedType());
+			String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
+			if (spawnerName == null) {
+				// prevent from breaking invalid spawners
+				Main.language.sendMessage(player, Main.language.getText(Keys.InvalidSpawner));
+				event.setCancelled(true);
+				return;
+			}
 
 			// if they can't mine it just let them break it normally
 			boolean canMine = false;
@@ -96,7 +101,7 @@ public class SpawnerEvents implements Listener {
 				player.getItemInHand().setDurability((short) (player.getItemInHand().getDurability() + 1));
 
 				// durability for safe keeping
-				short durability = csBlock.getSpawnedType().getTypeId();
+				short durability = SpawnerFunctions.durabilityFromEntityType(csBlock.getSpawnedType());
 				if (durability < 1) {
 					durability = 90;
 				}
@@ -132,12 +137,12 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			String spawnerName = csBlock.getSpawnedType().getName().toLowerCase();
+			String spawnerName = SpawnerType.fromEntityType(csBlock.getSpawnedType()).getName();
 
-			// if they can't mine it just let them break it normally
-			if (!player.hasPermission("spawner.place.*") && !player.hasPermission("spawner.place." + spawnerName)) {
+			// if they can't place it cancel event
+			if (!player.hasPermission("spawner.place.*") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
 				event.setCancelled(true);
-				String spawnerText = SpawnerType.getTextFromType(csBlock.getSpawnedType());
+				String spawnerText = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerText));
 				return;
 			}
@@ -149,7 +154,7 @@ public class SpawnerEvents implements Listener {
 				durability = 90;
 			}
 
-			EntityType spawnerType = SpawnerFunctions.getSpawnerType(durability);
+			SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(durability);
 
 			short spawnerId = 90;
 			String name;
@@ -269,7 +274,7 @@ public class SpawnerEvents implements Listener {
 					CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
 
 					// formatted name
-					String spawnerName = SpawnerFunctions.nameFromDurability(csBlock.getSpawnedType().getTypeId());
+					String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 
 					Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.SpawnerType, spawnerName));
 				}

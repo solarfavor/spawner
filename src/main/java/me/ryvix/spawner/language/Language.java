@@ -182,7 +182,7 @@ public class Language {
 			getConfig().addDefault("Language.EntitiesRemoved", "&a{0} {1} &aremoved.");
 		}
 		if (!getConfig().contains("Language.Spawner")) {
-			getConfig().addDefault("Language.Spawner", "spawner");
+			getConfig().addDefault("Language.Spawner", "&aspawner");
 		}
 
 		if (!getConfig().contains("Entities.XPOrb")) {

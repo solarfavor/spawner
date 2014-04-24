@@ -60,7 +60,7 @@ public class SpawnerFunctions {
 	 */
 	public static ItemStack setSpawnerName(ItemStack spawner, String name) {
 		Spawner newSpawnerStack = new Spawner();
-		ItemStack newSpawner = newSpawnerStack.setName(spawner, ChatColor.translateAlternateColorCodes('&', name) + ChatColor.GREEN + " " + Main.language.getText(Keys.Spawner));
+		ItemStack newSpawner = newSpawnerStack.setName(spawner, ChatColor.translateAlternateColorCodes('&', name + " " + Main.language.getText(Keys.Spawner)));
 
 		// currently just to remove the old lore line
 		if (newSpawnerStack.getLore(newSpawner) != null) {
@@ -71,20 +71,31 @@ public class SpawnerFunctions {
 	}
 
 	/**
-	 * Get the name from the durability/itemid value
+	 * Get the name from the durability/typeid value
 	 *
 	 * @param durability
 	 * @return Formated name
 	 */
 	public static String nameFromDurability(short durability) {
 
-		EntityType spawnerType = getSpawnerType(durability);
+		SpawnerType spawnerType = getSpawnerType(durability);
 		String spawnerName = "Pig";
 		if (spawnerType != null) {
 			spawnerName = SpawnerType.getTextFromType(spawnerType);
 		}
 
 		return formatName(spawnerName);
+	}
+
+	/**
+	 * Get the durability/typeid value from the EntityType
+	 *
+	 * @param entityType
+	 * @return short
+	 */
+	public static short durabilityFromEntityType(EntityType entityType) {
+		SpawnerType spawnerType = SpawnerType.fromEntityType(entityType);
+		return spawnerType.getTypeId();
 	}
 
 	/**
@@ -130,7 +141,7 @@ public class SpawnerFunctions {
 	 */
 	public static boolean removeEntities(Player player, String entityArg, int radius) {
 		int count = 0;
-		EntityType type = getSpawnerType(entityArg);
+		SpawnerType type = getSpawnerType(entityArg);
 		if (type == null) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.InvalidEntity));
 			return false;
@@ -140,7 +151,7 @@ public class SpawnerFunctions {
 
 		try {
 			for (Entity entity : entities) {
-				if (entity.getType() == type) {
+				if (entity.getType() == type.getEntityType()) {
 					entity.remove();
 					count++;
 				}
@@ -151,7 +162,7 @@ public class SpawnerFunctions {
 
 		String[] vars = new String[2];
 		vars[0] = "" + count;
-		vars[1] = entityArg;
+		vars[1] = SpawnerType.getTextFromName(entityArg);
 		Main.language.sendMessage(player, Main.language.getText(Keys.EntitiesRemoved, vars));
 
 		return true;
@@ -178,34 +189,24 @@ public class SpawnerFunctions {
 	}
 
 	/**
-	 * Return the EntityType of the given string.
+	 * Return the SpawnerType of the given string.
 	 *
 	 * @param arg
 	 * @return
 	 */
-	public static EntityType getSpawnerType(String arg) {
-
-		/*
-		 EntityType[] types = EntityType.values();
-		 for (EntityType type : types) {
-		 if(type.name().equalsIgnoreCase(arg)) {
-		 return type;
-		 }
-		 }
-		 return null;
-		 */
-		EntityType type = EntityType.fromName(arg);
+	public static SpawnerType getSpawnerType(String arg) {
+		SpawnerType type = SpawnerType.fromName(arg);
 		return type;
 	}
 
 	/**
-	 * Return the EntityType of the given id/durability.
+	 * Return the SpawnerType of the given id/durability.
 	 *
 	 * @param d
 	 * @return
 	 */
-	static EntityType getSpawnerType(short d) {
-		EntityType type = EntityType.fromId(d);
+	static SpawnerType getSpawnerType(short d) {
+		SpawnerType type = SpawnerType.fromId(d);
 		return type;
 	}
 }

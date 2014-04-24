@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -114,14 +113,14 @@ public class Spawner {
 	}
 
 	/**
-	 * Get spawner type
+	 * Get spawner EntityType
 	 *
 	 * @param target
 	 * @return
 	 */
-	public EntityType getSpawner(Block target) {
+	public SpawnerType getSpawner(Block target) {
 		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
-		return testSpawner.getSpawnedType();
+		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
 	}
 
 	/**
@@ -137,7 +136,7 @@ public class Spawner {
 			return false;
 		}
 		
-		EntityType type = SpawnerFunctions.getSpawnerType(arg);
+		SpawnerType type = SpawnerFunctions.getSpawnerType(arg);
 		if (type == null) {
 			return false;
 		}
@@ -150,7 +149,7 @@ public class Spawner {
 		}
 
 		if (testSpawner != null) {
-			testSpawner.setSpawnedType(type);
+			testSpawner.setSpawnedType(type.getEntityType());
 			target.getState().update();
 
 			return true;

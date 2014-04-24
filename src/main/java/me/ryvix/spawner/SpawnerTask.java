@@ -23,7 +23,6 @@ package me.ryvix.spawner;
 import me.ryvix.spawner.language.Keys;
 
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class SpawnerTask implements Runnable {
@@ -43,7 +42,7 @@ public class SpawnerTask implements Runnable {
 	@Override
 	public void run() {
 
-		EntityType spawnerType = SpawnerFunctions.getSpawnerType(d);
+		SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(d);
 
 		if (spawnerType == null) {
 			return;

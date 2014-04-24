@@ -28,7 +28,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -65,12 +64,21 @@ public class SpawnerCommands implements CommandExecutor {
 
 					if (target.getType() == Material.MOB_SPAWNER) {
 						Spawner spawner = new Spawner();
-						String type = SpawnerType.getTextFromType(spawner.getSpawner(target));
-						String name = SpawnerFunctions.formatName(type);
-						Main.language.sendMessage(sender, name + " spawner.");
+						SpawnerType spawnerType = spawner.getSpawner(target);
+						if (spawnerType == null) {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							// it's no longer a valid spawner for some reason
+							// maybe no longer in valid_entities so lets break it to stop spawns
+							target.breakNaturally();
+							return true;
+						}
+						String text = SpawnerType.getTextFromType(spawnerType);
+						Main.language.sendMessage(sender, text + " " + Main.language.getText(Keys.Spawner));
+						return true;
 
 					} else {
 						Main.language.sendMessage(sender, Main.language.getText(Keys.LookAtASpawner));
+						return true;
 					}
 
 				} else {
@@ -124,7 +132,7 @@ public class SpawnerCommands implements CommandExecutor {
 						// set type of spawner player is targeting
 
 						Spawner spawner = new Spawner();
-						
+
 						// setSpawner does it's own isValidEntity
 						if (spawner.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
@@ -134,46 +142,55 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 							String name = SpawnerFunctions.formatName(type);
 							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
+							return true;
 
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 
-					} else if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
-						// otherwise set type of spawner in players hand
+					} else {
+						if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
+							// otherwise set type of spawner in players hand
 
-						if (SpawnerType.isValidEntity(args[0])) {
-							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[0]);
-							if (spawnerType == null) {
+							if (SpawnerType.isValidEntity(args[0])) {
+								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
+								if (spawnerType == null) {
+									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									return true;
+								}
+
+								short durability = spawnerType.getTypeId();
+								String spawnerName = SpawnerType.getTextFromName(args[0]);
+								if (spawnerName == null) {
+									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									return true;
+								}
+
+								// make an ItemStack
+								ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
+
+								// formatted name
+								String name = SpawnerFunctions.formatName(spawnerName);
+
+								// set lore
+								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+
+								// set durability
+								newSpawner.setDurability(durability);
+
+								// set item in players hand
+								player.setItemInHand(newSpawner);
+
+								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
+								return true;
+							} else {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
-
-							short durability = spawnerType.getTypeId();
-							String spawnerName = SpawnerType.getTextFromName(args[0]);
-							if (spawnerName == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
-								return true;
-							}
-
-							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
-
-							// formatted name
-							String name = SpawnerFunctions.formatName(spawnerName);
-
-							// set lore
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
-
-							// set durability
-							newSpawner.setDurability(durability);
-
-							// set item in players hand
-							player.setItemInHand(newSpawner);
-
-							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.language.sendMessage(sender, Main.language.getText(Keys.NotPossible));
+							return true;
 						}
 					}
 				} else {
@@ -197,7 +214,7 @@ public class SpawnerCommands implements CommandExecutor {
 						Player player = (Player) sender;
 
 						if (SpawnerType.isValidEntity(args[1])) {
-							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
@@ -232,8 +249,10 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, name));
+							return true;
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 					} else {
 						Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
@@ -250,6 +269,7 @@ public class SpawnerCommands implements CommandExecutor {
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 					}
 				}
@@ -263,7 +283,7 @@ public class SpawnerCommands implements CommandExecutor {
 						// give a spawner
 
 						if (SpawnerType.isValidEntity(args[1])) {
-							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
@@ -288,6 +308,7 @@ public class SpawnerCommands implements CommandExecutor {
 							// set durability
 							newSpawner.setDurability(durability);
 
+							// TODO: fix deprecation...
 							Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 							if (targetPlayer != null) {
 
@@ -300,6 +321,7 @@ public class SpawnerCommands implements CommandExecutor {
 									// if target player is online drop it at their feet and tell them
 									targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
 									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, name));
+									return true;
 
 								} else {
 
@@ -309,6 +331,7 @@ public class SpawnerCommands implements CommandExecutor {
 										Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, name));
 									} else {
 										Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+										return true;
 									}
 
 									String[] vars = new String[2];
@@ -322,9 +345,11 @@ public class SpawnerCommands implements CommandExecutor {
 							} else {
 								// tell sender the target didn't get the spawner
 								Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+								return true;
 							}
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 
 					} else {
@@ -349,13 +374,13 @@ public class SpawnerCommands implements CommandExecutor {
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
 						}
 					}
 				}
 
 			} else {
 				Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
-				return true;
 			}
 		}
 
