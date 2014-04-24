@@ -8,7 +8,7 @@ Language:
     - GivenSpawner: '&aYou were given a {0} &aspawner.'
     - SpawnerDropped: '&aA {0} &aspawner was dropped at your feet because your inventory is full.'
     - YouGaveSpawner: '&aYou gave a {0} &aspawner to {1}.'
-    - NotDeliveredOffline: '&4The spawner was not delivered because &e{0} &ais offline.'
+    - NotDeliveredOffline: '&4The spawner was not delivered because &e{0} &4is offline.'
     - YouPickedUp: '&aYou picked up a {0} &aspawner.'
     - HoldingSpawner: '&aYou are holding a {0} &aspawner.'
     - SpawnerType: '&aSpawner type: {0}'
