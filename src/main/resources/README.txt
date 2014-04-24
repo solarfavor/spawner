@@ -66,6 +66,9 @@ Give a spawner to yourself or another player.
 /spawner remove <entity> [radius]
 Removes entities of the specified type within a given radius.
 
+/spawner reload
+Reload the plugin. Useful if you make changes to any of the files.
+
 Permissions
 
 spawner.*
