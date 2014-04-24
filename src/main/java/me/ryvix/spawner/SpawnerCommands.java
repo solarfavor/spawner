@@ -69,7 +69,7 @@ public class SpawnerCommands implements CommandExecutor {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							// it's no longer a valid spawner for some reason
 							// maybe no longer in valid_entities so lets break it to stop spawns
-							target.breakNaturally();
+							// target.breakNaturally();
 							return true;
 						}
 						String text = SpawnerType.getTextFromType(spawnerType);
