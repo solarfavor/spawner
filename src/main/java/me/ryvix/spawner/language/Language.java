@@ -152,7 +152,7 @@ public class Language {
 			getConfig().addDefault("Language.YouGaveSpawner", "&aYou gave a {0} &aspawner to {1}.");
 		}
 		if (!getConfig().contains("Language.NotDeliveredOffline")) {
-			getConfig().addDefault("Language.NotDeliveredOffline", "&4The spawner was not delivered because &e{0} &ais offline.");
+			getConfig().addDefault("Language.NotDeliveredOffline", "&4The spawner was not delivered because &e{0} &4is offline.");
 		}
 		if (!getConfig().contains("Language.YouPickedUp")) {
 			getConfig().addDefault("Language.YouPickedUp", "&aYou picked up a {0} &aspawner.");
