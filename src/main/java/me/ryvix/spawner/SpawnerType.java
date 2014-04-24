@@ -21,6 +21,7 @@
 package me.ryvix.spawner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import me.ryvix.spawner.language.Entities;
 import org.bukkit.entity.EntityType;
@@ -208,6 +209,21 @@ public enum SpawnerType {
 			return null;
 		}
 		return TEXT_NAME_MAP.get(type.name().toLowerCase());
+	}
+
+	public static boolean isValidEntity(String entity) {
+
+		// allow only valid entity types
+		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
+		boolean isValidEntity = false;
+		for (String entry : validEntities) {
+			if (entry.equalsIgnoreCase(entity)) {
+				isValidEntity = true;
+				break;
+			}
+		}
+
+		return isValidEntity;
 	}
 
 }

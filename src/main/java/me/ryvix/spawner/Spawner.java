@@ -133,20 +133,10 @@ public class Spawner {
 	 */
 	public boolean setSpawner(Block target, String arg) {
 
-		// allow only valid entity types
-		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
-		boolean isValidEntity = false;
-		for (String entity : validEntities) {
-			if (entity.equalsIgnoreCase(arg)) {
-				isValidEntity = true;
-				break;
-			}
-		}
-
-		if (!isValidEntity) {
+		if(!SpawnerType.isValidEntity(arg)) {
 			return false;
 		}
-
+		
 		EntityType type = SpawnerFunctions.getSpawnerType(arg);
 		if (type == null) {
 			return false;
@@ -168,4 +158,5 @@ public class Spawner {
 
 		return false;
 	}
+
 }
