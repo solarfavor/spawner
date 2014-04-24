@@ -21,9 +21,11 @@
 package me.ryvix.spawner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import me.ryvix.spawner.language.Language;
+import me.ryvix.spawner.metrics.Metrics;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -56,6 +58,13 @@ public class Main extends JavaPlugin {
 		// load config file
 		loadConfig();
 
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			// Failed to submit the stats :-(
+		}
+		
 		language = new Language("language.yml");
 		language.loadText();
 
