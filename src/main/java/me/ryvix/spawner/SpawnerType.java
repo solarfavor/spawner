@@ -59,7 +59,7 @@ public enum SpawnerType {
 	ZOMBIE("Zombie", Main.language.getEntity(Entities.Zombie), 54),
 	SLIME("Slime", Main.language.getEntity(Entities.Slime), 55),
 	GHAST("Ghast", Main.language.getEntity(Entities.Ghast), 56),
-	PIG_ZOMBIE("PigZombie", Main.language.getEntity(Entities.Ghast), 57),
+	PIG_ZOMBIE("PigZombie", Main.language.getEntity(Entities.PigZombie), 57),
 	ENDERMAN("Enderman", Main.language.getEntity(Entities.Enderman), 58),
 	CAVE_SPIDER("CaveSpider", Main.language.getEntity(Entities.CaveSpider), 59),
 	SILVERFISH("Silverfish", Main.language.getEntity(Entities.Silverfish), 60),
