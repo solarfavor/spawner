@@ -5,11 +5,12 @@
 	<groupId>me.ryvix</groupId>
 	<artifactId>Spawner</artifactId>
 	<version>1.9-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>Spawner</name>
 	<description>Gather spawners with silk touch enchanted tools. Provides the ability to change entity types of spawners.</description>
 	<url>http://dev.bukkit.org/server-mods/spawner/</url>
+
 	<scm>
 		<url>https://github.com/ty2u/Spawner</url>
 		<connection>scm:git:git://github.com:ty2u/Spawner.git</connection>
@@ -19,10 +20,43 @@
 		<system>GitHub</system>
 		<url>https://github.com/ty2u/Spawner/issues</url>
 	</issueManagement>
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.block.blue:8080</url>
+	</ciManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<build>
+		<defaultGoal>clean package</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo>Building Spawner Version=[${project.version}] MC=[${minecraft.version}]</echo>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
@@ -50,6 +84,7 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+
 	<repositories>
 		<repository>
 			<id>bukkit-repo</id>
