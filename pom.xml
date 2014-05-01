@@ -9,7 +9,7 @@
 
 	<name>Spawner</name>
 	<description>Gather spawners with silk touch enchanted tools. Provides the ability to change entity types of spawners.</description>
-	<url>http://dev.bukkit.org/server-mods/spawner/</url>
+	<url>http://dev.bukkit.org/bukkit-plugins/spawner/</url>
 
 	<scm>
 		<url>https://github.com/ty2u/Spawner</url>
