@@ -1,9 +1,9 @@
-name: Spawner
+name: ${project.name}
 main: me.ryvix.spawner.Main
-version: 1.9
+version: ${project.version}-b${BUILD_NUMBER}
 website: http://dev.bukkit.org/bukkit-plugins/spawner/
 author: ryvix
-description: Gather spawners with silk touch enchanted tools. Provides the ability to change mob types.
+description: ${project.description}
 commands:
   spawner:
     description: Allows switching of spawner entity types with /spawner <entity>

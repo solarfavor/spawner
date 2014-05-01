@@ -5,7 +5,7 @@
 	<groupId>me.ryvix</groupId>
 	<artifactId>Spawner</artifactId>
 	<version>1.9-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>Spawner</name>
 	<description>Gather spawners with silk touch enchanted tools. Provides the ability to change entity types of spawners.</description>
@@ -30,32 +30,46 @@
 	</properties>
 
 	<build>
-		<defaultGoal>clean package</defaultGoal>
+		<defaultGoal>clean install</defaultGoal>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/**</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<echo>Building Spawner Version=[${project.version}] MC=[${minecraft.version}]</echo>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.1</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
 				<configuration>
-					<skip>true</skip>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
-		</plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<configuration>
+					<show>public</show>
+					<windowtitle>Spawner</windowtitle>
+					<verbose>false</verbose>
+					<author>true</author>
+					<version>true</version>
+					<linksource>true</linksource>
+				</configuration>
+			</plugin>
+		</plugins>	
 	</build>
 
 	<dependencies>
