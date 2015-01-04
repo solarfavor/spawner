@@ -96,7 +96,7 @@ public class SpawnerEvents implements Listener {
 			}
 
 			// apply luck
-			if(SpawnerFunctions.chance("luck")) {
+			if(!SpawnerFunctions.chance("luck")) {
 				return;
 			}
 
