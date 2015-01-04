@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the ability
  * to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -337,6 +337,18 @@ public class Language {
 		}
 		if (!getConfig().contains("Entities.EnderCrystal")) {
 			getConfig().addDefault("Entities.EnderCrystal", "&eEnderCrystal");
+		}
+		if (!getConfig().contains("Entities.FireworksRocketEntity")) {
+			getConfig().addDefault("Entities.FireworksRocketEntity", "&eFireworksRocketEntity");
+		}
+		if (!getConfig().contains("Entities.Guardian")) {
+			getConfig().addDefault("Entities.Guardian", "&eGuardian");
+		}
+		if (!getConfig().contains("Entities.Endermite")) {
+			getConfig().addDefault("Entities.Endermite", "&eEndermite");
+		}
+		if (!getConfig().contains("Entities.Rabbit")) {
+			getConfig().addDefault("Entities.Rabbit", "&eRabbit");
 		}
 
 		try {

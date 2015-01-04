@@ -71,3 +71,7 @@ Entities:
     - EntityHorse: '&eEntityHorse'
     - Villager: '&eVillager'
     - EnderCrystal: '&eEnderCrystal'
+    - FireworksRocketEntity: '&eFireworksRocketEntity'
+    - Guardian: '&eGuardian'
+    - Endermite: '&eEndermite'
+    - Rabbit: '&eRabbit'

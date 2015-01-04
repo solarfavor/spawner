@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ public class Main extends JavaPlugin {
 
 		// add defaults
 		if (!config.contains("valid_entities")) {
-			List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager");
+			List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit");
 			getConfig().addDefault("valid_entities", validEntities);
 		}
 		if (config.contains("bad_entities")) {
@@ -119,6 +119,13 @@ public class Main extends JavaPlugin {
 		if (!config.contains("remove_radius")) {
 			getConfig().addDefault("remove_radius", 10);
 		}
+		if (!config.contains("luck")) {
+			getConfig().addDefault("luck", 100);
+		}
+		if (!config.contains("frequency")) {
+			getConfig().addDefault("frequency", 100);
+		}
+
 		/*if (!config.contains("limit")) {
 		 getConfig().addDefault("limit.members", "members");
 		 getConfig().addDefault("limit.vip", "vip");

@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the ability
  * to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import me.ryvix.spawner.language.Entities;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -82,7 +83,11 @@ public enum SpawnerType {
 	IRON_GOLEM("VillagerGolem", Main.language.getEntity(Entities.VillagerGolem), 99),
 	HORSE("EntityHorse", Main.language.getEntity(Entities.EntityHorse), 100),
 	VILLAGER("Villager", Main.language.getEntity(Entities.Villager), 120),
-	ENDER_CRYSTAL("EnderCrystal", Main.language.getEntity(Entities.EnderCrystal), 200);
+	ENDER_CRYSTAL("EnderCrystal", Main.language.getEntity(Entities.EnderCrystal), 200),
+	FIREWORK("FireworksRocketEntity", Main.language.getEntity(Entities.FireworksRocketEntity), 22),
+	GUARDIAN("Guardian", Main.language.getEntity(Entities.Guardian), 68),
+	ENDERMITE("Endermite", Main.language.getEntity(Entities.Endermite), 67),
+	RABBIT("Rabbit", Main.language.getEntity(Entities.Rabbit), 101);
 
 	private String name;
 	private String text;
@@ -175,7 +180,7 @@ public enum SpawnerType {
 		if (name == null) {
 			return null;
 		}
-		return NAME_MAP.get(name.toLowerCase());
+		return NAME_MAP.get(convertAlias(name).toLowerCase());
 	}
 
 	/**
@@ -201,7 +206,7 @@ public enum SpawnerType {
 		if (name == null) {
 			return null;
 		}
-		return TEXT_NAME_MAP.get(name.toLowerCase());
+		return TEXT_NAME_MAP.get(convertAlias(name).toLowerCase());
 	}
 
 	/**
@@ -230,19 +235,43 @@ public enum SpawnerType {
 		return TEXT_NAME_MAP.get(type.getName().toLowerCase());
 	}
 
-	public static boolean isValidEntity(String entity) {
+	/**
+	 * Check config for alias and return the entity type.
+	 * Returns input string if no aliases are found.
+	 * 
+	 * @param entity
+	 * @return String
+	 */
+	public static String convertAlias(String entity) {
 
-		// allow only valid entity types
-		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
-		boolean isValidEntity = false;
-		for (String entry : validEntities) {
-			if (entry.equalsIgnoreCase(entity)) {
-				isValidEntity = true;
-				break;
+		ConfigurationSection aliases = Main.instance.config.getConfigurationSection("aliases");
+		for(String key : aliases.getKeys(false)) {
+			List<String> aliasList = aliases.getStringList(key);
+			for (String alias : aliasList) {
+				if (alias.equalsIgnoreCase(entity)) {
+					return key;
+				}
 			}
 		}
 
-		return isValidEntity;
+		return entity;
+	}
+
+	public static boolean isValidEntity(String entity) {
+
+		// allow only valid entity types matched against aliases
+		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
+
+		// check valid_entities first
+		for (String entry : validEntities) {
+			if (entry.equalsIgnoreCase(entity)) {
+				return true;
+			}
+		}
+
+		// no valid_entities found so check for aliases
+		String aliasCheck = convertAlias(entity);
+		return !aliasCheck.isEmpty();
 	}
 
 }

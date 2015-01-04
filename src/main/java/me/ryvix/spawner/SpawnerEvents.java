@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@
 package me.ryvix.spawner;
 
 import java.util.Iterator;
-
 import me.ryvix.spawner.language.Keys;
-
-import org.bukkit.block.Block;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,10 +36,16 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+
+// Build against Spigot not Bukkit or you will get an error here.
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 
 public class SpawnerEvents implements Listener {
 
@@ -53,7 +57,7 @@ public class SpawnerEvents implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
-
+			
 			Player player = event.getPlayer();
 
 			// get spawner block
@@ -91,32 +95,25 @@ public class SpawnerEvents implements Listener {
 				return;
 			}
 
+			// apply luck
+			if(SpawnerFunctions.chance("luck")) {
+				return;
+			}
+
 			// if they are in creative or have silk touch and not holding a spawner and not holding a spawner
-			if ((player.getGameMode() == GameMode.CREATIVE || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) && player.getItemInHand().getTypeId() != 52) {
+			if ((player.getGameMode() == GameMode.CREATIVE || (player.hasPermission("spawner.mine.nosilk." + spawnerName) || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) && player.getItemInHand().getType() != Material.MOB_SPAWNER) {
 
 				// cancel event
 				event.setExpToDrop(0);
 
-				// set item damage in players hand
-				player.getItemInHand().setDurability((short) (player.getItemInHand().getDurability() + 1));
-
-				// durability for safe keeping
-				short durability = SpawnerFunctions.durabilityFromEntityType(csBlock.getSpawnedType());
-				if (durability < 1) {
-					durability = 90;
-				}
-
 				// make an ItemStack
-				ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+				ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
 				// formatted name
 				String name = SpawnerFunctions.formatName(spawnerName);
 
 				// set lore
 				ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, name);
-
-				// set durability
-				newSpawner.setDurability(durability);
 
 				// drop item
 				csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
@@ -148,29 +145,20 @@ public class SpawnerEvents implements Listener {
 			}
 
 			int itemId = player.getInventory().getHeldItemSlot();
-			ItemStack iStack = player.getInventory().getItem(itemId);
-			short durability = iStack.getDurability();
-			if (durability < 1) {
-				durability = 90;
-			}
+			ItemStack itemStack = player.getInventory().getItem(itemId);
 
-			SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(durability);
+			SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(itemStack);
 
 			short spawnerId = 90;
 			String name;
 			if (spawnerType == null) {
 				name = "Pig";
-				durability = 90;
 			} else {
 				name = spawnerType.getName();
 				spawnerId = spawnerType.getTypeId();
 			}
 
-			if (name.isEmpty()) {
-				durability = 90;
-			}
-
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new SpawnerTask(spawnerId, durability, event.getBlock(), player), 0);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new SpawnerTask(spawnerId, name, event.getBlock(), player), 0);
 		}
 	}
 
@@ -208,23 +196,10 @@ public class SpawnerEvents implements Listener {
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
-			ItemStack iStack = event.getItem().getItemStack();
-			iStack.removeEnchantment(Enchantment.SILK_TOUCH);
+			ItemStack itemStack = event.getItem().getItemStack();
+			itemStack.removeEnchantment(Enchantment.SILK_TOUCH);
 
-			// durability for safe keeping
-			short durability = iStack.getDurability();
-			if (durability < 1) {
-				durability = 90;
-			}
-
-			// formatted name
-			String spawnerName = SpawnerFunctions.nameFromDurability(durability);
-
-			// set lore
-			iStack = SpawnerFunctions.setSpawnerName(iStack, spawnerName);
-
-			// set durability
-			iStack.setDurability(durability);
+			String spawnerName = SpawnerFunctions.resetSpawnerName(itemStack);
 
 			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawnerName));
 
@@ -239,30 +214,26 @@ public class SpawnerEvents implements Listener {
 			return;
 		}
 
-		ItemStack iStack = event.getPlayer().getInventory().getItem(event.getNewSlot());
-		if (iStack == null) {
+		ItemStack itemStack = event.getPlayer().getInventory().getItem(event.getNewSlot());
+		if (itemStack == null) {
 			return;
 		}
 
-		if (iStack.getType().equals(Material.MOB_SPAWNER)) {
-			iStack.removeEnchantment(Enchantment.SILK_TOUCH);
+		if (itemStack.getType().equals(Material.MOB_SPAWNER)) {
+			itemStack.removeEnchantment(Enchantment.SILK_TOUCH);
 		} else {
 			return;
 		}
 
-		// formatted name
-		String spawnerName = SpawnerFunctions.nameFromDurability(iStack.getDurability());
-
-		// set lore
-		SpawnerFunctions.setSpawnerName(iStack, spawnerName);
+		String spawnerName = SpawnerFunctions.resetSpawnerName(itemStack);
 
 		// event.getPlayer().updateInventory();
 		Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (!event.hasBlock() || event.isCancelled()) {
+		if (!event.hasBlock()) {
 			return;
 		}
 
@@ -281,4 +252,40 @@ public class SpawnerEvents implements Listener {
 			}
 		}
 	}
+
+	/**
+	 * Spigot SpawnerSpawnEvent for spawn frequency chance
+	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse/Bukkit-Patches/0007-Define-EntitySpawnEvent-and-SpawnerSpawnEvent.patch
+	 * 
+	 * @param event 
+	 */
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
+	public void onSpawnerSpawn(SpawnerSpawnEvent event) {
+
+		// apply spawn frequency chance
+		if(!SpawnerFunctions.chance("frequency." + event.getEntityType().name().toLowerCase())) {
+
+			// stop spawner event
+			event.setCancelled(true);
+		}
+	}	
+
+
+	/**
+	 * Prevent anvil renaming of spawners.
+	 * @param event 
+	 */
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	public void onInventoryClickEvent(InventoryClickEvent event) {
+		if (!(event.getInventory() instanceof AnvilInventory)) {
+			return;
+		}
+		if (event.getSlotType() != SlotType.RESULT) {
+			return;
+		}
+		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER) {
+			event.setCancelled(true);
+		}
+	}
+
 }

@@ -1,10 +1,6 @@
 # Spawner config file
 
 # Valid entities
-# You can make spawners any of the entity names listed at this link:
-# http://jd.bukkit.org/rb/apidocs/src-html/org/bukkit/entity/EntityType.html#line.17
-# Generally you would use the name that appears inside the quotes in the brackets.
-# For example PigZombie will work while PIG_ZOMBIE will not.
 valid_entities:
 - Creeper
 - Skeleton
@@ -35,6 +31,20 @@ valid_entities:
 - VillagerGolem
 - EntityHorse
 - Villager
+- FireworksRocketEntity
+- Guardian
+- Endermite
+- Rabbit
+
+# Aliases
+aliases:
+    WitherBoss:
+        - wither
+    VillagerGolem:
+        - irongolem
+        - golem
+    EntityHorse:
+        - horse
 
 # Preventing spawners being destroyed by explosions.
 protect_from_explosions: true
@@ -54,3 +64,43 @@ remove_radius: 10
 
 # Allow mobs to wear armour (not yet implemented)
 #allow_armour: true
+
+# If less than 100 it will have a chance to not drop a spawner.
+luck: 100
+
+# The frequency that spawns from spawners are successful.
+# lowercase version of EntityType
+frequency:
+    creeper: 100
+    skeleton: 100
+    spider: 100
+    giant: 100
+    zombie: 100
+    slime: 100
+    ghast: 100
+    pigzombie: 100
+    enderman: 100
+    cavespider: 100
+    silverfish: 100
+    blaze: 100
+    lavaslime: 100
+    enderdragon: 100
+    witherboss: 100
+    bat: 100
+    witch: 100
+    pig: 100
+    sheep: 100
+    cow: 100
+    chicken: 100
+    squid: 100
+    wolf: 100
+    mushroomcow: 100
+    snowman: 100
+    ozelot: 100
+    villagergolem: 100
+    entityhorse: 100
+    villager: 100
+    fireworksrocketentity: 100
+    guardian: 100
+    endermite: 100
+    rabbit: 100

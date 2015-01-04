@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the ability
  * to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -33,12 +33,28 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
 public class SpawnerFunctions {
+
+	/**
+	 * A chance to return true or false based on the given config key integer.
+	 * A configKey with a value less than 100 will have a chance to return false.
+	 * 
+	 * @param configKey
+	 * @return 
+	 */
+	public static boolean chance(String configKey) {
+		int chance = Main.instance.config.getInt(configKey);
+		if(chance < 100) {
+			if((int)(Math.random()*100) < chance) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Format name
@@ -76,7 +92,7 @@ public class SpawnerFunctions {
 	 * @param durability
 	 * @return Formated name
 	 */
-	public static String nameFromDurability(short durability) {
+	/*public static String nameFromDurability(short durability) {
 
 		SpawnerType spawnerType = getSpawnerType(durability);
 		String spawnerName = "Pig";
@@ -85,7 +101,7 @@ public class SpawnerFunctions {
 		}
 
 		return formatName(spawnerName);
-	}
+	}*/
 
 	/**
 	 * Get the durability/typeid value from the EntityType
@@ -93,10 +109,10 @@ public class SpawnerFunctions {
 	 * @param entityType
 	 * @return short
 	 */
-	public static short durabilityFromEntityType(EntityType entityType) {
+	/*public static short durabilityFromEntityType(EntityType entityType) {
 		SpawnerType spawnerType = SpawnerType.fromEntityType(entityType);
 		return spawnerType.getTypeId();
-	}
+	}*/
 
 	/**
 	 * Reads a file to a string Lines starting with # will be ignored
@@ -110,19 +126,19 @@ public class SpawnerFunctions {
 			FileInputStream fstream = new FileInputStream(fileName);
 
 			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			StringBuilder sb = new StringBuilder();
-			String line;
-
-			while ((line = br.readLine()) != null) {
-				char check = line.charAt(0);
-				if (check == "#".charAt(0)) {
-					continue;
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				StringBuilder sb = new StringBuilder();
+				String line;
+				
+				while ((line = br.readLine()) != null) {
+					char check = line.charAt(0);
+					if (check == "#".charAt(0)) {
+						continue;
+					}
+					sb.append(line);
+					sb.append("\n");
 				}
-				sb.append(line);
-				sb.append("\n");
-			}
-			contents = sb.toString();
+				contents = sb.toString();
 			in.close();
 		} catch (IOException e) {
 			Logger.getLogger(SpawnerFunctions.class.getName()).log(Level.SEVERE, null, e);
@@ -195,18 +211,37 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static SpawnerType getSpawnerType(String arg) {
-		SpawnerType type = SpawnerType.fromName(arg);
-		return type;
+		return SpawnerType.fromName(arg);
 	}
 
 	/**
-	 * Return the SpawnerType of the given id/durability.
+	 * Return the SpawnerType of the given ItemStack.
 	 *
-	 * @param d
-	 * @return
+	 * @param itemStack
+	 * @return SpawnerType
 	 */
-	static SpawnerType getSpawnerType(short d) {
-		SpawnerType type = SpawnerType.fromId(d);
-		return type;
+	public static SpawnerType getSpawnerType(ItemStack itemStack) {
+		return SpawnerType.fromName(getSpawnerName(itemStack));
+	}
+
+	public static String getSpawnerName(ItemStack itemStack) {
+		return ChatColor.stripColor(itemStack.getItemMeta().getDisplayName().split(" ")[0]);
+	}
+
+	public static String resetSpawnerName(ItemStack itemStack) {
+		return setSpawnerName(itemStack);
+	}
+
+	private static String setSpawnerName(ItemStack itemStack) {
+		Spawner newSpawnerStack = new Spawner();
+		String name = getSpawnerName(itemStack);
+		ItemStack newSpawner = newSpawnerStack.setName(itemStack, ChatColor.translateAlternateColorCodes('&', name + " " + Main.language.getText(Keys.Spawner)));
+
+		// currently just to remove the old lore line
+		if (newSpawnerStack.getLore(newSpawner) != null) {
+			newSpawnerStack.setLore(newSpawner, "");
+		}
+
+		return name;
 	}
 }

@@ -1,6 +1,6 @@
 name: ${project.name}
 main: me.ryvix.spawner.Main
-version: ${project.version}-b${BUILD_NUMBER}
+version: ${project.version}-b${buildNumber}
 website: ${project.url}
 author: ryvix
 description: ${project.description}
@@ -8,6 +8,7 @@ commands:
   spawner:
     description: Allows switching of spawner entity types with /spawner <entity>
     usage: "/spawner help"
+    aliases: [spwnr]
 permissions:
   spawner.*:
     description: Gives all Spawner permissions.
@@ -21,6 +22,7 @@ permissions:
       spawner.get: true
       spawner.break.*: true
       spawner.mine.*: true
+      spawner.mine.nosilk.*: true
       spawner.list: true
       spawner.help: true
   spawner.remove:
@@ -46,6 +48,9 @@ permissions:
     default: op
   spawner.mine.*:
     description: Allows players to mine spawners with a silk touch enchanted tool.
+    default: op
+  spawner.mine.nosilk.*:
+    description: Allows players to mine spawners without a silk touch enchanted tool.
     default: op
   spawner.place.*:
     description: Players with this permission will be prevented from placing spawners.

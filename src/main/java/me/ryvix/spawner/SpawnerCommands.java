@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the ability
  * to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -124,7 +124,7 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 				// set spawner type
-				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + args[0].toLowerCase())) {
+				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + SpawnerType.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
@@ -160,7 +160,6 @@ public class SpawnerCommands implements CommandExecutor {
 									return true;
 								}
 
-								short durability = spawnerType.getTypeId();
 								String spawnerName = SpawnerType.getTextFromName(args[0]);
 								if (spawnerName == null) {
 									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -168,16 +167,13 @@ public class SpawnerCommands implements CommandExecutor {
 								}
 
 								// make an ItemStack
-								ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount(), durability);
+								ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount());
 
 								// formatted name
 								String name = SpawnerFunctions.formatName(spawnerName);
 
 								// set lore
 								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
-
-								// set durability
-								newSpawner.setDurability(durability);
 
 								// set item in players hand
 								player.setItemInHand(newSpawner);
@@ -210,7 +206,7 @@ public class SpawnerCommands implements CommandExecutor {
 						return true;
 					}
 
-					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + args[1].toLowerCase())) {
+					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
 						Player player = (Player) sender;
 
 						if (SpawnerType.isValidEntity(args[1])) {
@@ -220,7 +216,6 @@ public class SpawnerCommands implements CommandExecutor {
 								return true;
 							}
 
-							short durability = spawnerType.getTypeId();
 							String spawnerName = SpawnerType.getTextFromName(args[1]);
 							if (spawnerName == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -228,16 +223,13 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
 							// formatted name
 							String name = SpawnerFunctions.formatName(spawnerName);
 
 							// set lore
 							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
-
-							// set durability
-							newSpawner.setDurability(durability);
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -279,7 +271,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				if (args[0].equalsIgnoreCase("give")) {
 
-					if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + args[1].toLowerCase())) {
+					if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
 						// give a spawner
 
 						if (SpawnerType.isValidEntity(args[1])) {
@@ -289,7 +281,6 @@ public class SpawnerCommands implements CommandExecutor {
 								return true;
 							}
 
-							short durability = spawnerType.getTypeId();
 							String spawnerName = SpawnerType.getTextFromName(args[1]);
 							if (spawnerName == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -297,18 +288,14 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1, durability);
+							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
 							// formatted name
 							String name = SpawnerFunctions.formatName(spawnerName);
 
-							// set lore
+							// set name
 							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
 
-							// set durability
-							newSpawner.setDurability(durability);
-
-							// TODO: fix deprecation...
 							Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 							if (targetPlayer != null) {
 

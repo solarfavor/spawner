@@ -2,7 +2,7 @@
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
  *
- * Copyright (C) 2012-2014 Ryan Rhode - rrhode@gmail.com
+ * Copyright (C) 2012-2015 Ryan Rhode - rrhode@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,20 @@ public class SpawnerTask implements Runnable {
 
 	short entityID;
 	Block block;
-	short d;
+	String name;
 	Player player;
 
-	public SpawnerTask(short entityID, short d, Block block, Player player) {
+	public SpawnerTask(short entityID, String name, Block block, Player player) {
 		this.entityID = entityID;
 		this.block = block;
-		this.d = d;
+		this.name = name;
 		this.player = player;
 	}
 
 	@Override
 	public void run() {
 
-		SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(d);
+		SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(name);
 
 		if (spawnerType == null) {
 			return;
@@ -51,7 +51,7 @@ public class SpawnerTask implements Runnable {
 		Spawner spawner = new Spawner();
 
 		if (spawner.setSpawner(block, spawnerType.getName())) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.PlacedSpawner, SpawnerType.fromId(d).getText()));
+			Main.language.sendMessage(player, Main.language.getText(Keys.PlacedSpawner, SpawnerType.getTextFromName(name)));
 		} else {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
 		}
