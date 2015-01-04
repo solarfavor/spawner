@@ -124,7 +124,7 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 				// set spawner type
-				if (sender.hasPermission("spawner.set.*") || sender.hasPermission("spawner.set." + SpawnerType.convertAlias(args[0]).toLowerCase())) {
+				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerType.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
@@ -206,7 +206,7 @@ public class SpawnerCommands implements CommandExecutor {
 						return true;
 					}
 
-					if (sender.hasPermission("spawner.give.*") || sender.hasPermission("spawner.give." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
+					if (sender.hasPermission("spawner.give.all") || sender.hasPermission("spawner.give." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
 						Player player = (Player) sender;
 
 						if (SpawnerType.isValidEntity(args[1])) {
@@ -271,7 +271,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				if (args[0].equalsIgnoreCase("give")) {
 
-					if (sender.hasPermission("spawner.give.others.*") || sender.hasPermission("spawner.give.others." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
+					if (sender.hasPermission("spawner.giveothers.all") || sender.hasPermission("spawner.giveothers." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
 						// give a spawner
 
 						if (SpawnerType.isValidEntity(args[1])) {

@@ -71,7 +71,7 @@ Reload the plugin. Useful if you make changes to any of the files.
 
 Permissions
 
-spawner.*
+spawner.all
 Gives all Spawner permissions.
 Default: op
 
@@ -81,7 +81,7 @@ Default: op
 
 spawner.set.<entity>
 Gives access to use /spawner <entity> to set the spawner entity type.
-Use spawner.set.* to allow all spawner entity types.
+Use spawner.set.all to allow all spawner entity types.
 Default: op
 
 spawner.get
@@ -91,32 +91,32 @@ Default: op
 
 spawner.break.<entity>
 Allows players to break spawners as normal.
-Use spawner.break.* to allow all spawner entity types.
+Use spawner.break.all to allow all spawner entity types.
 Default: op
 
 spawner.mine.<entity>
 Allows players to mine spawners with a silk touch enchanted tool.
-Use spawner.mine.* to allow all spawner entity types.
+Use spawner.mine.all to allow all spawner entity types.
 Default: op
 
 spawner.place.<entity>
 Allows players to place spawners.
-Use spawner.place.* to allow all spawner entity types.
+Use spawner.place.all to allow all spawner entity types.
 Default: op
 
 spawner.set.<entity>
 Gives access to use /spawner <entity>
-Use spawner.set.* to allow all spawner entity types.
+Use spawner.set.all to allow all spawner entity types.
 Default: op
 
 spawner.give.<entity>
 Gives access to use /spawner give <entity>
-Use spawner.give.* to allow all spawner entity types.
+Use spawner.give.all to allow all spawner entity types.
 Default: op
 
 spawner.give.others.<entity>
 Gives access to use /spawner give <entity> <player>
-Use spawner.give.others.* to allow all spawner entity types.
+Use spawner.give.others.all to allow all spawner entity types.
 This can also be run from console.
 Default: op
 

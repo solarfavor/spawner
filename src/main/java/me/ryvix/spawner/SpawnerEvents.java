@@ -72,13 +72,13 @@ public class SpawnerEvents implements Listener {
 
 			// if they can't mine it just let them break it normally
 			boolean canMine = false;
-			if (player.hasPermission("spawner.mine.*") || player.hasPermission("spawner.mine." + spawnerName)) {
+			if (player.hasPermission("spawner.mine.all") || player.hasPermission("spawner.mine." + spawnerName)) {
 				canMine = true;
 			}
 
 			// if they can't break then cancel the event
 			boolean canBreak = false;
-			if (player.hasPermission("spawner.break.*") || player.hasPermission("spawner.break." + spawnerName)) {
+			if (player.hasPermission("spawner.break.all") || player.hasPermission("spawner.break." + spawnerName)) {
 				canBreak = true;
 			}
 
@@ -101,7 +101,7 @@ public class SpawnerEvents implements Listener {
 			}
 
 			// if they are in creative or have silk touch and not holding a spawner and not holding a spawner
-			if ((player.getGameMode() == GameMode.CREATIVE || (player.hasPermission("spawner.mine.nosilk." + spawnerName) || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) && player.getItemInHand().getType() != Material.MOB_SPAWNER) {
+			if ((player.getGameMode() == GameMode.CREATIVE || (player.hasPermission("spawner.nosilk.all") || player.hasPermission("spawner.nosilk." + spawnerName) || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) && player.getItemInHand().getType() != Material.MOB_SPAWNER) {
 
 				// cancel event
 				event.setExpToDrop(0);
@@ -137,7 +137,7 @@ public class SpawnerEvents implements Listener {
 			String spawnerName = SpawnerType.fromEntityType(csBlock.getSpawnedType()).getName();
 
 			// if they can't place it cancel event
-			if (!player.hasPermission("spawner.place.*") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
+			if (!player.hasPermission("spawner.place.all") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
 				event.setCancelled(true);
 				String spawnerText = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerText));

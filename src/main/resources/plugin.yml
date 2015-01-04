@@ -10,19 +10,19 @@ commands:
     usage: "/spawner help"
     aliases: [spwnr]
 permissions:
-  spawner.*:
+  spawner.all:
     description: Gives all Spawner permissions.
     default: op
     children:
       spawner.remove: true
       spawner.reload: true
-      spawner.set.*: true
-      spawner.give.*: true
-      spawner.give.others.*: true
+      spawner.set.all: true
+      spawner.give.all: true
+      spawner.giveothers.all: true
       spawner.get: true
-      spawner.break.*: true
-      spawner.mine.*: true
-      spawner.mine.nosilk.*: true
+      spawner.break.all: true
+      spawner.mine.all: true
+      spawner.nosilk.all: true
       spawner.list: true
       spawner.help: true
   spawner.remove:
@@ -31,28 +31,28 @@ permissions:
   spawner.reload:
     description: Gives access to use /spawner reload to reload the plugin.
     default: op
-  spawner.set.*:
+  spawner.set.all:
     description: Gives access to use /spawner <entity> to set the spawner entity type.
     default: op
-  spawner.give.*:
+  spawner.give.all:
     description: Gives access to use /spawner give <entity> to give yourself a spawner of the given entity type.
     default: op
-  spawner.give.others.*:
+  spawner.giveothers.all:
     description: Gives access to use /spawner give <entity> to give others a spawner of the given entity type.
     default: op
   spawner.get:
     description: Gives access to right-click a spawner or use /spawner to get the spawner entity type.
     default: op
-  spawner.break.*:
+  spawner.break.all:
     description: Allows players to break spawners as normal.
     default: op
-  spawner.mine.*:
+  spawner.mine.all:
     description: Allows players to mine spawners with a silk touch enchanted tool.
     default: op
-  spawner.mine.nosilk.*:
+  spawner.nosilk.all:
     description: Allows players to mine spawners without a silk touch enchanted tool.
     default: op
-  spawner.place.*:
+  spawner.place.all:
     description: Players with this permission will be prevented from placing spawners.
     default: op
   spawner.help:
