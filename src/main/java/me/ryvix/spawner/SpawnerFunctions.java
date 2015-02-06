@@ -25,13 +25,16 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ryvix.spawner.language.Keys;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,31 +43,75 @@ import org.bukkit.util.BlockIterator;
 public class SpawnerFunctions {
 
 	/**
+	 * Check config for alias and return the entity type.
+	 * Returns input string if no aliases are found.
+	 *
+	 * @param entity
+	 * @return String
+	 */
+	public static String convertAlias(String entity) {
+
+		ConfigurationSection aliases = Main.instance.config.getConfigurationSection("aliases");
+
+		if (aliases == null) {
+			return entity;
+		}
+
+		for (String key : aliases.getKeys(false)) {
+			List<String> aliasList = aliases.getStringList(key);
+			for (String alias : aliasList) {
+				if (alias.equalsIgnoreCase(entity)) {
+					return key;
+				}
+			}
+		}
+
+		return entity;
+	}
+
+	/**
+	 * Checks if entity is valid.
+	 * @param arg
+	 * @return 
+	 */
+	public static boolean isValidEntity(String arg) {
+
+		String entity = getSpawnerName(arg, "key");
+
+		// allow only valid entity types matched against aliases
+		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
+
+		if (validEntities == null) {
+			return false;
+		}
+
+		// check valid_entities first
+		for (String entry : validEntities) {
+			if (entry.equalsIgnoreCase(entity)) {
+				return true;
+			}
+		}
+
+		// no valid_entities found so check for aliases
+		String aliasCheck = convertAlias(entity);
+		return !aliasCheck.isEmpty();
+	}
+
+	/**
 	 * A chance to return true or false based on the given config key integer.
 	 * A configKey with a value less than 100 will have a chance to return false.
-	 * 
+	 *
 	 * @param configKey
-	 * @return 
+	 * @return
 	 */
 	public static boolean chance(String configKey) {
 		int chance = Main.instance.config.getInt(configKey);
-		if(chance < 100) {
-			if((int)(Math.random()*100) < chance) {
+		if (chance < 100) {
+			if ((int) (Math.random() * 100) < chance) {
 				return false;
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Format name
-	 *
-	 * @param name
-	 * @return
-	 */
-	public static String formatName(String name) {
-		String f = name.substring(0, 1);
-		return name.replaceFirst(f, f.toUpperCase());
 	}
 
 	/**
@@ -87,34 +134,6 @@ public class SpawnerFunctions {
 	}
 
 	/**
-	 * Get the name from the durability/typeid value
-	 *
-	 * @param durability
-	 * @return Formated name
-	 */
-	/*public static String nameFromDurability(short durability) {
-
-		SpawnerType spawnerType = getSpawnerType(durability);
-		String spawnerName = "Pig";
-		if (spawnerType != null) {
-			spawnerName = SpawnerType.getTextFromType(spawnerType);
-		}
-
-		return formatName(spawnerName);
-	}*/
-
-	/**
-	 * Get the durability/typeid value from the EntityType
-	 *
-	 * @param entityType
-	 * @return short
-	 */
-	/*public static short durabilityFromEntityType(EntityType entityType) {
-		SpawnerType spawnerType = SpawnerType.fromEntityType(entityType);
-		return spawnerType.getTypeId();
-	}*/
-
-	/**
 	 * Reads a file to a string Lines starting with # will be ignored
 	 *
 	 * @param fileName
@@ -126,19 +145,19 @@ public class SpawnerFunctions {
 			FileInputStream fstream = new FileInputStream(fileName);
 
 			DataInputStream in = new DataInputStream(fstream);
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-				StringBuilder sb = new StringBuilder();
-				String line;
-				
-				while ((line = br.readLine()) != null) {
-					char check = line.charAt(0);
-					if (check == "#".charAt(0)) {
-						continue;
-					}
-					sb.append(line);
-					sb.append("\n");
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			StringBuilder sb = new StringBuilder();
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				char check = line.charAt(0);
+				if (check == "#".charAt(0)) {
+					continue;
 				}
-				contents = sb.toString();
+				sb.append(line);
+				sb.append("\n");
+			}
+			contents = sb.toString();
 			in.close();
 		} catch (IOException e) {
 			Logger.getLogger(SpawnerFunctions.class.getName()).log(Level.SEVERE, null, e);
@@ -221,20 +240,93 @@ public class SpawnerFunctions {
 	 * @return SpawnerType
 	 */
 	public static SpawnerType getSpawnerType(ItemStack itemStack) {
-		return SpawnerType.fromName(getSpawnerName(itemStack));
+		return SpawnerType.fromName(itemStack.getItemMeta().getDisplayName());
 	}
 
-	public static String getSpawnerName(ItemStack itemStack) {
-		return ChatColor.stripColor(itemStack.getItemMeta().getDisplayName().split(" ")[0]);
+	/**
+	 * Get a spawner name.
+	 *
+	 * @param itemStack
+	 * @param type
+	 * @return
+	 */
+	public static String getSpawnerName(ItemStack itemStack, String type) {
+		return getSpawnerName(itemStack.getItemMeta().getDisplayName(), type);
 	}
 
+	/**
+	 * Get a spawner name.
+	 *
+	 * @param inputName
+	 * @param type
+	 * @param convert
+	 * @return
+	 */
+	public static String getSpawnerName(String inputName, String type, boolean... convert) {
+
+		String cleanName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', inputName));
+		String testName;
+		String returnName = cleanName;
+		if (!cleanName.contains(" ")) {
+			if (convert.length > 0 && convert[0] == false) {
+				testName = cleanName;
+			} else {
+				testName = convertAlias(cleanName);
+			}
+		} else {
+			if (convert.length > 0 && convert[0] == false) {
+				testName = cleanName.split(" ")[0];
+			} else {
+				testName = convertAlias(cleanName.split(" ")[0]);
+			}
+		}
+
+		// Translate spawner language keys
+		ConfigurationSection csEntities = Main.language.getConfig().getConfigurationSection("Entities");
+		Map<String, Object> entityValues = csEntities.getValues(false);
+		Iterator it = entityValues.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pairs = (Map.Entry) it.next();
+			String testKey = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getKey()));
+			String testValue = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getValue()));
+			if (type != null && (testValue.equalsIgnoreCase(testName) || testKey.equalsIgnoreCase(testName))) {
+				switch (type) {
+					case "value":
+						returnName = "" + pairs.getValue();
+						break;
+					case "key":
+						returnName = testKey;
+						break;
+				}
+				it.remove();
+				break;
+			}
+
+			it.remove();
+		}
+
+		return returnName;
+	}
+
+	/**
+	 * Reset spawner name.
+	 *
+	 * @param itemStack
+	 * @return
+	 */
 	public static String resetSpawnerName(ItemStack itemStack) {
 		return setSpawnerName(itemStack);
 	}
 
+	/**
+	 * Set spawner name.
+	 *
+	 * @param itemStack
+	 * @return
+	 */
 	private static String setSpawnerName(ItemStack itemStack) {
+		String name = getSpawnerName(itemStack, "value");
 		Spawner newSpawnerStack = new Spawner();
-		String name = getSpawnerName(itemStack);
 		ItemStack newSpawner = newSpawnerStack.setName(itemStack, ChatColor.translateAlternateColorCodes('&', name + " " + Main.language.getText(Keys.Spawner)));
 
 		// currently just to remove the old lore line

@@ -21,6 +21,7 @@
 package me.ryvix.spawner;
 
 import me.ryvix.spawner.language.Keys;
+import org.apache.commons.lang.StringUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -124,7 +125,7 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 				// set spawner type
-				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerType.convertAlias(args[0]).toLowerCase())) {
+				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerFunctions.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
@@ -140,8 +141,7 @@ public class SpawnerCommands implements CommandExecutor {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
-							String name = SpawnerFunctions.formatName(type);
-							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
+							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, type));
 							return true;
 
 						} else {
@@ -152,8 +152,7 @@ public class SpawnerCommands implements CommandExecutor {
 					} else {
 						if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
 							// otherwise set type of spawner in players hand
-
-							if (SpawnerType.isValidEntity(args[0])) {
+							if (SpawnerFunctions.isValidEntity(args[0])) {
 								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
 								if (spawnerType == null) {
 									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -169,16 +168,13 @@ public class SpawnerCommands implements CommandExecutor {
 								// make an ItemStack
 								ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount());
 
-								// formatted name
-								String name = SpawnerFunctions.formatName(spawnerName);
-
-								// set lore
-								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+								// set name
+								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
 
 								// set item in players hand
 								player.setItemInHand(newSpawner);
 
-								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, name));
+								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 								return true;
 							} else {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -206,10 +202,10 @@ public class SpawnerCommands implements CommandExecutor {
 						return true;
 					}
 
-					if (sender.hasPermission("spawner.give.all") || sender.hasPermission("spawner.give." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
+					if (sender.hasPermission("spawner.give.all") || sender.hasPermission("spawner.give." + SpawnerFunctions.convertAlias(args[1]).toLowerCase())) {
 						Player player = (Player) sender;
 
-						if (SpawnerType.isValidEntity(args[1])) {
+						if (SpawnerFunctions.isValidEntity(args[1])) {
 							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -225,11 +221,8 @@ public class SpawnerCommands implements CommandExecutor {
 							// make an ItemStack
 							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
-							// formatted name
-							String name = SpawnerFunctions.formatName(spawnerName);
-
-							// set lore
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+							// set name
+							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -238,9 +231,12 @@ public class SpawnerCommands implements CommandExecutor {
 							} else {
 								int invSlot = inventory.firstEmpty();
 								inventory.setItem(invSlot, newSpawner);
+
+								// make sure to show the player the item
+								player.updateInventory();
 							}
 
-							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, name));
+							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, spawnerName));
 							return true;
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -256,7 +252,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 					// /spawner remove <entity>
 					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
-						if (SpawnerType.isValidEntity(args[1])) {
+						if (SpawnerFunctions.isValidEntity(args[1])) {
 							int radius = Main.instance.config.getInt("remove_radius");
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
@@ -267,14 +263,66 @@ public class SpawnerCommands implements CommandExecutor {
 				}
 
 			} else if (args.length == 3) {
-				// give a spawner to others
 
 				if (args[0].equalsIgnoreCase("give")) {
 
-					if (sender.hasPermission("spawner.giveothers.all") || sender.hasPermission("spawner.giveothers." + SpawnerType.convertAlias(args[1]).toLowerCase())) {
-						// give a spawner
+					// amount parameter for give to self
+					if (StringUtils.isNumeric(args[2])) {
+						// /spawner give <entity> <amount>
 
-						if (SpawnerType.isValidEntity(args[1])) {
+						// catch console
+						if (!(sender instanceof Player)) {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+							return true;
+						}
+						Player player = (Player) sender;
+
+						if (SpawnerFunctions.isValidEntity(args[1])) {
+							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							if (spawnerType == null) {
+								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								return true;
+							}
+
+							String spawnerName = SpawnerType.getTextFromName(args[1]);
+							if (spawnerName == null) {
+								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								return true;
+							}
+
+							// make an ItemStack
+							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, Integer.parseInt(args[2]));
+
+							// set name
+							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+
+							// drop spawner at player location or add it to their inv if they have space
+							PlayerInventory inventory = player.getInventory();
+							if (inventory.firstEmpty() == -1) {
+								player.getWorld().dropItem(player.getLocation().add(0, 1, 0), newSpawner);
+							} else {
+								int invSlot = inventory.firstEmpty();
+								inventory.setItem(invSlot, newSpawner);
+
+								// make sure to show the player the item
+								player.updateInventory();
+							}
+
+							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, spawnerName));
+							return true;
+						} else {
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							return true;
+						}
+
+					}
+
+					// give a spawner to others
+					if (sender.hasPermission("spawner.giveothers.all") || sender.hasPermission("spawner.giveothers." + SpawnerFunctions.convertAlias(args[1]).toLowerCase())) {
+						// give a spawner
+						// /spawner give <entity> <player>
+
+						if (SpawnerFunctions.isValidEntity(args[1])) {
 							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -290,11 +338,8 @@ public class SpawnerCommands implements CommandExecutor {
 							// make an ItemStack
 							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
-							// formatted name
-							String name = SpawnerFunctions.formatName(spawnerName);
-
 							// set name
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, name);
+							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
 
 							Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 							if (targetPlayer != null) {
@@ -307,22 +352,25 @@ public class SpawnerCommands implements CommandExecutor {
 
 									// if target player is online drop it at their feet and tell them
 									targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, name));
+									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, spawnerName));
 									return true;
 
 								} else {
 
 									inventory.setItem(invSlot, newSpawner);
 
+									// make sure to show the player the item
+									targetPlayer.updateInventory();
+
 									if (targetPlayer != null) {
-										Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, name));
+										Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, spawnerName));
 									} else {
 										Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
 										return true;
 									}
 
 									String[] vars = new String[2];
-									vars[0] = name;
+									vars[0] = spawnerName;
 									vars[1] = targetPlayer.getName();
 									Main.language.sendMessage(sender, Main.language.getText(Keys.YouGaveSpawner, vars));
 								}
@@ -349,7 +397,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 					// /spawner remove <entity> <radius>
 					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
-						if (SpawnerType.isValidEntity(args[1])) {
+						if (SpawnerFunctions.isValidEntity(args[1])) {
 							int radius;
 							try {
 								radius = Integer.parseInt(args[2]);
@@ -366,6 +414,88 @@ public class SpawnerCommands implements CommandExecutor {
 					}
 				}
 
+			} else if (args.length == 4) {
+				// give a spawner to others
+
+				if (args[0].equalsIgnoreCase("give")) {
+
+					// amount parameter for give to others
+					if (StringUtils.isNumeric(args[3])) {
+						if (sender.hasPermission("spawner.giveothers.all") || sender.hasPermission("spawner.giveothers." + SpawnerFunctions.convertAlias(args[1]).toLowerCase())) {
+						// give a spawner
+							// /spawner give <entity> <player> <amount>
+
+							// amount parameter for give to self
+							if (StringUtils.isNumeric(args[3])) {
+
+								if (SpawnerFunctions.isValidEntity(args[1])) {
+									SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+									if (spawnerType == null) {
+										Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+										return true;
+									}
+
+									String spawnerName = SpawnerType.getTextFromName(args[1]);
+									if (spawnerName == null) {
+										Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+										return true;
+									}
+
+									// make an ItemStack
+									ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, Integer.parseInt(args[3]));
+
+									// set name
+									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+									Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
+									if (targetPlayer != null) {
+
+										PlayerInventory inventory = targetPlayer.getInventory();
+										int invSlot = inventory.firstEmpty();
+
+										// drop spawner at player location or add it to their inv if they have space
+										if (invSlot == -1) {
+
+											// if target player is online drop it at their feet and tell them
+											targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
+											Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, spawnerName));
+											return true;
+
+										} else {
+
+											inventory.setItem(invSlot, newSpawner);
+
+											// make sure to show the player the item
+											targetPlayer.updateInventory();
+
+											if (targetPlayer != null) {
+												Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, spawnerName));
+											} else {
+												Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+												return true;
+											}
+
+											String[] vars = new String[2];
+											vars[0] = spawnerName;
+											vars[1] = targetPlayer.getName();
+											Main.language.sendMessage(sender, Main.language.getText(Keys.YouGaveSpawner, vars));
+										}
+
+										return true;
+
+									} else {
+										// tell sender the target didn't get the spawner
+										Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+										return true;
+									}
+								} else {
+									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									return true;
+								}
+
+							}
+						}
+					}
+				}
 			} else {
 				Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
 			}

@@ -20,11 +20,10 @@
  */
 package me.ryvix.spawner;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import me.ryvix.spawner.language.Entities;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -106,56 +105,67 @@ public enum SpawnerType {
 	private static final Map<String, String> TEXT_TYPE_MAP = new HashMap<String, String>();
 
 	static {
-		for (SpawnerType type : values()) {
-			if (type.name != null) {
-				NAME_MAP.put(type.name.toLowerCase(), type);
+		try {
+			for (SpawnerType type : values()) {
+				if (type.name != null) {
+					NAME_MAP.put(type.name.toLowerCase(), type);
+				}
+				if (type.typeId > 0) {
+					ID_MAP.put(type.typeId, type);
+				}
+				if (type.text != null) {
+					TEXT_NAME_MAP.put(type.name.toLowerCase(), type.text);
+				}
+				if (type.text != null) {
+					TEXT_ID_MAP.put(type.typeId, type.text);
+				}
+				if (type.text != null) {
+					TEXT_TYPE_MAP.put(type.name().toLowerCase(), type.text);
+				}
 			}
-			if (type.typeId > 0) {
-				ID_MAP.put(type.typeId, type);
-			}
-			if (type.text != null) {
-				TEXT_NAME_MAP.put(type.name.toLowerCase(), type.text);
-			}
-			if (type.text != null) {
-				TEXT_ID_MAP.put(type.typeId, type.text);
-			}
-			if (type.text != null) {
-				TEXT_TYPE_MAP.put(type.name().toLowerCase(), type.text);
-			}
+		} catch (Throwable t) {
+			Main.instance.getLogger().severe("SpawnerType static error:");
+			Main.instance.getLogger().severe(t.getLocalizedMessage());
+			Main.instance.getLogger().severe(Arrays.toString(t.getStackTrace()));
+			throw t;
 		}
 	}
 
 	/**
 	 * Get name
-	 * @return 
+	 *
+	 * @return
 	 */
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
 	/**
 	 * Get text
-	 * @return 
+	 *
+	 * @return
 	 */
-    public String getText() {
-        return text;
-    }
+	public String getText() {
+		return text;
+	}
 
 	/**
 	 * Get typeId
-	 * @return 
+	 *
+	 * @return
 	 */
-    public short getTypeId() {
-        return typeId;
-    }
+	public short getTypeId() {
+		return typeId;
+	}
 
 	/**
 	 * Get EntityType
-	 * @return 
+	 *
+	 * @return
 	 */
-    public EntityType getEntityType() {
-        return EntityType.valueOf(name());
-    }
+	public EntityType getEntityType() {
+		return EntityType.valueOf(name());
+	}
 
 	/**
 	 * Get SpawnerType from EntityType
@@ -180,7 +190,7 @@ public enum SpawnerType {
 		if (name == null) {
 			return null;
 		}
-		return NAME_MAP.get(convertAlias(name).toLowerCase());
+		return NAME_MAP.get(SpawnerFunctions.getSpawnerName(SpawnerFunctions.convertAlias(name), "key").toLowerCase());
 	}
 
 	/**
@@ -199,14 +209,16 @@ public enum SpawnerType {
 	/**
 	 * Get text from name
 	 *
-	 * @param name
+	 * @param arg
 	 * @return
 	 */
-	public static String getTextFromName(String name) {
+	public static String getTextFromName(String arg) {
+		String name = SpawnerFunctions.getSpawnerName(arg, "key");
+
 		if (name == null) {
 			return null;
 		}
-		return TEXT_NAME_MAP.get(convertAlias(name).toLowerCase());
+		return SpawnerFunctions.getSpawnerName(TEXT_NAME_MAP.get(SpawnerFunctions.convertAlias(name).toLowerCase()), "value");
 	}
 
 	/**
@@ -219,7 +231,7 @@ public enum SpawnerType {
 		if (id > Short.MAX_VALUE) {
 			return null;
 		}
-		return TEXT_ID_MAP.get((short) id);
+		return SpawnerFunctions.getSpawnerName(TEXT_ID_MAP.get((short) id), "value");
 	}
 
 	/**
@@ -232,46 +244,7 @@ public enum SpawnerType {
 		if (type == null) {
 			return null;
 		}
-		return TEXT_NAME_MAP.get(type.getName().toLowerCase());
-	}
-
-	/**
-	 * Check config for alias and return the entity type.
-	 * Returns input string if no aliases are found.
-	 * 
-	 * @param entity
-	 * @return String
-	 */
-	public static String convertAlias(String entity) {
-
-		ConfigurationSection aliases = Main.instance.config.getConfigurationSection("aliases");
-		for(String key : aliases.getKeys(false)) {
-			List<String> aliasList = aliases.getStringList(key);
-			for (String alias : aliasList) {
-				if (alias.equalsIgnoreCase(entity)) {
-					return key;
-				}
-			}
-		}
-
-		return entity;
-	}
-
-	public static boolean isValidEntity(String entity) {
-
-		// allow only valid entity types matched against aliases
-		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
-
-		// check valid_entities first
-		for (String entry : validEntities) {
-			if (entry.equalsIgnoreCase(entity)) {
-				return true;
-			}
-		}
-
-		// no valid_entities found so check for aliases
-		String aliasCheck = convertAlias(entity);
-		return !aliasCheck.isEmpty();
+		return SpawnerFunctions.getSpawnerName(TEXT_NAME_MAP.get(type.getName().toLowerCase()), "value");
 	}
 
 }

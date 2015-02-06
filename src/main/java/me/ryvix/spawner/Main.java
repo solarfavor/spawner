@@ -22,12 +22,15 @@ package me.ryvix.spawner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import me.ryvix.spawner.language.Language;
 import me.ryvix.spawner.metrics.Metrics;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,20 +44,6 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 
-		// create config file
-		try {
-			File configFile = new File(getDataFolder(), "config.yml");
-			if (!configFile.exists()) {
-				getDataFolder().mkdir();
-				this.getConfig().options().copyDefaults(true);
-				this.getConfig().options().header("Spawner config file\n");
-				this.getConfig().options().copyHeader(true);
-				this.saveConfig();
-			}
-
-		} catch (Exception e) {
-		}
-
 		// load config file
 		loadConfig();
 
@@ -64,7 +53,7 @@ public class Main extends JavaPlugin {
 		} catch (IOException e) {
 			// Failed to submit the stats :-(
 		}
-		
+
 		language = new Language("language.yml");
 		language.loadText();
 
@@ -94,20 +83,44 @@ public class Main extends JavaPlugin {
 		language = null;
 	}
 
+	private void updateConfig() {
+
+		getConfig().options().copyDefaults(true);
+
+		// add header
+		getConfig().options().header("Spawner config file\n\n");
+		getConfig().options().copyHeader(true);
+
+		// save file
+		saveConfig();
+
+	}
+
 	/**
 	 * Load config values
 	 *
 	 */
 	public void loadConfig() {
 
+		// create config file
+		File configFile = new File(this.getDataFolder(), "config.yml");
+		try {
+			if (!configFile.exists()) {
+				getDataFolder().mkdir();
+
+				updateConfig();
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Cannot make folder: {0}", getDataFolder());
+		}
+
 		// get config file
-		FileConfiguration getConfig = getConfig();
-		File configFile = new File(this.getDataFolder() + "/config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
+
+		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit");
 
 		// add defaults
 		if (!config.contains("valid_entities")) {
-			List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit");
 			getConfig().addDefault("valid_entities", validEntities);
 		}
 		if (config.contains("bad_entities")) {
@@ -122,29 +135,45 @@ public class Main extends JavaPlugin {
 		if (!config.contains("luck")) {
 			getConfig().addDefault("luck", 100);
 		}
-		if (!config.contains("frequency")) {
-			getConfig().addDefault("frequency", 100);
+		if (!config.contains("aliases")) {
+			List wither = new ArrayList();
+			wither.add("wither");
+			getConfig().addDefault("aliases.WitherBoss", wither);
+
+			List golems = new ArrayList();
+			golems.add("golem");
+			golems.add("irongolem");
+			getConfig().addDefault("aliases.VillagerGolem", golems);
+
+			List horse = new ArrayList();
+			horse.add("horse");
+			getConfig().addDefault("aliases.EntityHorse", horse);
 		}
 
-		/*if (!config.contains("limit")) {
-		 getConfig().addDefault("limit.members", "members");
-		 getConfig().addDefault("limit.vip", "vip");
-		 getConfig().addDefault("limit.elite", "elite");
-		 getConfig().addDefault("limit.godlike", "godlike");
-		 }
-		 if (!config.contains("allow_baby")) {
-		 getConfig().addDefault("allow_baby", "false");
-		 }
-		 if (!config.contains("allow_armour")) {
-		 getConfig().addDefault("allow_armour", "true");
-		 }*/
-		getConfig.options().copyDefaults(true);
+		ConfigurationSection frequency = getConfig().getConfigurationSection("frequency");
+		if (frequency == null) {
+			frequency = getConfig().createSection("frequency");
+		}
 
-		// add header
-		getConfig().options().header("Spawner config file\n\n");
-		getConfig().options().copyHeader(true);
+		ConfigurationSection drops = getConfig().getConfigurationSection("drops");
+		if (drops == null) {
+			drops = getConfig().createSection("drops");
+		}
 
-		// save file
-		saveConfig();
+		Iterator<String> iterator = validEntities.iterator();
+		while (iterator.hasNext()) {
+			String entity = iterator.next();
+			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity);
+			if (frequencyEntity == null) {
+				frequency.addDefault(entity, 100);
+			}
+			ConfigurationSection dropsEntity = drops.getConfigurationSection(entity);
+			if (dropsEntity == null) {
+				drops.addDefault(entity, new ArrayList());
+			}
+
+		}
+
+		updateConfig();
 	}
 }

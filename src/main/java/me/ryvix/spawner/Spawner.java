@@ -132,10 +132,10 @@ public class Spawner {
 	 */
 	public boolean setSpawner(Block target, String arg) {
 
-		if(!SpawnerType.isValidEntity(arg)) {
+		if (!SpawnerFunctions.isValidEntity(arg)) {
 			return false;
 		}
-		
+
 		SpawnerType type = SpawnerFunctions.getSpawnerType(arg);
 		if (type == null) {
 			return false;

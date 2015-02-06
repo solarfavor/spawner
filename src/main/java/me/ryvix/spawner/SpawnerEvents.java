@@ -27,6 +27,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,19 +51,20 @@ import org.bukkit.event.entity.SpawnerSpawnEvent;
 public class SpawnerEvents implements Listener {
 
 	/**
-	 * When a spawner is broken set the Lore to the spawner type.
+	 * When a spawner is broken.
 	 *
 	 * @param event Block break event
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	private void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getType() == Material.MOB_SPAWNER) {
-			
+
 			Player player = event.getPlayer();
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
+			SpawnerType spawnerType = SpawnerType.fromEntityType(csBlock.getSpawnedType());
+			String spawnerName = spawnerType.getName();
 			if (spawnerName == null) {
 				// prevent from breaking invalid spawners
 				Main.language.sendMessage(player, Main.language.getText(Keys.InvalidSpawner));
@@ -96,33 +98,78 @@ public class SpawnerEvents implements Listener {
 			}
 
 			// apply luck
-			if(!SpawnerFunctions.chance("luck")) {
+			if (!SpawnerFunctions.chance("luck")) {
 				return;
+			}
+
+			// check for drops
+			int amount;
+			short damage;
+			Byte data;
+			Material type;
+			boolean silk;
+			boolean doDrop = true;
+			ConfigurationSection drops = Main.instance.config.getConfigurationSection("drops");
+			for (String key : drops.getKeys(false)) {
+
+				if (key.equalsIgnoreCase(spawnerName)
+					&& drops.contains(key + ".type")
+					&& drops.contains(key + ".amount")
+					&& drops.contains(key + ".damage")
+					&& drops.contains(key + ".data")
+					&& drops.contains(key + ".silk")) {
+
+					type = Material.matchMaterial(drops.getString(key + ".type"));
+					amount = drops.getInt(key + ".amount");
+					damage = Short.parseShort(drops.getString(key + ".damage"));
+					data = Byte.parseByte(drops.getString(key + ".data"));
+					silk = drops.getBoolean(key + ".silk");
+
+					if ((silk && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) || (!silk && !player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
+
+						// don't drop spawner anymore
+						doDrop = false;
+
+						// stop exp
+						event.setExpToDrop(0);
+
+						// make an ItemStack
+						ItemStack dropItem = new ItemStack(type);
+						dropItem.setAmount(amount);
+						dropItem.setDurability(data);
+						dropItem.getData().setData(data);
+
+						// drop item
+						csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), dropItem);
+					}
+				}
 			}
 
 			// if they are in creative or have silk touch and not holding a spawner and not holding a spawner
 			if ((player.getGameMode() == GameMode.CREATIVE || (player.hasPermission("spawner.nosilk.all") || player.hasPermission("spawner.nosilk." + spawnerName) || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) && player.getItemInHand().getType() != Material.MOB_SPAWNER) {
 
-				// cancel event
-				event.setExpToDrop(0);
+				// drop spawner
+				if (doDrop) {
 
-				// make an ItemStack
-				ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
+					// stop exp
+					event.setExpToDrop(0);
 
-				// formatted name
-				String name = SpawnerFunctions.formatName(spawnerName);
+					// make an ItemStack
+					ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
-				// set lore
-				ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, name);
+					// set lore
+					ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
 
-				// drop item
-				csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
+					// drop item
+					csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
+
+				}
 			}
 		}
 	}
 
 	/**
-	 * When a spawner is placed set the type to the lore.
+	 * When a spawner is placed.
 	 *
 	 * @param event Block place event
 	 */
@@ -163,7 +210,7 @@ public class SpawnerEvents implements Listener {
 	}
 
 	/**
-	 * When a spawner is exploded set the Lore to the spawner type.
+	 * When a spawner is exploded.
 	 *
 	 * @param event Entity explode event
 	 */
@@ -192,6 +239,10 @@ public class SpawnerEvents implements Listener {
 		}
 	}
 
+	/**
+	 * When a spawner is picked up.
+	 * @param event 
+	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
@@ -207,6 +258,10 @@ public class SpawnerEvents implements Listener {
 		}
 	}
 
+	/**
+	 * When a spawner is held.
+	 * @param event 
+	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerItemHeld(PlayerItemHeldEvent event) {
 
@@ -231,6 +286,10 @@ public class SpawnerEvents implements Listener {
 		Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
+	/**
+	 * When a player interacts with a spawner.
+	 * @param event 
+	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if (!event.hasBlock()) {
@@ -238,16 +297,33 @@ public class SpawnerEvents implements Listener {
 		}
 
 		Block clicked = event.getClickedBlock();
+		Player player = event.getPlayer();
+
+		// if a mob spawner was clicked
 		if (clicked.getType().equals(Material.MOB_SPAWNER)) {
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if (event.getPlayer().hasPermission("spawner.get")) {
+
+			// check permission for spawner eggs
+			if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
+
+				// get spawner name
+				String spawnerName = SpawnerFunctions.getSpawnerName(player.getItemInHand(), "key");
+
+				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
+					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+					event.setCancelled(true);
+				}
+
+			} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+
+				// allow right-clicking a spawner to get the name of it
+				if (player.hasPermission("spawner.get")) {
 
 					CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
 
 					// formatted name
 					String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 
-					Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.SpawnerType, spawnerName));
+					Main.language.sendMessage(player, Main.language.getText(Keys.SpawnerType, spawnerName));
 				}
 			}
 		}
@@ -256,24 +332,24 @@ public class SpawnerEvents implements Listener {
 	/**
 	 * Spigot SpawnerSpawnEvent for spawn frequency chance
 	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse/Bukkit-Patches/0007-Define-EntitySpawnEvent-and-SpawnerSpawnEvent.patch
-	 * 
-	 * @param event 
+	 *
+	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onSpawnerSpawn(SpawnerSpawnEvent event) {
 
 		// apply spawn frequency chance
-		if(!SpawnerFunctions.chance("frequency." + event.getEntityType().name().toLowerCase())) {
+		if (!SpawnerFunctions.chance("frequency." + event.getEntityType().name())) {
 
 			// stop spawner event
 			event.setCancelled(true);
 		}
-	}	
-
+	}
 
 	/**
 	 * Prevent anvil renaming of spawners.
-	 * @param event 
+	 *
+	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClickEvent(InventoryClickEvent event) {
@@ -283,7 +359,14 @@ public class SpawnerEvents implements Listener {
 		if (event.getSlotType() != SlotType.RESULT) {
 			return;
 		}
-		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER) {
+		Player player = (Player) event.getWhoClicked();
+		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER && !player.hasPermission("spawner.anvil.spawners")) {
+			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+			event.setCancelled(true);
+			return;
+		}
+		if (event.getCurrentItem().getType() == Material.MONSTER_EGG && !player.hasPermission("spawner.anvil.eggs")) {
+			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
 			event.setCancelled(true);
 		}
 	}

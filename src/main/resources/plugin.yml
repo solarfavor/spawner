@@ -14,6 +14,9 @@ permissions:
     description: Gives all Spawner permissions.
     default: op
     children:
+      spawner.eggs.all: true
+      spawner.anvil.eggs: true
+      spawner.anvil.spawners: true
       spawner.remove: true
       spawner.reload: true
       spawner.set.all: true
@@ -25,6 +28,15 @@ permissions:
       spawner.nosilk.all: true
       spawner.list: true
       spawner.help: true
+  spawner.eggs.all:
+    description: Allows using eggs on spawners to change their entity type.
+    default: op
+  spawner.anvil.eggs:
+    description: Allows using anvils to rename spawner eggs.
+    default: op
+  spawner.anvil.spawners:
+    description: Allows using anvils to rename spawners.
+    default: op
   spawner.remove:
     description: Gives access to use /spawner remove <entity> [radius] to remove entities around the player's location.
     default: op
@@ -38,7 +50,7 @@ permissions:
     description: Gives access to use /spawner give <entity> to give yourself a spawner of the given entity type.
     default: op
   spawner.giveothers.all:
-    description: Gives access to use /spawner give <entity> to give others a spawner of the given entity type.
+    description: Gives access to use /spawner give <entity> <player> to give others a spawner of the given entity type.
     default: op
   spawner.get:
     description: Gives access to right-click a spawner or use /spawner to get the spawner entity type.

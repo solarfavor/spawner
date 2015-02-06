@@ -69,38 +69,90 @@ remove_radius: 10
 luck: 100
 
 # The frequency that spawns from spawners are successful.
-# lowercase version of EntityType
 frequency:
-    creeper: 100
-    skeleton: 100
-    spider: 100
-    giant: 100
-    zombie: 100
-    slime: 100
-    ghast: 100
-    pigzombie: 100
-    enderman: 100
-    cavespider: 100
-    silverfish: 100
-    blaze: 100
-    lavaslime: 100
-    enderdragon: 100
-    witherboss: 100
-    bat: 100
-    witch: 100
-    pig: 100
-    sheep: 100
-    cow: 100
-    chicken: 100
-    squid: 100
-    wolf: 100
-    mushroomcow: 100
-    snowman: 100
-    ozelot: 100
-    villagergolem: 100
-    entityhorse: 100
-    villager: 100
-    fireworksrocketentity: 100
-    guardian: 100
-    endermite: 100
-    rabbit: 100
+    Creeper: 100
+    Skeleton: 100
+    Spider: 100
+    Giant: 100
+    Zombie: 100
+    Slime: 100
+    Ghast: 100
+    PigZombie: 100
+    Enderman: 100
+    CaveSpider: 100
+    Silverfish: 100
+    Blaze: 100
+    LavaSlime: 100
+    EnderDragon: 100
+    WitherBoss: 100
+    Bat: 100
+    Witch: 100
+    Pig: 100
+    Sheep: 100
+    Cow: 100
+    Chicken: 100
+    Squid: 100
+    Wolf: 100
+    MushroomCow: 100
+    SnowMan: 100
+    Ozelot: 100
+    VillagerGolem: 100
+    EntityHorse: 100
+    Villager: 100
+    FireworksRocketEntity: 100
+    Guardian: 100
+    Endermite: 100
+    Rabbit: 100
+
+# Spawner drops
+#
+# type - Material type of the item to drop.
+# amount - number of items to drop.
+# damage - the amount of damage it has.
+# data - the data value. For dropping a mob egg this would be the entity id.
+# silk - true: silk touch for drops
+#        false: no silk touch and silk touch still drops a spawner
+#
+# Example:
+#
+#    Creeper:
+#        type: MONSTER_EGG
+#        amount: 1
+#        damage: 0
+#        data: 50
+#        silk: false
+#
+drops:
+    Creeper: []
+    Skeleton: []
+    Spider: []
+    Giant: []
+    Zombie: []
+    Slime: []
+    Ghast: []
+    PigZombie: []
+    Enderman: []
+    CaveSpider: []
+    Silverfish: []
+    Blaze: []
+    LavaSlime: []
+    EnderDragon: []
+    WitherBoss: []
+    Bat: []
+    Witch: []
+    Pig: []
+    Sheep: []
+    Cow: []
+    Chicken: []
+    Squid: []
+    Wolf: []
+    MushroomCow: []
+    SnowMan: []
+    Ozelot: []
+    VillagerGolem: []
+    EntityHorse: []
+    Villager: []
+    FireworksRocketEntity: []
+    Guardian: []
+    Endermite: []
+    Rabbit: []
