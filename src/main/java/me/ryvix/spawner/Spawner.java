@@ -39,7 +39,7 @@ public class Spawner {
 	 */
 	public ItemStack setName(ItemStack item, String name) {
 
-		ItemMeta im = (ItemMeta) item.getItemMeta();
+		ItemMeta im = item.getItemMeta();
 		im.setDisplayName(name);
 		item.setItemMeta(im);
 
@@ -54,7 +54,7 @@ public class Spawner {
 	 */
 	public String getName(ItemStack item) {
 
-		ItemMeta im = (ItemMeta) item.getItemMeta();
+		ItemMeta im = item.getItemMeta();
 
 		return im.getDisplayName();
 	}
@@ -68,7 +68,7 @@ public class Spawner {
 	 */
 	public ItemStack setLore(ItemStack item, String lore) {
 
-		ItemMeta im = (ItemMeta) item.getItemMeta();
+		ItemMeta im = item.getItemMeta();
 		if (lore.isEmpty() && im.hasLore()) {
 			im.setLore(null);
 		} else {
@@ -88,7 +88,7 @@ public class Spawner {
 	 */
 	public ItemStack addLore(ItemStack item, String lore) {
 
-		ItemMeta im = (ItemMeta) item.getItemMeta();
+		ItemMeta im = item.getItemMeta();
 		List<String> newLore = im.getLore();
 		newLore.add(lore);
 		im.setLore(newLore);
@@ -105,7 +105,7 @@ public class Spawner {
 	 */
 	public List<String> getLore(ItemStack item) {
 
-		ItemMeta im = (ItemMeta) item.getItemMeta();
+		ItemMeta im = item.getItemMeta();
 		if (im.hasLore()) {
 			return im.getLore();
 		}

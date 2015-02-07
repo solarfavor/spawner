@@ -157,7 +157,7 @@ public class SpawnerEvents implements Listener {
 					// make an ItemStack
 					ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
 
-					// set lore
+					// set name
 					ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
 
 					// drop item
@@ -241,7 +241,8 @@ public class SpawnerEvents implements Listener {
 
 	/**
 	 * When a spawner is picked up.
-	 * @param event 
+	 *
+	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
@@ -260,7 +261,8 @@ public class SpawnerEvents implements Listener {
 
 	/**
 	 * When a spawner is held.
-	 * @param event 
+	 *
+	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onPlayerItemHeld(PlayerItemHeldEvent event) {
@@ -288,7 +290,8 @@ public class SpawnerEvents implements Listener {
 
 	/**
 	 * When a player interacts with a spawner.
-	 * @param event 
+	 *
+	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onPlayerInteract(PlayerInteractEvent event) {

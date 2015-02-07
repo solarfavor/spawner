@@ -83,6 +83,9 @@ public class Main extends JavaPlugin {
 		language = null;
 	}
 
+	/**
+	 * Saves the config file.
+	 */
 	private void updateConfig() {
 
 		getConfig().options().copyDefaults(true);

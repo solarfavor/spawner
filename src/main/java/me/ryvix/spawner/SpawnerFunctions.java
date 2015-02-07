@@ -71,8 +71,9 @@ public class SpawnerFunctions {
 
 	/**
 	 * Checks if entity is valid.
+	 *
 	 * @param arg
-	 * @return 
+	 * @return
 	 */
 	public static boolean isValidEntity(String arg) {
 
@@ -144,21 +145,21 @@ public class SpawnerFunctions {
 		try {
 			FileInputStream fstream = new FileInputStream(fileName);
 
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			StringBuilder sb = new StringBuilder();
-			String line;
+			try (DataInputStream in = new DataInputStream(fstream)) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				StringBuilder sb = new StringBuilder();
+				String line;
 
-			while ((line = br.readLine()) != null) {
-				char check = line.charAt(0);
-				if (check == "#".charAt(0)) {
-					continue;
+				while ((line = br.readLine()) != null) {
+					char check = line.charAt(0);
+					if (check == "#".charAt(0)) {
+						continue;
+					}
+					sb.append(line);
+					sb.append("\n");
 				}
-				sb.append(line);
-				sb.append("\n");
+				contents = sb.toString();
 			}
-			contents = sb.toString();
-			in.close();
 		} catch (IOException e) {
 			Logger.getLogger(SpawnerFunctions.class.getName()).log(Level.SEVERE, null, e);
 		}
