@@ -1,6 +1,6 @@
 name: ${project.name}
 main: me.ryvix.spawner.Main
-version: ${project.version}-r${buildNumber}
+version: ${project.version}-${buildNumber}
 website: ${project.url}
 author: ryvix
 description: ${project.description}
