@@ -140,22 +140,29 @@ public class Main extends JavaPlugin {
 		// get config file
 		config = YamlConfiguration.loadConfiguration(configFile);
 
+		boolean updates = false;
+		
 		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit");
 
 		// add defaults
 		if (!config.contains("valid_entities")) {
+			updates = true;
 			getConfig().addDefault("valid_entities", validEntities);
 		}
 		if (config.contains("bad_entities")) {
+			updates = true;
 			getConfig().set("bad_entities", null);
 		}
 		if (!config.contains("protect_from_explosions")) {
+			updates = true;
 			getConfig().addDefault("protect_from_explosions", "true");
 		}
 		if (!config.contains("remove_radius")) {
+			updates = true;
 			getConfig().addDefault("remove_radius", 10);
 		}
 		if (!config.contains("luck")) {
+			updates = true;
 			getConfig().addDefault("luck", 100);
 		}
 		if (!config.contains("aliases")) {
@@ -180,11 +187,13 @@ public class Main extends JavaPlugin {
 
 		ConfigurationSection frequency = getConfig().getConfigurationSection("frequency");
 		if (frequency == null) {
+			updates = true;
 			frequency = getConfig().createSection("frequency");
 		}
 
 		ConfigurationSection drops = getConfig().getConfigurationSection("drops");
 		if (drops == null) {
+			updates = true;
 			drops = getConfig().createSection("drops");
 		}
 
@@ -193,15 +202,22 @@ public class Main extends JavaPlugin {
 			String entity = iterator.next();
 			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity);
 			if (frequencyEntity == null) {
+				updates = true;
 				frequency.addDefault(entity, 100);
 			}
 			ConfigurationSection dropsEntity = drops.getConfigurationSection(entity);
 			if (dropsEntity == null) {
+				updates = true;
 				drops.addDefault(entity, new ArrayList());
 			}
 
 		}
 
 		updateConfig();
+		
+		if(updates == true){
+			config = null;
+			config = YamlConfiguration.loadConfiguration(configFile);
+		}
 	}
 }
