@@ -34,8 +34,10 @@ import me.ryvix.spawner.language.Keys;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
@@ -113,25 +115,6 @@ public class SpawnerFunctions {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * Set the name to the spawner type
-	 *
-	 * @param spawner
-	 * @param name
-	 * @return
-	 */
-	public static ItemStack setSpawnerName(ItemStack spawner, String name) {
-		Spawner newSpawnerStack = new Spawner();
-		ItemStack newSpawner = newSpawnerStack.setName(spawner, ChatColor.translateAlternateColorCodes('&', name + " " + Main.language.getText(Keys.Spawner)));
-
-		// currently just to remove the old lore line
-		if (newSpawnerStack.getLore(newSpawner) != null) {
-			newSpawner = newSpawnerStack.setLore(newSpawner, "");
-		}
-
-		return newSpawner;
 	}
 
 	/**
@@ -225,6 +208,45 @@ public class SpawnerFunctions {
 	}
 
 	/**
+	 * Get the name from the durability/typeid value
+	 *
+	 * @param durability
+	 * @return Formated name
+	 */
+	public static String nameFromDurability(short durability) {
+
+		SpawnerType spawnerType = getSpawnerType(durability);
+		String spawnerName = "Pig";
+		if (spawnerType != null) {
+			spawnerName = SpawnerType.getTextFromType(spawnerType);
+		}
+
+		return spawnerName;
+	}
+
+	/**
+	 * Get the durability/typeid value from the EntityType
+	 *
+	 * @param entityType
+	 * @return short
+	 */
+	public static short durabilityFromEntityType(EntityType entityType) {
+		SpawnerType spawnerType = SpawnerType.fromEntityType(entityType);
+		return spawnerType.getTypeId();
+	}
+
+	/**
+	 * Return the SpawnerType of the given id/durability.
+	 *
+	 * @param d
+	 * @return
+	 */
+	static SpawnerType getSpawnerType(short d) {
+		SpawnerType type = SpawnerType.fromId(d);
+		return type;
+	}
+
+	/**
 	 * Return the SpawnerType of the given string.
 	 *
 	 * @param arg
@@ -241,18 +263,28 @@ public class SpawnerFunctions {
 	 * @return SpawnerType
 	 */
 	public static SpawnerType getSpawnerType(ItemStack itemStack) {
-		return SpawnerType.fromName(itemStack.getItemMeta().getDisplayName());
+		String name = getCorrectName(new Spawner(itemStack));
+		return SpawnerType.fromName(name);
 	}
 
 	/**
-	 * Get a spawner name.
+	 * Check if the display name is null and if so try to get the spawned type
+	 * from the given itemStack.
 	 *
 	 * @param itemStack
-	 * @param type
 	 * @return
 	 */
-	public static String getSpawnerName(ItemStack itemStack, String type) {
-		return getSpawnerName(itemStack.getItemMeta().getDisplayName(), type);
+	private static String getCorrectName(Spawner spawner) {
+		String inputName = spawner.getItemMeta().getDisplayName();
+		String outName = inputName;
+		if (inputName == null) {
+			outName = inputName;
+		}
+
+		if (outName == null) {
+			outName = "Pig";
+		}
+		return outName;
 	}
 
 	/**
@@ -264,19 +296,37 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static String getSpawnerName(String inputName, String type, boolean... convert) {
+		Spawner spawner = new Spawner(Material.MOB_SPAWNER, 1);
+		spawner.setName(inputName);
+
+		String outputName = getSpawnerName(spawner, type, convert);
+		return outputName;
+	}
+
+	/**
+	 * Get a spawner name.
+	 *
+	 * @param spawner
+	 * @param type
+	 * @param convert
+	 * @return
+	 */
+	public static String getSpawnerName(Spawner spawner, String type, boolean... convert) {
+		String inputName = getCorrectName(spawner);
 
 		String cleanName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', inputName));
 		String testName;
-		String returnName = cleanName;
-		if (!cleanName.contains(" ")) {
-			if (convert.length > 0 && convert[0] == false) {
+		String returnName = "default";
+
+		if (convert.length > 0 && convert[0] == false) {
+			if (cleanName.contains(" ") == false) {
 				testName = cleanName;
 			} else {
-				testName = convertAlias(cleanName);
+				testName = cleanName.split(" ")[0];
 			}
 		} else {
-			if (convert.length > 0 && convert[0] == false) {
-				testName = cleanName.split(" ")[0];
+			if (cleanName.contains(" ") == false) {
+				testName = convertAlias(cleanName);
 			} else {
 				testName = convertAlias(cleanName.split(" ")[0]);
 			}
@@ -290,6 +340,7 @@ public class SpawnerFunctions {
 			Map.Entry pairs = (Map.Entry) it.next();
 			String testKey = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getKey()));
 			String testValue = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getValue()));
+
 			if (type != null && (testValue.equalsIgnoreCase(testName) || testKey.equalsIgnoreCase(testName))) {
 				switch (type) {
 					case "value":
@@ -306,35 +357,92 @@ public class SpawnerFunctions {
 			it.remove();
 		}
 
+		// if still default spawner name try getting value from durability
+		if (returnName.equals("default")) {
+			returnName = nameFromDurability(spawner.getDurability());
+		}
+
 		return returnName;
 	}
 
 	/**
 	 * Reset spawner name.
 	 *
-	 * @param itemStack
+	 * @param spawner
 	 * @return
 	 */
-	public static String resetSpawnerName(ItemStack itemStack) {
-		return setSpawnerName(itemStack);
+	public static String resetSpawnerName(Spawner spawner) {
+		Spawner result = setSpawnerName(spawner, "");
+		return getSpawnerName(result, "value");
 	}
 
 	/**
-	 * Set spawner name.
+	 * Set the name to the spawner type
 	 *
-	 * @param itemStack
+	 * @param spawner
+	 * @param name
 	 * @return
 	 */
-	private static String setSpawnerName(ItemStack itemStack) {
-		String name = getSpawnerName(itemStack, "value");
-		Spawner newSpawnerStack = new Spawner();
-		ItemStack newSpawner = newSpawnerStack.setName(itemStack, ChatColor.translateAlternateColorCodes('&', name + " " + Main.language.getText(Keys.Spawner)));
+	public static Spawner setSpawnerName(Spawner spawner, String name) {
+		String spawnerName;
+		if (name.isEmpty()) {
+			spawnerName = getSpawnerName(spawner, "value");
+		} else {
+			spawnerName = getSpawnerName(name, "value");
+		}
+		spawnerName += " " + Main.language.getText(Keys.Spawner);
+		spawner.setName(ChatColor.translateAlternateColorCodes('&', spawnerName));
 
 		// currently just to remove the old lore line
-		if (newSpawnerStack.getLore(newSpawner) != null) {
-			newSpawnerStack.setLore(newSpawner, "");
+		if (spawner.getLore() != null) {
+			spawner.setLore("");
 		}
 
-		return name;
+		// also set durability
+		SpawnerType spawnerType = getSpawnerType(spawner);
+		spawner.setDurability(spawnerType.getTypeId());
+
+		return spawner;
 	}
+
+	/**
+	 * Get spawner EntityType
+	 *
+	 * @param target
+	 * @return
+	 */
+	public static SpawnerType getSpawner(Block target) {
+		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
+		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
+	}
+
+	/**
+	 * Set spawner type
+	 *
+	 * @param target
+	 * @param arg
+	 * @return
+	 */
+	public static boolean setSpawner(Block target, String arg) {
+		if (!SpawnerFunctions.isValidEntity(arg)) {
+			return false;
+		}
+		SpawnerType type = SpawnerFunctions.getSpawnerType(arg);
+		if (type == null) {
+			return false;
+		}
+		CreatureSpawner testSpawner;
+		try {
+			testSpawner = (CreatureSpawner) target.getState();
+		} catch (Exception e) {
+			return false;
+		}
+		if (testSpawner != null) {
+			testSpawner.setSpawnedType(type.getEntityType());
+			target.getState().update();
+			return true;
+		}
+		return false;
+	}
+
 }

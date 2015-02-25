@@ -22,39 +22,47 @@ package me.ryvix.spawner;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.bukkit.block.Block;
-import org.bukkit.block.CreatureSpawner;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class Spawner {
+public class Spawner extends ItemStack {
+
+	Spawner(Material material) {
+		super(material);
+	}
+
+	Spawner(Material material, int amount) {
+		super(material, amount);
+	}
+
+	Spawner(ItemStack item) {
+		super(item);
+	}
 
 	/**
 	 * Set display name
 	 *
-	 * @param item
 	 * @param name
 	 * @return
 	 */
-	public ItemStack setName(ItemStack item, String name) {
+	public ItemStack setName(String name) {
 
-		ItemMeta im = item.getItemMeta();
+		ItemMeta im = getItemMeta();
 		im.setDisplayName(name);
-		item.setItemMeta(im);
+		setItemMeta(im);
 
-		return item;
+		return this;
 	}
 
 	/**
 	 * Get display name
 	 *
-	 * @param item
 	 * @return
 	 */
-	public String getName(ItemStack item) {
+	public String getName() {
 
-		ItemMeta im = item.getItemMeta();
+		ItemMeta im = getItemMeta();
 
 		return im.getDisplayName();
 	}
@@ -62,100 +70,50 @@ public class Spawner {
 	/**
 	 * Set lore
 	 *
-	 * @param item
 	 * @param lore
 	 * @return
 	 */
-	public ItemStack setLore(ItemStack item, String lore) {
+	public Spawner setLore(String lore) {
 
-		ItemMeta im = item.getItemMeta();
+		ItemMeta im = getItemMeta();
 		if (lore.isEmpty() && im.hasLore()) {
 			im.setLore(null);
 		} else {
 			im.setLore(Arrays.asList(lore));
 		}
-		item.setItemMeta(im);
+		setItemMeta(im);
 
-		return item;
+		return this;
 	}
 
 	/**
 	 * Add lore
 	 *
-	 * @param item
 	 * @param lore
 	 * @return
 	 */
-	public ItemStack addLore(ItemStack item, String lore) {
+	public Spawner addLore(String lore) {
 
-		ItemMeta im = item.getItemMeta();
+		ItemMeta im = getItemMeta();
 		List<String> newLore = im.getLore();
 		newLore.add(lore);
 		im.setLore(newLore);
-		item.setItemMeta(im);
+		setItemMeta(im);
 
-		return item;
+		return this;
 	}
 
 	/**
 	 * Get lore
 	 *
-	 * @param item
 	 * @return
 	 */
-	public List<String> getLore(ItemStack item) {
+	public List<String> getLore() {
 
-		ItemMeta im = item.getItemMeta();
+		ItemMeta im = getItemMeta();
 		if (im.hasLore()) {
 			return im.getLore();
 		}
 		return null;
 	}
-
-	/**
-	 * Get spawner EntityType
-	 *
-	 * @param target
-	 * @return
-	 */
-	public SpawnerType getSpawner(Block target) {
-		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
-		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
-	}
-
-	/**
-	 * Set spawner type
-	 *
-	 * @param target
-	 * @param arg
-	 * @return
-	 */
-	public boolean setSpawner(Block target, String arg) {
-
-		if (!SpawnerFunctions.isValidEntity(arg)) {
-			return false;
-		}
-
-		SpawnerType type = SpawnerFunctions.getSpawnerType(arg);
-		if (type == null) {
-			return false;
-		}
-
-		CreatureSpawner testSpawner;
-		try {
-			testSpawner = (CreatureSpawner) target.getState();
-		} catch (Exception e) {
-			return false;
-		}
-
-		if (testSpawner != null) {
-			testSpawner.setSpawnedType(type.getEntityType());
-			target.getState().update();
-
-			return true;
-		}
-
-		return false;
-	}
-
 }

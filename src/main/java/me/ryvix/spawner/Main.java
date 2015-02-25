@@ -44,9 +44,7 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 
-		// load config file
-		loadConfig();
-
+		// metrics
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
@@ -54,6 +52,40 @@ public class Main extends JavaPlugin {
 			// Failed to submit the stats :-(
 		}
 
+		// load files
+		loadFiles();
+
+		// register events
+		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
+
+		// spawner
+		getCommand("spawner").setExecutor(new SpawnerCommands());
+	}
+
+	@Override
+	public void onDisable() {
+		config = null;
+		language = null;
+	}
+
+	/**
+	 * Reload Spawner's files from disk.
+	 */
+	public void reloadFiles() {
+		loadFiles();
+	}
+
+	/**
+	 * Load Spawner's files from disk.
+	 */
+	public void loadFiles() {
+
+		// load config file
+		config = null;
+		loadConfig();
+
+		// load language file
+		language = null;
 		language = new Language("language.yml");
 		language.loadText();
 
@@ -69,18 +101,6 @@ public class Main extends JavaPlugin {
 			}
 		} catch (Exception e) {
 		}
-
-		// register events
-		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
-
-		// spawner
-		getCommand("spawner").setExecutor(new SpawnerCommands());
-	}
-
-	@Override
-	public void onDisable() {
-		config = null;
-		language = null;
 	}
 
 	/**

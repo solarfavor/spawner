@@ -64,8 +64,7 @@ public class SpawnerCommands implements CommandExecutor {
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
 
 					if (target.getType() == Material.MOB_SPAWNER) {
-						Spawner spawner = new Spawner();
-						SpawnerType spawnerType = spawner.getSpawner(target);
+						SpawnerType spawnerType = SpawnerFunctions.getSpawner(target);
 						if (spawnerType == null) {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							// it's no longer a valid spawner for some reason
@@ -91,8 +90,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				// spawner reload
 				if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("spawner.reload")) {
-					Main.instance.getServer().getPluginManager().disablePlugin(Main.instance);
-					Main.instance.getServer().getPluginManager().enablePlugin(Main.instance);
+					Main.instance.reloadFiles();
 					Main.instance.getLogger().info("Reloaded");
 					if ((sender instanceof Player)) {
 						Main.language.sendMessage(sender, ChatColor.GREEN + "Spawner has been reloaded.");
@@ -132,10 +130,8 @@ public class SpawnerCommands implements CommandExecutor {
 					if (target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
 
-						Spawner spawner = new Spawner();
-
 						// setSpawner does it's own isValidEntity
-						if (spawner.setSpawner(target, args[0])) {
+						if (SpawnerFunctions.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
 							if (type == null) {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -166,7 +162,7 @@ public class SpawnerCommands implements CommandExecutor {
 								}
 
 								// make an ItemStack
-								ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, player.getItemInHand().getAmount());
+								Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, player.getItemInHand().getAmount());
 
 								// set name
 								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
@@ -219,7 +215,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
+							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, 1);
 
 							// set name
 							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
@@ -291,7 +287,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, Integer.parseInt(args[2]));
+							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, Integer.parseInt(args[2]));
 
 							// set name
 							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
@@ -336,7 +332,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// make an ItemStack
-							ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
+							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, 1);
 
 							// set name
 							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
@@ -442,7 +438,7 @@ public class SpawnerCommands implements CommandExecutor {
 									}
 
 									// make an ItemStack
-									ItemStack newSpawner = new ItemStack(Material.MOB_SPAWNER, Integer.parseInt(args[3]));
+									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, Integer.parseInt(args[3]));
 
 									// set name
 									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);

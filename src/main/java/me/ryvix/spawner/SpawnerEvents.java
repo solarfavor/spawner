@@ -155,7 +155,7 @@ public class SpawnerEvents implements Listener {
 					event.setExpToDrop(0);
 
 					// make an ItemStack
-					ItemStack dropSpawner = new ItemStack(Material.MOB_SPAWNER, 1);
+					Spawner dropSpawner = new Spawner(Material.MOB_SPAWNER, 1);
 
 					// set name
 					ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
@@ -248,10 +248,10 @@ public class SpawnerEvents implements Listener {
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
-			ItemStack itemStack = event.getItem().getItemStack();
-			itemStack.removeEnchantment(Enchantment.SILK_TOUCH);
+			Spawner spawner = new Spawner(event.getItem().getItemStack());
+			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
 
-			String spawnerName = SpawnerFunctions.resetSpawnerName(itemStack);
+			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
 
 			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawnerName));
 
@@ -270,22 +270,14 @@ public class SpawnerEvents implements Listener {
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
 			return;
 		}
-
 		ItemStack itemStack = event.getPlayer().getInventory().getItem(event.getNewSlot());
-		if (itemStack == null) {
-			return;
+
+		if (itemStack != null && itemStack.getType().equals(Material.MOB_SPAWNER)) {
+			Spawner spawner = new Spawner(itemStack);
+			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
+			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
+			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 		}
-
-		if (itemStack.getType().equals(Material.MOB_SPAWNER)) {
-			itemStack.removeEnchantment(Enchantment.SILK_TOUCH);
-		} else {
-			return;
-		}
-
-		String spawnerName = SpawnerFunctions.resetSpawnerName(itemStack);
-
-		// event.getPlayer().updateInventory();
-		Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 	}
 
 	/**
@@ -309,7 +301,7 @@ public class SpawnerEvents implements Listener {
 			if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
 
 				// get spawner name
-				String spawnerName = SpawnerFunctions.getSpawnerName(player.getItemInHand(), "key");
+				String spawnerName = SpawnerFunctions.getSpawnerName(new Spawner(player.getItemInHand()), "key");
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
 					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));

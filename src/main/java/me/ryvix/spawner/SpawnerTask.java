@@ -48,9 +48,7 @@ public class SpawnerTask implements Runnable {
 			return;
 		}
 
-		Spawner spawner = new Spawner();
-
-		if (spawner.setSpawner(block, spawnerType.getName())) {
+		if (SpawnerFunctions.setSpawner(block, spawnerType.getName())) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.PlacedSpawner, SpawnerType.getTextFromName(name)));
 		} else {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
