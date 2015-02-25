@@ -45,6 +45,9 @@ aliases:
         - golem
     EntityHorse:
         - horse
+    Ozelot:
+        - ocelot
+        - cat
 
 # Preventing spawners being destroyed by explosions.
 protect_from_explosions: true

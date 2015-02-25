@@ -171,6 +171,11 @@ public class Main extends JavaPlugin {
 			List horse = new ArrayList();
 			horse.add("horse");
 			getConfig().addDefault("aliases.EntityHorse", horse);
+
+			List ozelot = new ArrayList();
+			ozelot.add("ocelot");
+			ozelot.add("cat");
+			getConfig().addDefault("aliases.Ozelot", ozelot);
 		}
 
 		ConfigurationSection frequency = getConfig().getConfigurationSection("frequency");
