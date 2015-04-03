@@ -3,19 +3,19 @@
  * ability to change mob types.
  *
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Ryan Rhode
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -259,6 +259,7 @@ public class SpawnerEvents implements Listener {
 			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
 
 			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
+			spawner.updateDurability();
 
 			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawnerName));
 
@@ -282,7 +283,10 @@ public class SpawnerEvents implements Listener {
 		if (itemStack != null && itemStack.getType().equals(Material.MOB_SPAWNER)) {
 			Spawner spawner = new Spawner(itemStack);
 			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
+			spawner.updateDurability();
+
 			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
+
 			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
 		}
 	}

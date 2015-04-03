@@ -3,19 +3,19 @@
  * ability to change mob types.
  *
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Ryan Rhode
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -86,7 +86,8 @@ public class SpawnerFunctions {
 	 */
 	public static boolean isValidEntity(String arg) {
 
-		String entity = getSpawnerName(arg, "key");
+		// get the spawner name with no default value
+		String entity = getSpawnerName(arg, "key", 3);
 
 		// allow only valid entity types matched against aliases
 		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
@@ -102,6 +103,7 @@ public class SpawnerFunctions {
 			}
 		}
 
+		// TODO: test if necessary anymore, (test 2 or 3 for options arg for getSpawnerName above)
 		// no valid_entities found so check for aliases
 		String aliasCheck = convertAlias(entity);
 		return !aliasCheck.isEmpty();
@@ -218,14 +220,19 @@ public class SpawnerFunctions {
 	 * Get the name from the durability/typeid value
 	 *
 	 * @param durability
+	 * @param noDefault
 	 * @return Formated name
 	 */
-	public static String nameFromDurability(short durability) {
+	public static String nameFromDurability(short durability, boolean... noDefault) {
 
 		SpawnerType spawnerType = getSpawnerType(durability);
 		String spawnerName = "Pig";
 		if (spawnerType != null) {
 			spawnerName = SpawnerType.getTextFromType(spawnerType);
+		} else {
+			if (noDefault.length > 0 && noDefault[0] == true) {
+				return "";
+			}
 		}
 
 		return spawnerName;
@@ -279,9 +286,14 @@ public class SpawnerFunctions {
 	 * from the given itemStack.
 	 *
 	 * @param itemStack
+	 * @param options
+	 * 0 = default, no convert
+	 * unset, 1 = default, convert
+	 * 2 = no default, convert
+	 * 3 = no default, no convert
 	 * @return
 	 */
-	private static String getCorrectName(Spawner spawner) {
+	private static String getCorrectName(Spawner spawner, int... options) {
 		String inputName = spawner.getItemMeta().getDisplayName();
 		String outName = inputName;
 		if (inputName == null) {
@@ -289,7 +301,13 @@ public class SpawnerFunctions {
 		}
 
 		if (outName == null) {
-			outName = "Pig";
+
+			// optionally provide default
+			if (options.length > 0 && (options[0] > 1)) {
+				outName = "";
+			} else {
+				outName = "Pig";
+			}
 		}
 		return outName;
 	}
@@ -299,14 +317,18 @@ public class SpawnerFunctions {
 	 *
 	 * @param inputName
 	 * @param type
-	 * @param convert
+	 * @param options
+	 * 0 = default, no convert
+	 * unset, 1 = default, convert
+	 * 2 = no default, convert
+	 * 3 = no default, no convert
 	 * @return
 	 */
-	public static String getSpawnerName(String inputName, String type, boolean... convert) {
+	public static String getSpawnerName(String inputName, String type, int... options) {
 		Spawner spawner = new Spawner(Material.MOB_SPAWNER, 1);
 		spawner.setName(inputName);
 
-		String outputName = getSpawnerName(spawner, type, convert);
+		String outputName = getSpawnerName(spawner, type, options);
 		return outputName;
 	}
 
@@ -315,17 +337,21 @@ public class SpawnerFunctions {
 	 *
 	 * @param spawner
 	 * @param type
-	 * @param convert
+	 * @param options
+	 * 0 = default, no convert
+	 * unset, 1 = default, convert
+	 * 2 = no default, convert
+	 * 3 = no default, no convert
 	 * @return
 	 */
-	public static String getSpawnerName(Spawner spawner, String type, boolean... convert) {
-		String inputName = getCorrectName(spawner);
+	public static String getSpawnerName(Spawner spawner, String type, int... options) {
+		String inputName = getCorrectName(spawner, options);
 
 		String cleanName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', inputName));
 		String testName;
 		String returnName = "default";
 
-		if (convert.length > 0 && convert[0] == false) {
+		if (options.length > 0 && (options[0] == 0 || options[0] == 3)) {
 			if (cleanName.contains(" ") == false) {
 				testName = cleanName;
 			} else {
@@ -366,7 +392,14 @@ public class SpawnerFunctions {
 
 		// if still default spawner name try getting value from durability
 		if (returnName.equals("default")) {
-			returnName = nameFromDurability(spawner.getDurability());
+			if (options.length > 0 && (options[0] > 1)) {
+				returnName = nameFromDurability(spawner.getDurability(), true);
+				if (returnName.isEmpty()) {
+					returnName = testName;
+				}
+			} else {
+				returnName = nameFromDurability(spawner.getDurability());
+			}
 		}
 
 		return returnName;
