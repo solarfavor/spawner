@@ -251,7 +251,7 @@ public class SpawnerEvents implements Listener {
 	 *
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
