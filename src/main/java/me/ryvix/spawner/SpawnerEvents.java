@@ -51,6 +51,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.SpawnEgg;
 
 // Build against Spigot not Bukkit or you will get an error here.
 import org.bukkit.event.entity.SpawnerSpawnEvent;
@@ -313,7 +314,8 @@ public class SpawnerEvents implements Listener {
 			if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
 
 				// get spawner name
-				String spawnerName = SpawnerFunctions.getSpawnerName(new Spawner(player.getItemInHand()), "key");
+				SpawnEgg spawnEgg = (SpawnEgg) player.getItemInHand().getData();
+				String spawnerName = SpawnerFunctions.getSpawnerName(spawnEgg.getSpawnedType().name(), "key");
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
 					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
