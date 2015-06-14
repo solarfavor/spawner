@@ -106,6 +106,7 @@ public class SpawnerEvents implements Listener {
 
 			// apply luck
 			if (!SpawnerFunctions.chance("luck")) {
+				// don't drop anything at all
 				return;
 			}
 
