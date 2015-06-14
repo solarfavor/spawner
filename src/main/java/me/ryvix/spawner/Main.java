@@ -206,7 +206,7 @@ public class Main extends JavaPlugin {
 
 		Iterator<String> iterator = validEntities.iterator();
 		while (iterator.hasNext()) {
-			String entity = iterator.next();
+			String entity = iterator.next().toLowerCase();
 			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity);
 			if (frequencyEntity == null) {
 				updates = true;

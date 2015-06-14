@@ -346,7 +346,7 @@ public class SpawnerEvents implements Listener {
 	public void onSpawnerSpawn(SpawnerSpawnEvent event) {
 
 		// apply spawn frequency chance
-		if (!SpawnerFunctions.chance("frequency." + event.getEntityType().name())) {
+		if (!SpawnerFunctions.chance("frequency." + event.getEntityType().name().toLowerCase())) {
 
 			// stop spawner event
 			event.setCancelled(true);
