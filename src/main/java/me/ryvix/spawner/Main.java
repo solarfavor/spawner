@@ -206,11 +206,11 @@ public class Main extends JavaPlugin {
 
 		Iterator<String> iterator = validEntities.iterator();
 		while (iterator.hasNext()) {
-			String entity = iterator.next().toLowerCase();
-			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity);
+			String entity = iterator.next();
+			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity.toLowerCase());
 			if (frequencyEntity == null) {
 				updates = true;
-				frequency.addDefault(entity, 100);
+				frequency.addDefault(entity.toLowerCase(), 100);
 			}
 			ConfigurationSection dropsEntity = drops.getConfigurationSection(entity);
 			if (dropsEntity == null) {
