@@ -346,9 +346,10 @@ public class SpawnerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	public void onSpawnerSpawn(SpawnerSpawnEvent event) {
+		String spawnerText = SpawnerType.getUnformattedTextFromName(event.getEntityType().name());
 
 		// apply spawn frequency chance
-		if (!SpawnerFunctions.chance("frequency." + event.getEntityType().name().toLowerCase())) {
+		if (!SpawnerFunctions.chance("frequency." + spawnerText)) {
 
 			// stop spawner event
 			event.setCancelled(true);

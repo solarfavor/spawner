@@ -229,6 +229,19 @@ public enum SpawnerType {
 	}
 
 	/**
+	 * Get unformatted text from name
+	 *
+	 * @param arg
+	 * @return
+	 */
+	public static String getUnformattedTextFromName(String arg) {
+		if (arg == null) {
+			return null;
+		}
+		return SpawnerType.valueOf(arg).getName().toLowerCase();
+	}
+
+	/**
 	 * Get text from id/durability
 	 *
 	 * @param id
