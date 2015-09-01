@@ -366,9 +366,17 @@ public class SpawnerFunctions {
 		}
 
 		// Translate spawner language keys
-		ConfigurationSection csEntities = Main.language.getConfig().getConfigurationSection("Entities");
-		Map<String, Object> entityValues = csEntities.getValues(false);
-		Iterator it = entityValues.entrySet().iterator();
+		ConfigurationSection csEntities;
+		Map<String, Object> entityValues;
+		Iterator it;
+		try {
+			csEntities = Main.language.getConfig().getConfigurationSection("Entities");
+			entityValues = csEntities.getValues(false);
+			it = entityValues.entrySet().iterator();
+		} catch (Exception e) {
+			Main.instance.getLogger().severe("Your Spawner language.yml is missing entities in the Entities section. This is probably because it's outdated. You can update it manually or to install a new one you can rename or delete the old one. Once finished run the command /spawner reload");
+			return null;
+		}
 		while (it.hasNext()) {
 			Map.Entry pairs = (Map.Entry) it.next();
 			String testKey = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getKey()));

@@ -162,7 +162,7 @@ public class Language {
 	 * Add default values
 	 */
 	private void setValues() {
-		if (!config.isSet("Language")) {
+		if (!config.contains("Language")) {
 			updates = true;
 			config.createSection("Language");
 		}
@@ -243,7 +243,7 @@ public class Language {
 			config.set("Language.Spawner", "&aspawner");
 		}
 
-		if (!config.isSet("Entities")) {
+		if (!config.contains("Entities")) {
 			updates = true;
 			config.createSection("Entities");
 		}
