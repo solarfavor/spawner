@@ -225,27 +225,60 @@ public class SpawnerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
-		if (!Main.instance.config.getBoolean("protect_from_explosions")) {
-			return;
-		}
 
-		if (event.blockList().isEmpty()) {
-			return;
-		}
+		if (Main.instance.config.getBoolean("protect_from_explosions")) {
+			// protect_from_explosions
 
-		// check if explosion causes a spawner to be broken
-		Iterator<Block> iterator = event.blockList().iterator();
-		while (iterator.hasNext()) {
-
-			// if block was a spawner cancel explosion event
-			// this gives a natural protection around spawners
-			if (iterator.next().getType() == Material.MOB_SPAWNER) {
-				event.setCancelled(true);
-
-				// return since we already found a spawner
+			if (event.blockList().isEmpty()) {
 				return;
 			}
+
+			// check if explosion causes a spawner to be broken
+			Iterator<Block> iterator = event.blockList().iterator();
+			while (iterator.hasNext()) {
+
+				// if block was a spawner cancel explosion event
+				// this gives a natural protection around spawners
+				if (iterator.next().getType() == Material.MOB_SPAWNER) {
+					event.setCancelled(true);
+
+					// return since we already found a spawner
+					return;
+				}
+			}
+
+		} else if (Main.instance.config.getBoolean("drop_from_explosions")) {
+			// drop_from_explosions
+
+			if (event.blockList().isEmpty()) {
+				return;
+			}
+
+			// check if explosion causes any spawners to drop
+			Iterator<Block> iterator = event.blockList().iterator();
+			while (iterator.hasNext()) {
+
+				// if block was a spawner drop a spawner
+				if (iterator.next().getType() == Material.MOB_SPAWNER) {
+					
+					CreatureSpawner csBlock = (CreatureSpawner) iterator.next().getState();
+					SpawnerType spawnerType = SpawnerType.fromEntityType(csBlock.getSpawnedType());
+					String spawnerName = spawnerType.getName();
+					if (spawnerName != null) {
+
+						// make an ItemStack
+						Spawner dropSpawner = new Spawner(Material.MOB_SPAWNER, 1);
+
+						// set name
+						ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
+
+						// drop item
+						csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
+					}
+				}
+			}
 		}
+
 	}
 
 	/**

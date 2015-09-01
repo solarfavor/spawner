@@ -164,6 +164,10 @@ public class Main extends JavaPlugin {
 			updates = true;
 			getConfig().addDefault("protect_from_explosions", "true");
 		}
+		if (!config.contains("drop_from_explosions")) {
+			updates = true;
+			getConfig().addDefault("drop_from_explosions", "false");
+		}
 		if (!config.contains("remove_radius")) {
 			updates = true;
 			getConfig().addDefault("remove_radius", 10);

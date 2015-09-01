@@ -52,6 +52,10 @@ aliases:
 # Preventing spawners being destroyed by explosions.
 protect_from_explosions: true
 
+# Spawners will drop from explosions.
+# protect_from_explosions must be false for this to work.
+drop_from_explosions: false
+
 # Default radius when removing entities with /spawner remove <entity>
 remove_radius: 10
 
