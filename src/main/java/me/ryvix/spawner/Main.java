@@ -85,7 +85,6 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Load Spawner's files from disk.
-	 * @param reload
 	 */
 	public void loadFiles() {
 
