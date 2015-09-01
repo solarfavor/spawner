@@ -60,7 +60,7 @@ public class Main extends JavaPlugin {
 		}
 
 		// load files
-		loadFiles(false);
+		loadFiles();
 
 		// register events
 		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
@@ -79,19 +79,17 @@ public class Main extends JavaPlugin {
 	 * Reload Spawner's files from disk.
 	 */
 	public void reloadFiles() {
-		loadFiles(true);
+		reloadConfig();
+		loadFiles();
 	}
 
 	/**
 	 * Load Spawner's files from disk.
 	 * @param reload
 	 */
-	public void loadFiles(boolean reload) {
+	public void loadFiles() {
 
 		// load config file
-		if(reload) {
-			reloadConfig();
-		}
 		config = null;
 		loadConfig();
 
