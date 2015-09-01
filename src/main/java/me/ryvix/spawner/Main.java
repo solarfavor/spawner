@@ -91,10 +91,9 @@ public class Main extends JavaPlugin {
 		// load config file
 		if(reload) {
 			reloadConfig();
-		} else {
-			config = null;
-			loadConfig();
 		}
+		config = null;
+		loadConfig();
 
 		// load language file
 		language = null;
