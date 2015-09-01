@@ -103,10 +103,9 @@ public class SpawnerFunctions {
 			}
 		}
 
-		// TODO: test if necessary anymore, (test 2 or 3 for options arg for getSpawnerName above)
 		// no valid_entities found so check for aliases
 		String aliasCheck = convertAlias(entity);
-		return !aliasCheck.isEmpty();
+		return !(!aliasCheck.isEmpty() && aliasCheck.equalsIgnoreCase(arg));
 	}
 
 	/**
