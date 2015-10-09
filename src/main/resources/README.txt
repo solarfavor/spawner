@@ -26,5 +26,9 @@
  *
  */
 
-Bukkit plugin page: http://dev.bukkit.org/bukkit-plugins/spawner/
-Source: https://github.com/ty2u/spawner
+[Bukkit plugin page](http://dev.bukkit.org/bukkit-plugins/spawner/)
+[Source](https://github.com/ty2u/spawner)
+[Documentation](https://github.com/ty2u/spawner/wiki/Main)
+[Creating a Spawner From Another Plugin](https://github.com/ty2u/spawner/wiki/Creating-a-Spawner-From-Another-Plugin)
+[EntityTypes and Item Durabilities](https://github.com/ty2u/spawner/wiki/EntityTypes-and-Item-Durabilities)
+[TODO](https://github.com/ty2u/spawner/wiki/TODO)
