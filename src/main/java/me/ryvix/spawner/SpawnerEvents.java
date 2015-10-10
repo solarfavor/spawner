@@ -259,10 +259,10 @@ public class SpawnerEvents implements Listener {
 			while (iterator.hasNext()) {
 
 				// if block was a spawner drop a spawner
-				if (iterator.next().getType() == Material.MOB_SPAWNER) {
+				Block block = iterator.next();
+				if (block.getType().equals(Material.MOB_SPAWNER)) {
 					
-					CreatureSpawner csBlock = (CreatureSpawner) iterator.next().getState();
-					SpawnerType spawnerType = SpawnerType.fromEntityType(csBlock.getSpawnedType());
+					SpawnerType spawnerType = SpawnerFunctions.getSpawner(block);
 					String spawnerName = spawnerType.getName();
 					if (spawnerName != null) {
 
@@ -273,7 +273,7 @@ public class SpawnerEvents implements Listener {
 						ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
 
 						// drop item
-						csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
+						block.getWorld().dropItemNaturally(block.getLocation(), newSpawner);
 					}
 				}
 			}

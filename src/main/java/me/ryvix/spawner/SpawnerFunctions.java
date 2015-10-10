@@ -460,7 +460,12 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static SpawnerType getSpawner(Block target) {
-		CreatureSpawner testSpawner = (CreatureSpawner) target.getState();
+		CreatureSpawner testSpawner;
+		try {
+			testSpawner = (CreatureSpawner) target.getState();
+		} catch (Exception e) {
+			return SpawnerType.PIG;
+		}
 		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
 	}
 
