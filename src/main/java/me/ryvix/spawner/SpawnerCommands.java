@@ -37,6 +37,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class SpawnerCommands implements CommandExecutor {
@@ -152,10 +153,17 @@ public class SpawnerCommands implements CommandExecutor {
 						}
 
 					} else {
-						if (player.getItemInHand().getType() == Material.MOB_SPAWNER) {
-							// otherwise set type of spawner in players hand
+						// otherwise set type of spawner in players hand
+
+						PlayerInventory playerInv = player.getInventory();
+						ItemStack itemInMainHand = playerInv.getItemInMainHand();
+						ItemStack itemInOffHand = playerInv.getItemInOffHand();
+
+						if (itemInMainHand.getType() == Material.MOB_SPAWNER || itemInOffHand.getType() == Material.MOB_SPAWNER) {
+							
 							if (SpawnerFunctions.isValidEntity(args[0])) {
 								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
+								
 								if (spawnerType == null) {
 									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 									return true;
@@ -167,14 +175,28 @@ public class SpawnerCommands implements CommandExecutor {
 									return true;
 								}
 
-								// make an ItemStack
-								Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, player.getItemInHand().getAmount());
+								if (itemInMainHand.getType() == Material.MOB_SPAWNER) {
 
-								// set name
-								newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+									// make an ItemStack
+									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, itemInMainHand.getAmount());
 
-								// set item in players hand
-								player.setItemInHand(newSpawner);
+									// set name
+									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+
+									// set item in players hand
+									playerInv.setItemInMainHand(newSpawner);
+
+								} else if (itemInOffHand.getType() == Material.MOB_SPAWNER) {
+
+									// make an ItemStack
+									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, itemInOffHand.getAmount());
+
+									// set name
+									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+
+									// set item in players hand
+									playerInv.setItemInOffHand(newSpawner);
+								}
 
 								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 								return true;

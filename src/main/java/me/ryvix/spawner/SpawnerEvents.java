@@ -55,6 +55,7 @@ import org.bukkit.material.SpawnEgg;
 
 // Build against Spigot not Bukkit or you will get an error here.
 import org.bukkit.event.entity.SpawnerSpawnEvent;
+import org.bukkit.inventory.PlayerInventory;
 
 public class SpawnerEvents implements Listener {
 
@@ -134,7 +135,11 @@ public class SpawnerEvents implements Listener {
 					data = Byte.parseByte(drops.getString(key + ".data"));
 					silk = drops.getBoolean(key + ".silk");
 
-					if ((silk && player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH)) || (!silk && !player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
+					PlayerInventory playerInv = player.getInventory();
+					if ((silk && playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
+						(silk && playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
+						(!silk && !playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
+						(!silk && !playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
 
 						// don't drop spawner anymore
 						doDrop = false;
@@ -200,10 +205,13 @@ public class SpawnerEvents implements Listener {
 				return;
 			}
 
-			int itemId = player.getInventory().getHeldItemSlot();
-			ItemStack itemStack = player.getInventory().getItem(itemId);
-
-			SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(itemStack);
+			SpawnerType spawnerType = null;
+			PlayerInventory playerInv = player.getInventory();
+			if (playerInv.getItemInMainHand().getType().equals(Material.MOB_SPAWNER)) {
+				spawnerType = SpawnerFunctions.getSpawnerType(playerInv.getItemInMainHand());
+			} else if (playerInv.getItemInOffHand().getType().equals(Material.MOB_SPAWNER)) {
+				spawnerType = SpawnerFunctions.getSpawnerType(playerInv.getItemInOffHand());
+			}
 
 			short spawnerId = 90;
 			String name;
@@ -344,10 +352,25 @@ public class SpawnerEvents implements Listener {
 		if (clicked.getType().equals(Material.MOB_SPAWNER)) {
 
 			// check permission for spawner eggs
-			if (player.getItemInHand().getType().equals(Material.MONSTER_EGG)) {
+			PlayerInventory playerInv = player.getInventory();
+			if (playerInv.getItemInMainHand().getType().equals(Material.MONSTER_EGG)) {
 
 				// get spawner name
-				SpawnEgg spawnEgg = (SpawnEgg) player.getItemInHand().getData();
+				SpawnEgg spawnEgg = (SpawnEgg) playerInv.getItemInMainHand().getData();
+
+				//https://hub.spigotmc.org/jira/browse/SPIGOT-1592
+				String spawnerName = SpawnerFunctions.getSpawnerName(spawnEgg.getSpawnedType().name(), "key");
+
+				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
+					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+					event.setCancelled(true);
+				}
+			} else if (playerInv.getItemInOffHand().getType().equals(Material.MONSTER_EGG)) {
+
+				// get spawner name
+				SpawnEgg spawnEgg = (SpawnEgg) playerInv.getItemInOffHand().getData();
+
+				//https://hub.spigotmc.org/jira/browse/SPIGOT-1592
 				String spawnerName = SpawnerFunctions.getSpawnerName(spawnEgg.getSpawnedType().name(), "key");
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
