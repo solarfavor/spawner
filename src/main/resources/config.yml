@@ -35,6 +35,7 @@ valid_entities:
 - Guardian
 - Endermite
 - Rabbit
+- Shulker
 
 # Aliases
 aliases:
@@ -110,6 +111,7 @@ frequency:
     guardian: 100
     endermite: 100
     rabbit: 100
+    shulker: 100
 
 # Spawner drops
 #
@@ -163,3 +165,4 @@ drops:
     Guardian: []
     Endermite: []
     Rabbit: []
+    Shulker: []
