@@ -467,6 +467,10 @@ public class Language {
 			updates = true;
 			config.set("Entities.Rabbit", "&eRabbit");
 		}
+		if (!config.isSet("Entities.Shulker")) {
+			updates = true;
+			config.set("Entities.Shulker", "&eShulker");
+		}
 	}
 
 	/**
