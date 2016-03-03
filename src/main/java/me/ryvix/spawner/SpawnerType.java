@@ -93,7 +93,8 @@ public enum SpawnerType {
 	FIREWORK("FireworksRocketEntity", Main.language.getEntity(Entities.FireworksRocketEntity), 22),
 	GUARDIAN("Guardian", Main.language.getEntity(Entities.Guardian), 68),
 	ENDERMITE("Endermite", Main.language.getEntity(Entities.Endermite), 67),
-	RABBIT("Rabbit", Main.language.getEntity(Entities.Rabbit), 101);
+	RABBIT("Rabbit", Main.language.getEntity(Entities.Rabbit), 101),
+	SHULKER("Shulker", Main.language.getEntity(Entities.Shulker), 69);
 
 	private String name;
 	private String text;
