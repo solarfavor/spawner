@@ -28,6 +28,8 @@
 package me.ryvix.spawner;
 
 import java.util.Iterator;
+import me.ryvix.spawner.nbt.NBTItem;
+import me.ryvix.spawner.nbt.NBTReflectionUtil;
 import me.ryvix.spawner.language.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -136,10 +138,10 @@ public class SpawnerEvents implements Listener {
 					silk = drops.getBoolean(key + ".silk");
 
 					PlayerInventory playerInv = player.getInventory();
-					if ((silk && playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
-						(silk && playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
-						(!silk && !playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) ||
-						(!silk && !playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
+					if ((silk && playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
+						|| (silk && playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))
+						|| (!silk && !playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
+						|| (!silk && !playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
 
 						// don't drop spawner anymore
 						doDrop = false;
@@ -269,7 +271,7 @@ public class SpawnerEvents implements Listener {
 				// if block was a spawner drop a spawner
 				Block block = iterator.next();
 				if (block.getType().equals(Material.MOB_SPAWNER)) {
-					
+
 					SpawnerType spawnerType = SpawnerFunctions.getSpawner(block);
 					String spawnerName = spawnerType.getName();
 					if (spawnerName != null) {
@@ -352,31 +354,15 @@ public class SpawnerEvents implements Listener {
 		if (clicked.getType().equals(Material.MOB_SPAWNER)) {
 
 			// check permission for spawner eggs
+			ItemStack itemInHand = null;
 			PlayerInventory playerInv = player.getInventory();
 			if (playerInv.getItemInMainHand().getType().equals(Material.MONSTER_EGG)) {
 
-				// get spawner name
-				SpawnEgg spawnEgg = (SpawnEgg) playerInv.getItemInMainHand().getData();
+				itemInHand = playerInv.getItemInMainHand();
 
-				//https://hub.spigotmc.org/jira/browse/SPIGOT-1592
-				String spawnerName = SpawnerFunctions.getSpawnerName(spawnEgg.getSpawnedType().name(), "key");
-
-				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
-					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
-					event.setCancelled(true);
-				}
 			} else if (playerInv.getItemInOffHand().getType().equals(Material.MONSTER_EGG)) {
 
-				// get spawner name
-				SpawnEgg spawnEgg = (SpawnEgg) playerInv.getItemInOffHand().getData();
-
-				//https://hub.spigotmc.org/jira/browse/SPIGOT-1592
-				String spawnerName = SpawnerFunctions.getSpawnerName(spawnEgg.getSpawnedType().name(), "key");
-
-				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
-					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
-					event.setCancelled(true);
-				}
+				itemInHand = playerInv.getItemInOffHand();
 
 			} else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
@@ -389,6 +375,42 @@ public class SpawnerEvents implements Listener {
 					String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 
 					Main.language.sendMessage(player, Main.language.getText(Keys.SpawnerType, spawnerName));
+				}
+			}
+
+			if (itemInHand != null) {
+
+				String eggId = "";
+
+				// get spawner name
+				try {
+
+					NBTItem nbtItem = new NBTItem(itemInHand);
+
+					if (!nbtItem.hasKey("EntityTag")) {
+						Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
+						event.setCancelled(true);
+						return;
+					}
+					
+					eggId = NBTReflectionUtil.fromCompound(itemInHand, "EntityTag", "String", "id");
+
+				} catch (Exception ex) {
+					Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
+					event.setCancelled(true);
+					return;
+				}
+
+				String spawnerName = SpawnerFunctions.getSpawnerName(eggId, "key");
+
+				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
+					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+					event.setCancelled(true);
+
+				} else {
+					// formatted name
+					spawnerName = SpawnerType.getTextFromName(eggId);
+					Main.language.sendMessage(player, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 				}
 			}
 		}
