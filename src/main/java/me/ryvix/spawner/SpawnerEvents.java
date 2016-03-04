@@ -53,7 +53,6 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.SpawnEgg;
 
 // Build against Spigot not Bukkit or you will get an error here.
 import org.bukkit.event.entity.SpawnerSpawnEvent;
