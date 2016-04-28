@@ -28,8 +28,6 @@
 package me.ryvix.spawner;
 
 import java.util.Iterator;
-import me.ryvix.spawner.nbt.NBTItem;
-import me.ryvix.spawner.nbt.NBTReflectionUtil;
 import me.ryvix.spawner.language.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -53,10 +51,10 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 // Build against Spigot not Bukkit or you will get an error here.
 import org.bukkit.event.entity.SpawnerSpawnEvent;
-import org.bukkit.inventory.PlayerInventory;
 
 public class SpawnerEvents implements Listener {
 
@@ -379,26 +377,7 @@ public class SpawnerEvents implements Listener {
 
 			if (itemInHand != null) {
 
-				String eggId = "";
-
-				// get spawner name
-				try {
-
-					NBTItem nbtItem = new NBTItem(itemInHand);
-
-					if (!nbtItem.hasKey("EntityTag")) {
-						Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
-						event.setCancelled(true);
-						return;
-					}
-					
-					eggId = NBTReflectionUtil.fromCompound(itemInHand, "EntityTag", "String", "id");
-
-				} catch (Exception ex) {
-					Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
-					event.setCancelled(true);
-					return;
-				}
+				String eggId = SpawnerFunctions.getEntityNameFromSpawnEgg(itemInHand);
 
 				String spawnerName = SpawnerFunctions.getSpawnerName(eggId, "key");
 

@@ -38,11 +38,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ryvix.spawner.language.Keys;
+import net.minecraft.server.v1_9_R1.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -50,6 +52,32 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
 public class SpawnerFunctions {
+
+	/**
+	 * Get data using NMS
+	 *
+	 * @url https://www.spigotmc.org/threads/tutorial-mob-eggs-in-1-9.131474/
+	 * @param is
+	 * @return
+	 */
+	public static String getEntityNameFromSpawnEgg(ItemStack is) {
+		if (!(is.getType() == Material.MONSTER_EGG)) {
+			return null;
+		}
+
+		net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
+
+		if (nmsStack.hasTag()) {
+			NBTTagCompound tag = nmsStack.getTag();
+			NBTTagCompound entityTag = tag.getCompound("EntityTag");
+			if (entityTag.hasKey("id")) {
+				String entity = entityTag.getString("id");
+				return entity;
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Check config for alias and return the entity type.
@@ -229,10 +257,8 @@ public class SpawnerFunctions {
 		String spawnerName = "Pig";
 		if (spawnerType != null) {
 			spawnerName = SpawnerType.getTextFromType(spawnerType);
-		} else {
-			if (noDefault.length > 0 && noDefault[0] == true) {
-				return "";
-			}
+		} else if (noDefault.length > 0 && noDefault[0] == true) {
+			return "";
 		}
 
 		return spawnerName;
@@ -357,12 +383,10 @@ public class SpawnerFunctions {
 			} else {
 				testName = cleanName.split(" ")[0];
 			}
+		} else if (cleanName.contains(" ") == false) {
+			testName = convertAlias(cleanName);
 		} else {
-			if (cleanName.contains(" ") == false) {
-				testName = convertAlias(cleanName);
-			} else {
-				testName = convertAlias(cleanName.split(" ")[0]);
-			}
+			testName = convertAlias(cleanName.split(" ")[0]);
 		}
 
 		// Translate spawner language keys
