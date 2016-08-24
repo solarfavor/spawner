@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- * 
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- * 
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,13 +23,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
 
 import me.ryvix.spawner.language.Keys;
 import org.apache.commons.lang.StringUtils;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,9 +44,9 @@ public class SpawnerCommands implements CommandExecutor {
 	 * "/command" command controller.
 	 *
 	 * @param sender Command sender
-	 * @param cmd Command
-	 * @param label Command alias
-	 * @param args Other parameters
+	 * @param cmd    Command
+	 * @param label  Command alias
+	 * @param args   Other parameters
 	 * @return boolean
 	 */
 	@Override
@@ -56,7 +54,6 @@ public class SpawnerCommands implements CommandExecutor {
 		String cName = cmd.getName();
 
 		if (cName.equalsIgnoreCase("spawner")) {
-
 			if (args.length == 0) {
 
 				// catch console
@@ -69,7 +66,6 @@ public class SpawnerCommands implements CommandExecutor {
 				if (sender.hasPermission("spawner.get")) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
-
 					if (target.getType() == Material.MOB_SPAWNER) {
 						SpawnerType spawnerType = SpawnerFunctions.getSpawner(target);
 						if (spawnerType == null) {
@@ -133,7 +129,6 @@ public class SpawnerCommands implements CommandExecutor {
 				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerFunctions.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
-
 					if (target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
 
@@ -141,14 +136,14 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
 							if (type == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.language.sendMessage(sender, "1 " + Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
 							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, type));
 							return true;
 
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.language.sendMessage(sender, "2 " + Main.language.getText(Keys.InvalidSpawner));
 							return true;
 						}
 
@@ -160,39 +155,33 @@ public class SpawnerCommands implements CommandExecutor {
 						ItemStack itemInOffHand = playerInv.getItemInOffHand();
 
 						if (itemInMainHand.getType() == Material.MOB_SPAWNER || itemInOffHand.getType() == Material.MOB_SPAWNER) {
-							
+
 							if (SpawnerFunctions.isValidEntity(args[0])) {
 								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
-								
+
 								if (spawnerType == null) {
-									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									Main.language.sendMessage(sender, "3 " + Main.language.getText(Keys.InvalidSpawner));
 									return true;
 								}
 
 								String spawnerName = SpawnerType.getTextFromName(args[0]);
 								if (spawnerName == null) {
-									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									Main.language.sendMessage(sender, "4 " + Main.language.getText(Keys.InvalidSpawner));
 									return true;
 								}
 
 								if (itemInMainHand.getType() == Material.MOB_SPAWNER) {
 
-									// make an ItemStack
-									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, itemInMainHand.getAmount());
-
-									// set name
-									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+									// get a new spawner
+									Spawner newSpawner = new Spawner(spawnerName, itemInMainHand.getAmount());
 
 									// set item in players hand
 									playerInv.setItemInMainHand(newSpawner);
 
 								} else if (itemInOffHand.getType() == Material.MOB_SPAWNER) {
 
-									// make an ItemStack
-									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, itemInOffHand.getAmount());
-
-									// set name
-									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+									// get a new spawner
+									Spawner newSpawner = new Spawner(spawnerName, itemInOffHand.getAmount());
 
 									// set item in players hand
 									playerInv.setItemInOffHand(newSpawner);
@@ -201,7 +190,7 @@ public class SpawnerCommands implements CommandExecutor {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 								return true;
 							} else {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.language.sendMessage(sender, "5 " + Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
 						} else {
@@ -242,11 +231,8 @@ public class SpawnerCommands implements CommandExecutor {
 								return true;
 							}
 
-							// make an ItemStack
-							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, 1);
-
-							// set name
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+							// get a new spawner
+							Spawner newSpawner = new Spawner(spawnerName);
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -277,7 +263,7 @@ public class SpawnerCommands implements CommandExecutor {
 					// /spawner remove <entity>
 					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
-							int radius = Main.instance.config.getInt("remove_radius");
+							int radius = Main.instance.getSpawnerConfig().getInt("remove_radius");
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
 							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
@@ -314,11 +300,8 @@ public class SpawnerCommands implements CommandExecutor {
 								return true;
 							}
 
-							// make an ItemStack
-							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, Integer.parseInt(args[2]));
-
-							// set name
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+							// get a new spawner
+							Spawner newSpawner = new Spawner(spawnerName, Integer.parseInt(args[2]));
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -359,11 +342,8 @@ public class SpawnerCommands implements CommandExecutor {
 								return true;
 							}
 
-							// make an ItemStack
-							Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, 1);
-
-							// set name
-							newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
+							// get a new spawner
+							Spawner newSpawner = new Spawner(spawnerName);
 
 							Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 							if (targetPlayer != null) {
@@ -446,7 +426,7 @@ public class SpawnerCommands implements CommandExecutor {
 					// amount parameter for give to others
 					if (StringUtils.isNumeric(args[3])) {
 						if (sender.hasPermission("spawner.giveothers.all") || sender.hasPermission("spawner.giveothers." + SpawnerFunctions.convertAlias(args[1]).toLowerCase())) {
-						// give a spawner
+							// give a spawner
 							// /spawner give <entity> <player> <amount>
 
 							// amount parameter for give to self
@@ -465,11 +445,10 @@ public class SpawnerCommands implements CommandExecutor {
 										return true;
 									}
 
-									// make an ItemStack
-									Spawner newSpawner = new Spawner(Material.MOB_SPAWNER, Integer.parseInt(args[3]));
+									// get a new spawner
+									Spawner newSpawner = new Spawner(spawnerName, Integer.parseInt(args[3]));
 
 									// set name
-									newSpawner = SpawnerFunctions.setSpawnerName(newSpawner, spawnerName);
 									Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 									if (targetPlayer != null) {
 

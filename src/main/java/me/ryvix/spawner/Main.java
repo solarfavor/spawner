@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- * 
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- * 
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,33 +23,42 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
 import me.ryvix.spawner.language.Language;
 import me.ryvix.spawner.metrics.Metrics;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+
 public class Main extends JavaPlugin {
 
-	public Configuration config;
+	private static Configuration config;
 	public static Language language;
 	public static Main instance;
+
+	private static String nmsVersion;
 
 	@Override
 	public void onEnable() {
 		instance = this;
+
+		setNmsVersion();
+
+		if (!ArrayUtils.contains(compatibleVersions(), getNmsVersion())) {
+			getLogger().log(Level.SEVERE, "Incompatible server version, disabling plugin! Must be: " + compatibleVersions().toString());
+			getPluginLoader().disablePlugin(this);
+		}
 
 		// metrics
 		try {
@@ -86,7 +95,7 @@ public class Main extends JavaPlugin {
 	/**
 	 * Load Spawner's files from disk.
 	 */
-	public void loadFiles() {
+	private void loadFiles() {
 
 		// load config file
 		config = null;
@@ -129,9 +138,8 @@ public class Main extends JavaPlugin {
 
 	/**
 	 * Load config values
-	 *
 	 */
-	public void loadConfig() {
+	private void loadConfig() {
 
 		// create config file
 		File configFile = new File(this.getDataFolder(), "config.yml");
@@ -149,8 +157,8 @@ public class Main extends JavaPlugin {
 		config = YamlConfiguration.loadConfiguration(configFile);
 
 		boolean updates = false;
-		
-		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit", "Shulker");
+
+		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit", "Shulker", "PolarBear");
 
 		// add defaults
 		if (!config.contains("valid_entities")) {
@@ -163,11 +171,11 @@ public class Main extends JavaPlugin {
 		}
 		if (!config.contains("protect_from_explosions")) {
 			updates = true;
-			getConfig().addDefault("protect_from_explosions", "true");
+			getConfig().addDefault("protect_from_explosions", true);
 		}
 		if (!config.contains("drop_from_explosions")) {
 			updates = true;
-			getConfig().addDefault("drop_from_explosions", "false");
+			getConfig().addDefault("drop_from_explosions", false);
 		}
 		if (!config.contains("remove_radius")) {
 			updates = true;
@@ -178,20 +186,20 @@ public class Main extends JavaPlugin {
 			getConfig().addDefault("luck", 100);
 		}
 		if (!config.contains("aliases")) {
-			List wither = new ArrayList();
+			List<String> wither = new ArrayList<>();
 			wither.add("wither");
 			getConfig().addDefault("aliases.WitherBoss", wither);
 
-			List golems = new ArrayList();
+			List<String> golems = new ArrayList<>();
 			golems.add("golem");
 			golems.add("irongolem");
 			getConfig().addDefault("aliases.VillagerGolem", golems);
 
-			List horse = new ArrayList();
+			List<String> horse = new ArrayList<>();
 			horse.add("horse");
 			getConfig().addDefault("aliases.EntityHorse", horse);
 
-			List ozelot = new ArrayList();
+			List<String> ozelot = new ArrayList<>();
 			ozelot.add("ocelot");
 			ozelot.add("cat");
 			getConfig().addDefault("aliases.Ozelot", ozelot);
@@ -209,9 +217,7 @@ public class Main extends JavaPlugin {
 			drops = getConfig().createSection("drops");
 		}
 
-		Iterator<String> iterator = validEntities.iterator();
-		while (iterator.hasNext()) {
-			String entity = iterator.next();
+		for (String entity : validEntities) {
 			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity.toLowerCase());
 			if (frequencyEntity == null) {
 				updates = true;
@@ -222,14 +228,52 @@ public class Main extends JavaPlugin {
 				updates = true;
 				drops.addDefault(entity, new ArrayList());
 			}
+		}
 
+		if (!config.contains("break_into_inventory")) {
+			updates = true;
+			getConfig().addDefault("break_into_inventory", false);
+		}
+		if (!config.contains("prevent_break_if_inventory_full")) {
+			updates = true;
+			getConfig().addDefault("prevent_break_if_inventory_full", false);
 		}
 
 		updateConfig();
-		
-		if(updates == true){
+
+		if (updates) {
 			config = null;
 			config = YamlConfiguration.loadConfiguration(configFile);
 		}
 	}
+
+	public static Configuration getSpawnerConfig() {
+		return config;
+	}
+
+	private String[] compatibleVersions() {
+		String[] versions = {"v1_10_R1"};
+		return versions;
+	}
+
+	public static String getNmsVersion() {
+		return nmsVersion;
+	}
+
+	public void setNmsVersion() {
+		String pkg = getServer().getClass().getPackage().getName();
+		nmsVersion = pkg.substring(pkg.lastIndexOf(".") + 1);
+	}
+
+	/*public String getNMS(String name) {
+		return "net.minecraft.server." + nmsVersion + "." + name;
+	}
+
+	public String getCB(String name) {
+		return "org.bukkit.craftbukkit." + nmsVersion + "." + name;
+	}
+
+	public static String getNMSClass(String className) {
+		return "me.ryvix.spawner." + getNmsVersion() + "." + className + "_" + getNmsVersion();
+	}*/
 }

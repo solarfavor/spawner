@@ -36,6 +36,7 @@ valid_entities:
 - Endermite
 - Rabbit
 - Shulker
+- PolarBear
 
 # Aliases
 aliases:
@@ -59,19 +60,6 @@ drop_from_explosions: false
 
 # Default radius when removing entities with /spawner remove <entity>
 remove_radius: 10
-
-# Adds ability to limit the number of spawners a player can give/change.
-#limit:
-#    members: 0
-#    vip: 3
-#    elite: 6
-#    godlike: 10
-
-# Allow baby spawners (not yet implemented)
-#allow_baby: false
-
-# Allow mobs to wear armour (not yet implemented)
-#allow_armour: true
 
 # If less than 100 it will have a chance to not drop a spawner.
 luck: 100
@@ -112,6 +100,7 @@ frequency:
     endermite: 100
     rabbit: 100
     shulker: 100
+    polarbear: 100
 
 # Spawner drops
 #
@@ -166,3 +155,12 @@ drops:
     Endermite: []
     Rabbit: []
     Shulker: []
+    PolarBear: []
+
+# Place spawners directly into player inventories when broken?
+# true or false
+break_into_inventory: false
+
+# If break_into_inventory is true then you can use this option to control whether to prevent breaking spawners when the
+# player's inventory is full. Set to false to drop the spawner on the ground. Set to true to prevent breaking.
+prevent_break_if_inventory_full: false

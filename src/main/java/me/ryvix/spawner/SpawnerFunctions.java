@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,49 +23,47 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.ryvix.spawner.language.Keys;
-import net.minecraft.server.v1_9_R1.NBTTagCompound;
-import org.bukkit.ChatColor;
+import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_9_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
+import java.io.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * Useful Info:
+ * http://minecraft.gamepedia.com/Tutorials/Command_NBT_tags
+ * http://minecraft.gamepedia.com/Monster_Spawner
+ */
 public class SpawnerFunctions {
 
 	/**
-	 * Get data using NMS
+	 * Get entity name from spawn egg using NBT
 	 *
-	 * @url https://www.spigotmc.org/threads/tutorial-mob-eggs-in-1-9.131474/
 	 * @param is
 	 * @return
+	 * @url https://www.spigotmc.org/threads/tutorial-mob-eggs-in-1-9.131474/
 	 */
 	public static String getEntityNameFromSpawnEgg(ItemStack is) {
 		if (!(is.getType() == Material.MONSTER_EGG)) {
 			return null;
 		}
 
-		net.minecraft.server.v1_9_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
+		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
 
 		if (nmsStack.hasTag()) {
 			NBTTagCompound tag = nmsStack.getTag();
@@ -88,7 +86,7 @@ public class SpawnerFunctions {
 	 */
 	public static String convertAlias(String entity) {
 
-		ConfigurationSection aliases = Main.instance.config.getConfigurationSection("aliases");
+		ConfigurationSection aliases = Main.instance.getSpawnerConfig().getConfigurationSection("aliases");
 
 		if (aliases == null) {
 			return entity;
@@ -118,7 +116,7 @@ public class SpawnerFunctions {
 		String entity = getSpawnerName(arg, "key", 3);
 
 		// allow only valid entity types matched against aliases
-		List<String> validEntities = Main.instance.config.getStringList("valid_entities");
+		List<String> validEntities = Main.instance.getSpawnerConfig().getStringList("valid_entities");
 
 		if (validEntities == null) {
 			return false;
@@ -144,7 +142,7 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static boolean chance(String configKey) {
-		int chance = Main.instance.config.getInt(configKey);
+		int chance = Main.instance.getSpawnerConfig().getInt(configKey);
 		if (chance < 100) {
 			int randomChance = (int) (Math.random() * 100);
 			if (chance < randomChance) {
@@ -254,11 +252,20 @@ public class SpawnerFunctions {
 	public static String nameFromDurability(short durability, boolean... noDefault) {
 
 		SpawnerType spawnerType = getSpawnerType(durability);
-		String spawnerName = "Pig";
+		String spawnerName = "default";
 		if (spawnerType != null) {
 			spawnerName = SpawnerType.getTextFromType(spawnerType);
 		} else if (noDefault.length > 0 && noDefault[0] == true) {
 			return "";
+		}
+
+		if (spawnerName.equals("default")) {
+			try {
+				throw new Pigception();
+			} catch (Pigception p) {
+				p.printStackTrace();
+			}
+			spawnerName = "Pig";
 		}
 
 		return spawnerName;
@@ -299,43 +306,23 @@ public class SpawnerFunctions {
 	/**
 	 * Return the SpawnerType of the given ItemStack.
 	 *
-	 * @param itemStack
+	 * @param spawner
 	 * @return SpawnerType
 	 */
-	public static SpawnerType getSpawnerType(ItemStack itemStack) {
-		String name = getCorrectName(new Spawner(itemStack));
+	public static SpawnerType getSpawnerType(Spawner spawner) {
+		String name = spawner.getEntityNameFromSpawnerNBT();
 		return SpawnerType.fromName(name);
 	}
 
 	/**
-	 * Check if the display name is null and if so try to get the spawned type
-	 * from the given itemStack.
+	 * Return the SpawnerType of the given ItemStack.
 	 *
-	 * @param itemStack
-	 * @param options
-	 * 0 = default, no convert
-	 * unset, 1 = default, convert
-	 * 2 = no default, convert
-	 * 3 = no default, no convert
-	 * @return
+	 * @param is
+	 * @return SpawnerType
 	 */
-	private static String getCorrectName(Spawner spawner, int... options) {
-		String inputName = spawner.getItemMeta().getDisplayName();
-		String outName = inputName;
-		if (inputName == null) {
-			outName = inputName;
-		}
-
-		if (outName == null) {
-
-			// optionally provide default
-			if (options.length > 0 && (options[0] > 1)) {
-				outName = "";
-			} else {
-				outName = "Pig";
-			}
-		}
-		return outName;
+	public static SpawnerType getSpawnerType(ItemStack is) {
+		Spawner spawner = new Spawner(is);
+		return spawner.getSpawnerType();
 	}
 
 	/**
@@ -343,16 +330,14 @@ public class SpawnerFunctions {
 	 *
 	 * @param inputName
 	 * @param type
-	 * @param options
-	 * 0 = default, no convert
-	 * unset, 1 = default, convert
-	 * 2 = no default, convert
-	 * 3 = no default, no convert
+	 * @param options   0 = default, no convert
+	 *                  unset, 1 = default, convert
+	 *                  2 = no default, convert
+	 *                  3 = no default, no convert
 	 * @return
 	 */
 	public static String getSpawnerName(String inputName, String type, int... options) {
-		Spawner spawner = new Spawner(Material.MOB_SPAWNER, 1);
-		spawner.setName(inputName);
+		Spawner spawner = new Spawner(Material.MOB_SPAWNER, 1, inputName);
 
 		String outputName = getSpawnerName(spawner, type, options);
 		return outputName;
@@ -363,64 +348,29 @@ public class SpawnerFunctions {
 	 *
 	 * @param spawner
 	 * @param type
-	 * @param options
-	 * 0 = default, no convert
-	 * unset, 1 = default, convert
-	 * 2 = no default, convert
-	 * 3 = no default, no convert
+	 * @param options 0 = default, no convert
+	 *                unset, 1 = default, convert
+	 *                2 = no default, convert
+	 *                3 = no default, no convert
 	 * @return
 	 */
 	public static String getSpawnerName(Spawner spawner, String type, int... options) {
-		String inputName = getCorrectName(spawner, options);
-
-		String cleanName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', inputName));
+		String cleanName = spawner.getEntityName();
 		String testName;
-		String returnName = "default";
-
+		String returnName;
 		if (options.length > 0 && (options[0] == 0 || options[0] == 3)) {
-			if (cleanName.contains(" ") == false) {
+			if (!cleanName.contains(" ")) {
 				testName = cleanName;
 			} else {
 				testName = cleanName.split(" ")[0];
 			}
-		} else if (cleanName.contains(" ") == false) {
+		} else if (!cleanName.contains(" ")) {
 			testName = convertAlias(cleanName);
 		} else {
 			testName = convertAlias(cleanName.split(" ")[0]);
 		}
 
-		// Translate spawner language keys
-		ConfigurationSection csEntities;
-		Map<String, Object> entityValues;
-		Iterator it;
-		try {
-			csEntities = Main.language.getConfig().getConfigurationSection("Entities");
-			entityValues = csEntities.getValues(false);
-			it = entityValues.entrySet().iterator();
-		} catch (Exception e) {
-			Main.instance.getLogger().severe("Your Spawner language.yml is missing entities in the Entities section. This is probably because it's outdated. You can update it manually or to install a new one you can rename or delete the old one. Once finished run the command /spawner reload");
-			return null;
-		}
-		while (it.hasNext()) {
-			Map.Entry pairs = (Map.Entry) it.next();
-			String testKey = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getKey()));
-			String testValue = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getValue()));
-
-			if (type != null && (testValue.equalsIgnoreCase(testName) || testKey.equalsIgnoreCase(testName))) {
-				switch (type) {
-					case "value":
-						returnName = "" + pairs.getValue();
-						break;
-					case "key":
-						returnName = testKey;
-						break;
-				}
-				it.remove();
-				break;
-			}
-
-			it.remove();
-		}
+		returnName = Main.language.translateEntity(testName, type);
 
 		// if still default spawner name try getting value from durability
 		if (returnName.equals("default")) {
@@ -438,46 +388,6 @@ public class SpawnerFunctions {
 	}
 
 	/**
-	 * Reset spawner name.
-	 *
-	 * @param spawner
-	 * @return
-	 */
-	public static String resetSpawnerName(Spawner spawner) {
-		Spawner result = setSpawnerName(spawner, "");
-		return getSpawnerName(result, "value");
-	}
-
-	/**
-	 * Set the name to the spawner type
-	 *
-	 * @param spawner
-	 * @param name
-	 * @return
-	 */
-	public static Spawner setSpawnerName(Spawner spawner, String name) {
-		String spawnerName;
-		if (name.isEmpty()) {
-			spawnerName = getSpawnerName(spawner, "value");
-		} else {
-			spawnerName = getSpawnerName(name, "value");
-		}
-		spawnerName += " " + Main.language.getText(Keys.Spawner);
-		spawner.setName(ChatColor.translateAlternateColorCodes('&', spawnerName));
-
-		// currently just to remove the old lore line
-		if (spawner.getLore() != null) {
-			spawner.setLore("");
-		}
-
-		// also set durability
-		SpawnerType spawnerType = getSpawnerType(spawner);
-		spawner.setDurability(spawnerType.getTypeId());
-
-		return spawner;
-	}
-
-	/**
 	 * Get spawner EntityType
 	 *
 	 * @param target
@@ -488,6 +398,11 @@ public class SpawnerFunctions {
 		try {
 			testSpawner = (CreatureSpawner) target.getState();
 		} catch (Exception e) {
+			try {
+				throw new Pigception();
+			} catch (Pigception p) {
+				p.printStackTrace();
+			}
 			return SpawnerType.PIG;
 		}
 		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
@@ -521,5 +436,4 @@ public class SpawnerFunctions {
 		}
 		return false;
 	}
-
 }

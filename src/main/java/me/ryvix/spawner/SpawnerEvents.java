@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- *
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- *
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,11 +23,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
 
-import java.util.Iterator;
 import me.ryvix.spawner.language.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -44,6 +42,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -54,7 +53,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 // Build against Spigot not Bukkit or you will get an error here.
-import org.bukkit.event.entity.SpawnerSpawnEvent;
 
 public class SpawnerEvents implements Listener {
 
@@ -111,34 +109,45 @@ public class SpawnerEvents implements Listener {
 				return;
 			}
 
+			PlayerInventory playerInv = player.getInventory();
+
+			boolean break_into_inventory = Main.getSpawnerConfig().getBoolean("break_into_inventory");
+			boolean prevent_break_if_inventory_full = Main.getSpawnerConfig().getBoolean("prevent_break_if_inventory_full");
+
+			// prevent break if inv is full and prevent_break_if_inventory_full option is true
+			if (break_into_inventory && playerInv.firstEmpty() == -1 && prevent_break_if_inventory_full) {
+				Main.language.sendMessage(player, Main.language.getText(Keys.InventoryFull));
+				event.setCancelled(true);
+				return;
+			}
+
 			// check for drops
 			int amount;
-			short damage;
+			//short damage;
 			Byte data;
 			Material type;
 			boolean silk;
 			boolean doDrop = true;
-			ConfigurationSection drops = Main.instance.config.getConfigurationSection("drops");
+			ConfigurationSection drops = Main.getSpawnerConfig().getConfigurationSection("drops");
 			for (String key : drops.getKeys(false)) {
 
 				if (key.equalsIgnoreCase(spawnerName)
-					&& drops.contains(key + ".type")
-					&& drops.contains(key + ".amount")
-					&& drops.contains(key + ".damage")
-					&& drops.contains(key + ".data")
-					&& drops.contains(key + ".silk")) {
+						&& drops.contains(key + ".type")
+						&& drops.contains(key + ".amount")
+						&& drops.contains(key + ".damage")
+						&& drops.contains(key + ".data")
+						&& drops.contains(key + ".silk")) {
 
 					type = Material.matchMaterial(drops.getString(key + ".type"));
 					amount = drops.getInt(key + ".amount");
-					damage = Short.parseShort(drops.getString(key + ".damage"));
+					//damage = Short.parseShort(drops.getString(key + ".damage"));
 					data = Byte.parseByte(drops.getString(key + ".data"));
 					silk = drops.getBoolean(key + ".silk");
 
-					PlayerInventory playerInv = player.getInventory();
 					if ((silk && playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-						|| (silk && playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))
-						|| (!silk && !playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
-						|| (!silk && !playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
+							|| (silk && playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))
+							|| (!silk && !playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH))
+							|| (!silk && !playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))) {
 
 						// don't drop spawner anymore
 						doDrop = false;
@@ -152,14 +161,29 @@ public class SpawnerEvents implements Listener {
 						dropItem.setDurability(data);
 						dropItem.getData().setData(data);
 
-						// drop item
-						csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), dropItem);
+						if (!break_into_inventory || (playerInv.firstEmpty() == -1 && !prevent_break_if_inventory_full)) {
+							// drop item
+							csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), dropItem);
+						} else {
+							// place into free inventory slot
+							int invSlot = playerInv.firstEmpty();
+							playerInv.setItem(invSlot, dropItem);
+
+							// make sure to show the player the item
+							player.updateInventory();
+						}
 					}
 				}
 			}
 
-			// if they are in creative or have silk touch and not holding a spawner and not holding a spawner
-			if ((player.getGameMode() == GameMode.CREATIVE || (player.hasPermission("spawner.nosilk.all") || player.hasPermission("spawner.nosilk." + spawnerName) || player.getItemInHand().containsEnchantment(Enchantment.SILK_TOUCH))) && player.getItemInHand().getType() != Material.MOB_SPAWNER) {
+			// if they are in creative or have silk touch and not holding a spawner
+			if ((player.getGameMode() == GameMode.CREATIVE
+					|| (player.hasPermission("spawner.nosilk.all")
+					|| player.hasPermission("spawner.nosilk." + spawnerName)
+					|| (playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)
+					|| playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))))
+					&& (playerInv.getItemInMainHand().getType() != Material.MOB_SPAWNER
+					|| playerInv.getItemInOffHand().getType() != Material.MOB_SPAWNER)) {
 
 				// drop spawner
 				if (doDrop) {
@@ -167,14 +191,21 @@ public class SpawnerEvents implements Listener {
 					// stop exp
 					event.setExpToDrop(0);
 
-					// make an ItemStack
-					Spawner dropSpawner = new Spawner(Material.MOB_SPAWNER, 1);
+					// get a new spawner
+					Spawner dropSpawner = new Spawner(spawnerName);
 
-					// set name
-					ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
+					// drop spawner
+					if (!break_into_inventory || (playerInv.firstEmpty() == -1 && !prevent_break_if_inventory_full)) {
+						// drop spawner
+						csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), dropSpawner);
+					} else {
+						// place into free inventory slot
+						int invSlot = playerInv.firstEmpty();
+						playerInv.setItem(invSlot, dropSpawner);
 
-					// drop item
-					csBlock.getWorld().dropItemNaturally(csBlock.getLocation(), newSpawner);
+						// make sure to show the player the spawner
+						player.updateInventory();
+					}
 
 				}
 			}
@@ -194,34 +225,38 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			String spawnerName = SpawnerType.fromEntityType(csBlock.getSpawnedType()).getName();
+			SpawnerType spawnerTypeBlock = SpawnerType.fromEntityType(csBlock.getSpawnedType());
+			String spawnerName = spawnerTypeBlock.getName();
+
+			SpawnerType spawnerTypeHand = null;
+			PlayerInventory playerInv = player.getInventory();
+			if (playerInv.getItemInMainHand().getType().equals(Material.MOB_SPAWNER)) {
+				spawnerTypeHand = SpawnerFunctions.getSpawnerType(playerInv.getItemInMainHand());
+			} else if (playerInv.getItemInOffHand().getType().equals(Material.MOB_SPAWNER)) {
+				spawnerTypeHand = SpawnerFunctions.getSpawnerType(playerInv.getItemInOffHand());
+			}
+
+			String name;
+			if (spawnerTypeHand == null) {
+				name = "Pig";
+				try {
+					throw new Pigception();
+				} catch (Pigception p) {
+					p.printStackTrace();
+				}
+			} else {
+				name = spawnerTypeHand.getName();
+			}
 
 			// if they can't place it cancel event
 			if (!player.hasPermission("spawner.place.all") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
 				event.setCancelled(true);
-				String spawnerText = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
+				String spawnerText = SpawnerType.getTextFromType(spawnerTypeBlock);
 				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerText));
 				return;
 			}
 
-			SpawnerType spawnerType = null;
-			PlayerInventory playerInv = player.getInventory();
-			if (playerInv.getItemInMainHand().getType().equals(Material.MOB_SPAWNER)) {
-				spawnerType = SpawnerFunctions.getSpawnerType(playerInv.getItemInMainHand());
-			} else if (playerInv.getItemInOffHand().getType().equals(Material.MOB_SPAWNER)) {
-				spawnerType = SpawnerFunctions.getSpawnerType(playerInv.getItemInOffHand());
-			}
-
-			short spawnerId = 90;
-			String name;
-			if (spawnerType == null) {
-				name = "Pig";
-			} else {
-				name = spawnerType.getName();
-				spawnerId = spawnerType.getTypeId();
-			}
-
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new SpawnerTask(spawnerId, name, event.getBlock(), player), 0);
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new SpawnerTask(name, event.getBlock(), player), 0);
 		}
 	}
 
@@ -233,7 +268,7 @@ public class SpawnerEvents implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
 
-		if (Main.instance.config.getBoolean("protect_from_explosions")) {
+		if (Main.instance.getSpawnerConfig().getBoolean("protect_from_explosions")) {
 			// protect_from_explosions
 
 			if (event.blockList().isEmpty()) {
@@ -241,12 +276,11 @@ public class SpawnerEvents implements Listener {
 			}
 
 			// check if explosion causes a spawner to be broken
-			Iterator<Block> iterator = event.blockList().iterator();
-			while (iterator.hasNext()) {
+			for (Block block : event.blockList()) {
 
 				// if block was a spawner cancel explosion event
 				// this gives a natural protection around spawners
-				if (iterator.next().getType() == Material.MOB_SPAWNER) {
+				if (block.getType() == Material.MOB_SPAWNER) {
 					event.setCancelled(true);
 
 					// return since we already found a spawner
@@ -254,7 +288,7 @@ public class SpawnerEvents implements Listener {
 				}
 			}
 
-		} else if (Main.instance.config.getBoolean("drop_from_explosions")) {
+		} else if (Main.instance.getSpawnerConfig().getBoolean("drop_from_explosions")) {
 			// drop_from_explosions
 
 			if (event.blockList().isEmpty()) {
@@ -262,25 +296,19 @@ public class SpawnerEvents implements Listener {
 			}
 
 			// check if explosion causes any spawners to drop
-			Iterator<Block> iterator = event.blockList().iterator();
-			while (iterator.hasNext()) {
-
+			for (Block block : event.blockList()) {
 				// if block was a spawner drop a spawner
-				Block block = iterator.next();
 				if (block.getType().equals(Material.MOB_SPAWNER)) {
 
 					SpawnerType spawnerType = SpawnerFunctions.getSpawner(block);
 					String spawnerName = spawnerType.getName();
 					if (spawnerName != null) {
 
-						// make an ItemStack
-						Spawner dropSpawner = new Spawner(Material.MOB_SPAWNER, 1);
-
-						// set name
-						ItemStack newSpawner = SpawnerFunctions.setSpawnerName(dropSpawner, spawnerName);
+						// get a new spawner
+						Spawner dropSpawner = new Spawner(spawnerName);
 
 						// drop item
-						block.getWorld().dropItemNaturally(block.getLocation(), newSpawner);
+						block.getWorld().dropItemNaturally(block.getLocation(), dropSpawner);
 					}
 				}
 			}
@@ -298,14 +326,10 @@ public class SpawnerEvents implements Listener {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
 			Spawner spawner = new Spawner(event.getItem().getItemStack());
-			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
 
-			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
-			spawner.updateDurability();
+			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawner.getFormattedEntityName()));
 
-			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawnerName));
-
-			// event.getPlayer().updateInventory();
+			event.getPlayer().updateInventory();
 		}
 	}
 
@@ -315,7 +339,7 @@ public class SpawnerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+	private void onPlayerItemHeld(PlayerItemHeldEvent event) {
 
 		if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
 			return;
@@ -324,12 +348,10 @@ public class SpawnerEvents implements Listener {
 
 		if (itemStack != null && itemStack.getType().equals(Material.MOB_SPAWNER)) {
 			Spawner spawner = new Spawner(itemStack);
-			String spawnerName = SpawnerFunctions.resetSpawnerName(spawner);
-			spawner.updateDurability();
 
-			spawner.removeEnchantment(Enchantment.SILK_TOUCH);
+			event.getPlayer().updateInventory();
 
-			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawnerName));
+			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawner.getFormattedEntityName()));
 		}
 	}
 
@@ -339,7 +361,7 @@ public class SpawnerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	private void onPlayerInteract(PlayerInteractEvent event) {
 		if (!event.hasBlock()) {
 			return;
 		}
@@ -379,7 +401,8 @@ public class SpawnerEvents implements Listener {
 
 				String eggId = SpawnerFunctions.getEntityNameFromSpawnEgg(itemInHand);
 
-				String spawnerName = SpawnerFunctions.getSpawnerName(eggId, "key");
+				Spawner spawner = new Spawner(eggId);
+				String spawnerName = spawner.getEntityName();
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
 					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
@@ -401,7 +424,7 @@ public class SpawnerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-	public void onSpawnerSpawn(SpawnerSpawnEvent event) {
+	private void onSpawnerSpawn(SpawnerSpawnEvent event) {
 		String spawnerText = SpawnerType.getUnformattedTextFromName(event.getEntityType().name());
 
 		// apply spawn frequency chance
@@ -418,14 +441,27 @@ public class SpawnerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onInventoryClickEvent(InventoryClickEvent event) {
+	private void onInventoryClickEvent(InventoryClickEvent event) {
+		Player player = (Player) event.getWhoClicked();
+		if (player == null) {
+			return;
+		}
+
+		// can we stop creative mode messing spawners up? A: Somewhat
+		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER && player.getGameMode() == GameMode.CREATIVE) {
+			Main.language.sendMessage(player, Main.language.getText(Keys.NoCreative));
+			event.setCancelled(true);
+			player.updateInventory();
+			return;
+		}
+
 		if (!(event.getInventory() instanceof AnvilInventory)) {
 			return;
 		}
 		if (event.getSlotType() != SlotType.RESULT) {
 			return;
 		}
-		Player player = (Player) event.getWhoClicked();
+
 		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER && !player.hasPermission("spawner.anvil.spawners")) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
 			event.setCancelled(true);

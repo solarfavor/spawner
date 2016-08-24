@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- * 
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- * 
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,24 +23,20 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
 
 import me.ryvix.spawner.language.Keys;
-
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class SpawnerTask implements Runnable {
 
-	short entityID;
-	Block block;
-	String name;
-	Player player;
+	private Block block;
+	private String name;
+	private Player player;
 
-	public SpawnerTask(short entityID, String name, Block block, Player player) {
-		this.entityID = entityID;
+	SpawnerTask(String name, Block block, Player player) {
 		this.block = block;
 		this.name = name;
 		this.player = player;
@@ -48,14 +44,7 @@ public class SpawnerTask implements Runnable {
 
 	@Override
 	public void run() {
-
-		SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(name);
-
-		if (spawnerType == null) {
-			return;
-		}
-
-		if (SpawnerFunctions.setSpawner(block, spawnerType.getName())) {
+		if (SpawnerFunctions.setSpawner(block, name)) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.PlacedSpawner, SpawnerType.getTextFromName(name)));
 		} else {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));

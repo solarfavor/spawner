@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- * 
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- * 
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,22 +23,21 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner.language;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.ryvix.spawner.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Language {
 
@@ -153,7 +152,7 @@ public class Language {
 		saveConfig();
 
 		// make sure to reload the config if there were new additions
-		if(updates == true) {
+		if (updates == true) {
 			loadConfig();
 		}
 	}
@@ -241,6 +240,14 @@ public class Language {
 		if (!config.isSet("Language.Spawner")) {
 			updates = true;
 			config.set("Language.Spawner", "&aspawner");
+		}
+		if (!config.isSet("Language.NoCreative")) {
+			updates = true;
+			config.set("Language.NoCreative", "&4Sorry but you can't pick that up in creative mode.");
+		}
+		if (!config.isSet("Language.InventoryFull")) {
+			updates = true;
+			config.set("Language.InventoryFull", "&4Your inventory is full.");
 		}
 
 		if (!config.contains("Entities")) {
@@ -471,6 +478,10 @@ public class Language {
 			updates = true;
 			config.set("Entities.Shulker", "&eShulker");
 		}
+		if (!config.isSet("Entities.PolarBear")) {
+			updates = true;
+			config.set("Entities.PolarBear", "&ePolarBear");
+		}
 	}
 
 	/**
@@ -553,5 +564,53 @@ public class Language {
 		if (!text.isEmpty()) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
 		}
+	}
+
+	/**
+	 * Translate entity names to their keys or values.
+	 *
+	 * @param inputName
+	 * @param type      returns either the key or value
+	 * @return
+	 */
+	public String translateEntity(String inputName, String type) {
+		// Translate spawner language keys
+		inputName = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + inputName));
+		String returnName = "default";
+		ConfigurationSection csEntities;
+		Map<String, Object> entityValues;
+		Iterator it;
+		try {
+			csEntities = Main.language.getConfig().getConfigurationSection("Entities");
+			entityValues = csEntities.getValues(false);
+			it = entityValues.entrySet().iterator();
+		} catch (Exception e) {
+			Main.instance.getLogger().severe("Your Spawner language.yml is missing entities in the Entities section. This is probably because it's outdated. You can update it manually or to install a new one you can rename or delete the old one. Once finished run the command /spawner reload");
+			return null;
+		}
+
+		if (type != null) {
+			while (it.hasNext()) {
+				Map.Entry pairs = (Map.Entry) it.next();
+				String testKey = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getKey()));
+				String testValue = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', "" + pairs.getValue()));
+				if (testValue.equalsIgnoreCase(inputName) || testKey.equalsIgnoreCase(inputName)) {
+					switch (type) {
+						case "value":
+							returnName = "" + pairs.getValue();
+							break;
+						case "key":
+							returnName = testKey;
+							break;
+					}
+					it.remove();
+					break;
+				}
+
+				it.remove();
+			}
+		}
+
+		return returnName;
 	}
 }

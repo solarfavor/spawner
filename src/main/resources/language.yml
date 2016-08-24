@@ -6,8 +6,7 @@ Language:
   SpawnerChangedTo: '&aSpawner type changed to {0}'
   InvalidSpawner: '&4Invalid spawner type!'
   GivenSpawner: '&aYou were given a {0} &aspawner.'
-  SpawnerDropped: '&aA {0} spawner was dropped at your feet because your inventory
-    is full.'
+  SpawnerDropped: '&aA {0} spawner was dropped at your feet because your inventory is full.'
   YouGaveSpawner: '&aYou gave a {0} &aspawner to {1}.'
   NotDeliveredOffline: '&4The spawner was not delivered because &e{0} &4is offline.'
   YouPickedUp: '&aYou picked up a {0} &aspawner.'
@@ -17,10 +16,11 @@ Language:
   NotPossible: '&4It was not possible to change that spawner.'
   InvalidRadius: '&4You entered an invalid radius.'
   InvalidEntity: '&4You entered an invalid entity.'
-  ErrorRemovingEntities: '&4There was an error removing entities. Some may not have
-    been removed.'
+  ErrorRemovingEntities: '&4There was an error removing entities. Some may not have been removed.'
   EntitiesRemoved: '&a{0} {1} &aremoved.'
   Spawner: '&aspawner'
+  NoCreative: '&4Sorry but you can''t pick that up in creative mode.'
+  InventoryFull: '&4Your inventory is full.'
 Entities:
   XPOrb: '&eXPOrb'
   LeashKnot: '&eLeashKnot'
@@ -78,3 +78,4 @@ Entities:
   Endermite: '&eEndermite'
   Rabbit: '&eRabbit'
   Shulker: '&eShulker'
+  PolarBear: '&ePolarBear'

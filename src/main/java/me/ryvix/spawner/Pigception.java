@@ -24,11 +24,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ryvix.spawner.language;
+package me.ryvix.spawner;
 
-/**
- * Keys for the language file
- */
-public enum Keys {
-	ConsoleUsageGive, LookAtASpawner, NoPermission, SpawnerChangedTo, InvalidSpawner, GivenSpawner, SpawnerDropped, YouGaveSpawner, NotDeliveredOffline, YouPickedUp, HoldingSpawner, SpawnerType, PlacedSpawner, NotPossible, InvalidRadius, InvalidEntity, ErrorRemovingEntities, EntitiesRemoved, Spawner, NoCreative, InventoryFull
+public class Pigception extends Throwable {
+
 }

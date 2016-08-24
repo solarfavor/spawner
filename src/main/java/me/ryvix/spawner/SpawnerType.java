@@ -1,21 +1,21 @@
 /**
  * Spawner - Gather mob spawners with silk touch enchanted tools and the
  * ability to change mob types.
- *
+ * <p>
  * The MIT License (MIT)
- * 
+ * <p>
  * Copyright (c) 2016 Ryan Rhode
- * 
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,19 +23,22 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- *
  */
 package me.ryvix.spawner;
+
+import me.ryvix.spawner.language.Entities;
+import org.bukkit.entity.EntityType;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import me.ryvix.spawner.language.Entities;
-import org.bukkit.entity.EntityType;
 
 /**
  * Originally from Bukkit EntityType enum.
  * Using it here for future use to translate durability to entity names.
+ * <p>
+ * For future reference:
+ * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/entity/EntityType.java
  */
 public enum SpawnerType {
 
@@ -94,23 +97,24 @@ public enum SpawnerType {
 	GUARDIAN("Guardian", Main.language.getEntity(Entities.Guardian), 68),
 	ENDERMITE("Endermite", Main.language.getEntity(Entities.Endermite), 67),
 	RABBIT("Rabbit", Main.language.getEntity(Entities.Rabbit), 101),
-	SHULKER("Shulker", Main.language.getEntity(Entities.Shulker), 69);
+	SHULKER("Shulker", Main.language.getEntity(Entities.Shulker), 69),
+	POLAR_BEAR("PolarBear", Main.language.getEntity(Entities.PolarBear), 102);
 
 	private String name;
 	private String text;
 	private short typeId;
 
-	private SpawnerType(String name, String text, int typeId) {
+	SpawnerType(String name, String text, int typeId) {
 		this.name = name;
 		this.typeId = (short) typeId;
 		this.text = text;
 	}
 
-	private static final Map<String, SpawnerType> NAME_MAP = new HashMap<String, SpawnerType>();
-	private static final Map<Short, SpawnerType> ID_MAP = new HashMap<Short, SpawnerType>();
-	private static final Map<String, String> TEXT_NAME_MAP = new HashMap<String, String>();
-	private static final Map<Short, String> TEXT_ID_MAP = new HashMap<Short, String>();
-	private static final Map<String, String> TEXT_TYPE_MAP = new HashMap<String, String>();
+	private static final Map<String, SpawnerType> NAME_MAP = new HashMap<>();
+	private static final Map<Short, SpawnerType> ID_MAP = new HashMap<>();
+	private static final Map<String, String> TEXT_NAME_MAP = new HashMap<>();
+	private static final Map<Short, String> TEXT_ID_MAP = new HashMap<>();
+	private static final Map<String, String> TEXT_TYPE_MAP = new HashMap<>();
 
 	static {
 		try {
@@ -185,7 +189,25 @@ public enum SpawnerType {
 		if (entityType == null) {
 			return null;
 		}
-		return SpawnerType.valueOf(entityType.name());
+
+		try {
+			return SpawnerType.valueOf(entityType.name());
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Get type from clean name
+	 *
+	 * @param name
+	 * @return
+	 */
+	public static SpawnerType fromCleanName(String name) {
+		if (name == null) {
+			return null;
+		}
+		return NAME_MAP.get(name.toLowerCase());
 	}
 
 	/**
@@ -239,7 +261,7 @@ public enum SpawnerType {
 		if (arg == null) {
 			return null;
 		}
-		return SpawnerType.valueOf(arg).getName().toLowerCase();
+		return SpawnerFunctions.getSpawnerName(arg, "key");
 	}
 
 	/**
