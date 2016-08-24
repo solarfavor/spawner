@@ -183,7 +183,7 @@ public class SpawnerEvents implements Listener {
 					|| (playerInv.getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)
 					|| playerInv.getItemInOffHand().containsEnchantment(Enchantment.SILK_TOUCH))))
 					&& (playerInv.getItemInMainHand().getType() != Material.MOB_SPAWNER
-					|| playerInv.getItemInOffHand().getType() != Material.MOB_SPAWNER)) {
+					&& playerInv.getItemInOffHand().getType() != Material.MOB_SPAWNER)) {
 
 				// drop spawner
 				if (doDrop) {
