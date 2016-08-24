@@ -136,14 +136,14 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
 							if (type == null) {
-								Main.language.sendMessage(sender, "1 " + Main.language.getText(Keys.InvalidSpawner));
+								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
 							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, type));
 							return true;
 
 						} else {
-							Main.language.sendMessage(sender, "2 " + Main.language.getText(Keys.InvalidSpawner));
+							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 							return true;
 						}
 
@@ -160,13 +160,13 @@ public class SpawnerCommands implements CommandExecutor {
 								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
 
 								if (spawnerType == null) {
-									Main.language.sendMessage(sender, "3 " + Main.language.getText(Keys.InvalidSpawner));
+									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 									return true;
 								}
 
 								String spawnerName = SpawnerType.getTextFromName(args[0]);
 								if (spawnerName == null) {
-									Main.language.sendMessage(sender, "4 " + Main.language.getText(Keys.InvalidSpawner));
+									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 									return true;
 								}
 
@@ -190,7 +190,7 @@ public class SpawnerCommands implements CommandExecutor {
 								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
 								return true;
 							} else {
-								Main.language.sendMessage(sender, "5 " + Main.language.getText(Keys.InvalidSpawner));
+								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
 								return true;
 							}
 						} else {
