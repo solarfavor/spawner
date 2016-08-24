@@ -173,7 +173,7 @@ public class SpawnerCommands implements CommandExecutor {
 								if (itemInMainHand.getType() == Material.MOB_SPAWNER) {
 
 									// get a new spawner
-									Spawner newSpawner = new Spawner(spawnerName, itemInMainHand.getAmount());
+									Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName, itemInMainHand.getAmount());
 
 									// set item in players hand
 									playerInv.setItemInMainHand(newSpawner);
@@ -181,7 +181,7 @@ public class SpawnerCommands implements CommandExecutor {
 								} else if (itemInOffHand.getType() == Material.MOB_SPAWNER) {
 
 									// get a new spawner
-									Spawner newSpawner = new Spawner(spawnerName, itemInOffHand.getAmount());
+									Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName, itemInOffHand.getAmount());
 
 									// set item in players hand
 									playerInv.setItemInOffHand(newSpawner);
@@ -232,7 +232,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// get a new spawner
-							Spawner newSpawner = new Spawner(spawnerName);
+							Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName);
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -301,7 +301,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// get a new spawner
-							Spawner newSpawner = new Spawner(spawnerName, Integer.parseInt(args[2]));
+							Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName, Integer.parseInt(args[2]));
 
 							// drop spawner at player location or add it to their inv if they have space
 							PlayerInventory inventory = player.getInventory();
@@ -343,8 +343,7 @@ public class SpawnerCommands implements CommandExecutor {
 							}
 
 							// get a new spawner
-							Spawner newSpawner = new Spawner(spawnerName);
-
+							Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName);
 							Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);
 							if (targetPlayer != null) {
 
@@ -446,7 +445,7 @@ public class SpawnerCommands implements CommandExecutor {
 									}
 
 									// get a new spawner
-									Spawner newSpawner = new Spawner(spawnerName, Integer.parseInt(args[3]));
+									Spawner newSpawner = SpawnerFunctions.makeSpawner(spawnerName, Integer.parseInt(args[3]));
 
 									// set name
 									Player targetPlayer = Main.instance.getServer().getPlayer(args[2]);

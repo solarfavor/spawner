@@ -192,7 +192,7 @@ public class SpawnerEvents implements Listener {
 					event.setExpToDrop(0);
 
 					// get a new spawner
-					Spawner dropSpawner = new Spawner(spawnerName);
+					Spawner dropSpawner = SpawnerFunctions.makeSpawner(spawnerName);
 
 					// drop spawner
 					if (!break_into_inventory || (playerInv.firstEmpty() == -1 && !prevent_break_if_inventory_full)) {
@@ -305,7 +305,7 @@ public class SpawnerEvents implements Listener {
 					if (spawnerName != null) {
 
 						// get a new spawner
-						Spawner dropSpawner = new Spawner(spawnerName);
+						Spawner dropSpawner = SpawnerFunctions.makeSpawner(spawnerName);
 
 						// drop item
 						block.getWorld().dropItemNaturally(block.getLocation(), dropSpawner);
@@ -325,7 +325,7 @@ public class SpawnerEvents implements Listener {
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		if (event.getItem().getItemStack().getType() == Material.MOB_SPAWNER) {
 
-			Spawner spawner = new Spawner(event.getItem().getItemStack());
+			Spawner spawner = SpawnerFunctions.makeSpawner(event.getItem().getItemStack());
 
 			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawner.getFormattedEntityName()));
 
@@ -347,7 +347,7 @@ public class SpawnerEvents implements Listener {
 		ItemStack itemStack = event.getPlayer().getInventory().getItem(event.getNewSlot());
 
 		if (itemStack != null && itemStack.getType().equals(Material.MOB_SPAWNER)) {
-			Spawner spawner = new Spawner(itemStack);
+			Spawner spawner = SpawnerFunctions.makeSpawner(itemStack);
 
 			event.getPlayer().updateInventory();
 
@@ -401,7 +401,7 @@ public class SpawnerEvents implements Listener {
 
 				String eggId = SpawnerFunctions.getEntityNameFromSpawnEgg(itemInHand);
 
-				Spawner spawner = new Spawner(eggId);
+				Spawner spawner = SpawnerFunctions.makeSpawner(eggId);
 				String spawnerName = spawner.getEntityName();
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {

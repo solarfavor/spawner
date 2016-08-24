@@ -28,6 +28,7 @@ package me.ryvix.spawner;
 
 import me.ryvix.spawner.language.Keys;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
+import net.minecraft.server.v1_10_R1.NBTTagList;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
@@ -51,6 +52,125 @@ import java.util.logging.Logger;
  */
 public class SpawnerFunctions {
 
+	public static Spawner makeSpawner(Material material, int amount, String name) {
+		Spawner spawner = new Spawner(material, amount, name);
+		return new Spawner(setSpawnerNBT(spawner), amount);
+	}
+
+	public static Spawner makeSpawner(ItemStack item) {
+		Spawner spawner = new Spawner(item);
+		return new Spawner(setSpawnerNBT(spawner), 1);
+	}
+
+	public static Spawner makeSpawner(String name) {
+		Spawner spawner = new Spawner(name);
+		return new Spawner(setSpawnerNBT(spawner), 1);
+	}
+
+	public static Spawner makeSpawner(String name, int amount) {
+		Spawner spawner = new Spawner(name, amount);
+		return new Spawner(setSpawnerNBT(spawner), amount);
+	}
+
+	/**
+	 * Get spawner type using NBT
+	 *
+	 * @return Entity Name string
+	 */
+	public static String getEntityNameFromSpawnerNBT(Spawner spawner) {
+		if (!(spawner.getType() == Material.MOB_SPAWNER)) {
+			return null;
+		}
+
+		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(spawner);
+
+		if (nmsStack.hasTag()) {
+			NBTTagCompound tag = nmsStack.getTag();
+
+			if (tag != null) {
+
+				if (tag.hasKey("BlockEntityTag")) {
+					NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
+
+					if (blockEntityTag.hasKey("SpawnPotentials")) {
+						NBTTagList spawnPotentials = blockEntityTag.getList("SpawnPotentials", 10);
+						if (!spawnPotentials.isEmpty()) {
+							// TODO: show all entity types in mob spawner name
+							NBTTagCompound entity = spawnPotentials.get(0).getCompound("Entity");
+							return entity.getString("id");
+						}
+					}
+
+				} else if (tag.hasKey("SpawnData")) {
+					NBTTagCompound spawnData = tag.getCompound("SpawnData");
+					if (spawnData.hasKey("id")) {
+						return spawnData.getString("id");
+					}
+
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Set spawner type using NBT
+	 *
+	 * @param spawner
+	 * @return
+	 */
+	public static ItemStack setSpawnerNBT(Spawner spawner) {
+		if (!(spawner.getType() == Material.MOB_SPAWNER)) {
+			return null;
+		}
+
+		String cleanEntity = Main.language.translateEntity(spawner.getEntityName(), "key");
+
+		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(spawner);
+
+		NBTTagCompound tag;
+		if (nmsStack.hasTag()) {
+			tag = nmsStack.getTag();
+		} else {
+			tag = new NBTTagCompound();
+			nmsStack.setTag(tag);
+		}
+
+		if (!tag.hasKey("SpawnData")) {
+			tag.set("SpawnData", new NBTTagCompound());
+		}
+
+		NBTTagCompound spawnData = tag.getCompound("SpawnData");
+		spawnData.setString("id", cleanEntity);
+
+		if (!tag.hasKey("BlockEntityTag")) {
+			tag.set("BlockEntityTag", new NBTTagCompound());
+		}
+
+		NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
+
+		if (!blockEntityTag.hasKey("SpawnPotentials")) {
+			blockEntityTag.set("SpawnPotentials", new NBTTagCompound());
+		}
+
+		NBTTagCompound spawnPotentials = new NBTTagCompound();
+
+		spawnPotentials.setInt("Weight", 1);
+		spawnPotentials.set("Entity", new NBTTagCompound());
+
+		NBTTagCompound spawnPotentialsEntity = spawnPotentials.getCompound("Entity");
+		spawnPotentialsEntity.setString("id", cleanEntity);
+
+		NBTTagList tags = new NBTTagList();
+
+		tags.add(spawnPotentials);
+
+		blockEntityTag.set("SpawnPotentials", tags);
+
+		return CraftItemStack.asCraftMirror(nmsStack);
+	}
+
 	/**
 	 * Get entity name from spawn egg using NBT
 	 *
@@ -69,8 +189,7 @@ public class SpawnerFunctions {
 			NBTTagCompound tag = nmsStack.getTag();
 			NBTTagCompound entityTag = tag.getCompound("EntityTag");
 			if (entityTag.hasKey("id")) {
-				String entity = entityTag.getString("id");
-				return entity;
+				return entityTag.getString("id");
 			}
 		}
 
@@ -86,7 +205,7 @@ public class SpawnerFunctions {
 	 */
 	public static String convertAlias(String entity) {
 
-		ConfigurationSection aliases = Main.instance.getSpawnerConfig().getConfigurationSection("aliases");
+		ConfigurationSection aliases = Main.getSpawnerConfig().getConfigurationSection("aliases");
 
 		if (aliases == null) {
 			return entity;
@@ -116,7 +235,7 @@ public class SpawnerFunctions {
 		String entity = getSpawnerName(arg, "key", 3);
 
 		// allow only valid entity types matched against aliases
-		List<String> validEntities = Main.instance.getSpawnerConfig().getStringList("valid_entities");
+		List<String> validEntities = Main.getSpawnerConfig().getStringList("valid_entities");
 
 		if (validEntities == null) {
 			return false;
@@ -142,7 +261,7 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static boolean chance(String configKey) {
-		int chance = Main.instance.getSpawnerConfig().getInt(configKey);
+		int chance = Main.getSpawnerConfig().getInt(configKey);
 		if (chance < 100) {
 			int randomChance = (int) (Math.random() * 100);
 			if (chance < randomChance) {
@@ -255,7 +374,7 @@ public class SpawnerFunctions {
 		String spawnerName = "default";
 		if (spawnerType != null) {
 			spawnerName = SpawnerType.getTextFromType(spawnerType);
-		} else if (noDefault.length > 0 && noDefault[0] == true) {
+		} else if (noDefault.length > 0 && noDefault[0]) {
 			return "";
 		}
 
@@ -288,7 +407,7 @@ public class SpawnerFunctions {
 	 * @param d
 	 * @return
 	 */
-	static SpawnerType getSpawnerType(short d) {
+	public static SpawnerType getSpawnerType(short d) {
 		SpawnerType type = SpawnerType.fromId(d);
 		return type;
 	}
@@ -310,7 +429,7 @@ public class SpawnerFunctions {
 	 * @return SpawnerType
 	 */
 	public static SpawnerType getSpawnerType(Spawner spawner) {
-		String name = spawner.getEntityNameFromSpawnerNBT();
+		String name = getEntityNameFromSpawnerNBT(spawner);
 		return SpawnerType.fromName(name);
 	}
 
@@ -321,7 +440,7 @@ public class SpawnerFunctions {
 	 * @return SpawnerType
 	 */
 	public static SpawnerType getSpawnerType(ItemStack is) {
-		Spawner spawner = new Spawner(is);
+		Spawner spawner = SpawnerFunctions.makeSpawner(is);
 		return spawner.getSpawnerType();
 	}
 
@@ -337,10 +456,9 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static String getSpawnerName(String inputName, String type, int... options) {
-		Spawner spawner = new Spawner(Material.MOB_SPAWNER, 1, inputName);
+		Spawner spawner = makeSpawner(Material.MOB_SPAWNER, 1, inputName);
 
-		String outputName = getSpawnerName(spawner, type, options);
-		return outputName;
+		return getSpawnerName(spawner, type, options);
 	}
 
 	/**

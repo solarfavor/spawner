@@ -45,44 +45,30 @@ public class Spawner extends ItemStack {
 	private String entityName;
 	private SpawnerType spawnerType;
 
-	public Spawner(Material material) {
-		super(material);
-		initSpawner(getEntityName());
-	}
-
-	public Spawner(Material material, String name) {
-		super(material);
-		initSpawner(name);
-	}
-
-	public Spawner(Material material, int amount) {
-		super(material, amount);
-		initSpawner("");
-	}
-
-	public Spawner(Material material, int amount, String name) {
+	Spawner(Material material, int amount, String name) {
 		super(material, amount);
 		initSpawner(name);
 	}
 
-	public Spawner(ItemStack item) {
+	Spawner(ItemStack item) {
 		super(item);
 		initSpawner("");
 	}
 
-	public Spawner(ItemStack item, String name) {
-		super(item);
-		initSpawner(name);
-	}
-
-	public Spawner(String name) {
+	Spawner(String name) {
 		super(Material.MOB_SPAWNER);
 		initSpawner(name);
 	}
 
-	public Spawner(String name, int amount) {
+	Spawner(String name, int amount) {
 		super(Material.MOB_SPAWNER, amount);
 		initSpawner(name);
+	}
+
+	Spawner(ItemStack item, int amount) {
+		super(item);
+		item.setAmount(amount);
+		initSpawner("");
 	}
 
 	private void initSpawner(String name) {
@@ -111,109 +97,6 @@ public class Spawner extends ItemStack {
 		returnName = Main.language.translateEntity(returnName, "key");
 
 		return returnName;
-	}
-
-	/**
-	 * Get spawner type using NBT
-	 *
-	 * @return Entity Name string
-	 */
-	public String getEntityNameFromSpawnerNBT() {
-		if (!(getType() == Material.MOB_SPAWNER)) {
-			return null;
-		}
-
-		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(this);
-
-		if (nmsStack.hasTag()) {
-			NBTTagCompound tag = nmsStack.getTag();
-
-			if (tag != null) {
-
-				if (tag.hasKey("BlockEntityTag")) {
-					NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
-
-					if (blockEntityTag.hasKey("SpawnPotentials")) {
-						NBTTagList spawnPotentials = blockEntityTag.getList("SpawnPotentials", 10);
-						if (!spawnPotentials.isEmpty()) {
-							// TODO: show all entity types in mob spawner name
-							NBTTagCompound entity = spawnPotentials.get(0).getCompound("Entity");
-							return entity.getString("id");
-						}
-					}
-
-				} else if (tag.hasKey("SpawnData")) {
-					NBTTagCompound spawnData = tag.getCompound("SpawnData");
-					if (spawnData.hasKey("id")) {
-						return spawnData.getString("id");
-					}
-
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Set spawner type using NBT
-	 *
-	 * @param entity
-	 * @return
-	 */
-	public ItemStack setSpawnerNBT(String entity) {
-		if (!(getType() == Material.MOB_SPAWNER)) {
-			return null;
-		}
-
-		if (!SpawnerFunctions.isValidEntity(entity)) {
-			return null;
-		}
-
-		String cleanEntity = SpawnerType.getUnformattedTextFromName(entity);
-
-		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(this);
-
-		NBTTagCompound tag;
-		if (nmsStack.hasTag()) {
-			tag = nmsStack.getTag();
-		} else {
-			tag = new NBTTagCompound();
-			nmsStack.setTag(tag);
-		}
-
-		if (!tag.hasKey("SpawnData")) {
-			tag.set("SpawnData", new NBTTagCompound());
-		}
-
-		NBTTagCompound spawnData = tag.getCompound("SpawnData");
-		spawnData.setString("id", cleanEntity);
-
-		if (!tag.hasKey("BlockEntityTag")) {
-			tag.set("BlockEntityTag", new NBTTagCompound());
-		}
-
-		NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
-
-		if (!blockEntityTag.hasKey("SpawnPotentials")) {
-			blockEntityTag.set("SpawnPotentials", new NBTTagCompound());
-		}
-
-		NBTTagCompound spawnPotentials = new NBTTagCompound();
-
-		spawnPotentials.setInt("Weight", 1);
-		spawnPotentials.set("Entity", new NBTTagCompound());
-
-		NBTTagCompound spawnPotentialsEntity = spawnPotentials.getCompound("Entity");
-		spawnPotentialsEntity.setString("id", cleanEntity);
-
-		NBTTagList tags = new NBTTagList();
-
-		tags.add(spawnPotentials);
-
-		blockEntityTag.set("SpawnPotentials", tags);
-
-		return CraftItemStack.asCraftMirror(nmsStack);
 	}
 
 	/**
@@ -318,7 +201,7 @@ public class Spawner extends ItemStack {
 
 	public String getEntityName() {
 		if (entityName == null) {
-			entityName = getEntityNameFromSpawnerNBT();
+			entityName = SpawnerFunctions.getEntityNameFromSpawnerNBT(this);
 			if (entityName == null || entityName.isEmpty()) {
 				entityName = getEntityNameFromDisplay();
 				if (entityName == null || entityName.isEmpty()) {
