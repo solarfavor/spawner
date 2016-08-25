@@ -193,7 +193,11 @@ public class Spawner extends ItemStack {
 
 	public short updateDurability() {
 		// set correct durability
-		EntityType entityType = getSpawnerType().getEntityType();
+		SpawnerType type = getSpawnerType();
+		if(type == null) {
+			return 0;
+		}
+		EntityType entityType = type.getEntityType();
 		short durability = SpawnerFunctions.durabilityFromEntityType(entityType);
 		this.setDurability(durability);
 		return this.getDurability();
@@ -209,7 +213,7 @@ public class Spawner extends ItemStack {
 				}
 			}
 		}
-		return entityName;
+		return SpawnerFunctions.convertAlias(entityName);
 	}
 
 	public void setEntityName(String entityName) {
