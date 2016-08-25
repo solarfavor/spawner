@@ -34,6 +34,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -51,6 +52,8 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.Random;
 
 // Build against Spigot not Bukkit or you will get an error here.
 
@@ -425,13 +428,30 @@ public class SpawnerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	private void onSpawnerSpawn(SpawnerSpawnEvent event) {
-		String spawnerText = SpawnerType.getUnformattedTextFromName(event.getEntityType().name());
+		String spawnerType = event.getSpawner().getCreatureTypeName();
 
 		// apply spawn frequency chance
-		if (!SpawnerFunctions.chance("frequency." + spawnerText)) {
+		if (!SpawnerFunctions.chance("frequency." + spawnerType)) {
 
 			// stop spawner event
 			event.setCancelled(true);
+			return;
+		}
+
+		// handle specific spawner types
+		switch (spawnerType) {
+			case "FireworksRocketEntity":
+				// make fireworks!
+				SpawnerFunctions.spawnRandomFirework(event.getLocation());
+				break;
+			case "XPOrb":
+				// make xp orbs drop xp worth something
+				ExperienceOrb xpOrb = (ExperienceOrb) event.getEntity();
+				Random random = new Random();
+				xpOrb.setExperience(random.nextInt(10 - 1) + 1);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -448,12 +468,12 @@ public class SpawnerEvents implements Listener {
 		}
 
 		ItemStack item = event.getCurrentItem();
-		if(item == null) {
+		if (item == null) {
 			return;
 		}
 
 		Material type = item.getType();
-		if(type == null) {
+		if (type == null) {
 			return;
 		}
 

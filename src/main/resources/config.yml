@@ -37,6 +37,7 @@ valid_entities:
 - Rabbit
 - Shulker
 - PolarBear
+- XPOrb
 
 # Aliases
 aliases:
@@ -50,6 +51,12 @@ aliases:
     Ozelot:
         - ocelot
         - cat
+    Rabbit:
+        - bunny
+    FireworksRocketEntity:
+        - fireworks
+    XPOrb:
+        - xp
 
 # Preventing spawners being destroyed by explosions.
 protect_from_explosions: true
@@ -101,6 +108,7 @@ frequency:
     rabbit: 100
     shulker: 100
     polarbear: 100
+    xporb: 100
 
 # Spawner drops
 #
@@ -156,6 +164,7 @@ drops:
     Rabbit: []
     Shulker: []
     PolarBear: []
+    XPOrb: []
 
 # Place spawners directly into player inventories when broken?
 # true or false

@@ -29,6 +29,10 @@ package me.ryvix.spawner;
 import me.ryvix.spawner.language.Keys;
 import net.minecraft.server.v1_10_R1.NBTTagCompound;
 import net.minecraft.server.v1_10_R1.NBTTagList;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Type;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
@@ -36,12 +40,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.BlockIterator;
 
 import java.io.*;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -475,7 +482,6 @@ public class SpawnerFunctions {
 	public static String getSpawnerName(Spawner spawner, String type, int... options) {
 		String cleanName = spawner.getEntityName();
 		String testName;
-		String returnName;
 		if (options.length > 0 && (options[0] == 0 || options[0] == 3)) {
 			if (!cleanName.contains(" ")) {
 				testName = cleanName;
@@ -487,8 +493,7 @@ public class SpawnerFunctions {
 		} else {
 			testName = convertAlias(cleanName.split(" ")[0]);
 		}
-
-		returnName = Main.language.translateEntity(testName, type);
+		String returnName = Main.language.translateEntity(testName, type);
 
 		// if still default spawner name try getting value from durability
 		if (returnName.equals("default")) {
@@ -554,4 +559,50 @@ public class SpawnerFunctions {
 		}
 		return false;
 	}
+
+	/**
+	 * Spawn a random firework at the given location.
+	 *
+	 * @param loc
+	 */
+	public static void spawnRandomFirework(Location loc) {
+		Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+		FireworkMeta fireworkMeta = firework.getFireworkMeta();
+
+		Random random = new Random();
+		int randomInt = random.nextInt(5) + 1;
+
+		Type type = null;
+		switch (randomInt) {
+			case 1:
+				type = Type.BALL;
+				break;
+			case 2:
+				type = Type.BALL_LARGE;
+				break;
+			case 3:
+				type = Type.BURST;
+				break;
+			case 4:
+				type = Type.CREEPER;
+				break;
+			case 5:
+				type = Type.STAR;
+				break;
+		}
+
+		FireworkEffect effect = FireworkEffect.builder()
+				.flicker(random.nextBoolean())
+				.with(type)
+				.withColor(Color.fromRGB(random.nextInt(256), random.nextInt(256), random.nextInt(256)))
+				.withFade(Color.fromRGB(random.nextInt(256), random.nextInt(256), random.nextInt(256)))
+				.trail(random.nextBoolean())
+				.build();
+		fireworkMeta.addEffect(effect);
+
+		fireworkMeta.setPower(randomInt);
+
+		firework.setFireworkMeta(fireworkMeta);
+	}
+
 }
