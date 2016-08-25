@@ -447,8 +447,18 @@ public class SpawnerEvents implements Listener {
 			return;
 		}
 
+		ItemStack item = event.getCurrentItem();
+		if(item == null) {
+			return;
+		}
+
+		Material type = item.getType();
+		if(type == null) {
+			return;
+		}
+
 		// can we stop creative mode messing spawners up? A: Somewhat
-		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER && player.getGameMode() == GameMode.CREATIVE) {
+		if (type == Material.MOB_SPAWNER && player.getGameMode() == GameMode.CREATIVE) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NoCreative));
 			event.setCancelled(true);
 			player.updateInventory();
@@ -462,12 +472,12 @@ public class SpawnerEvents implements Listener {
 			return;
 		}
 
-		if (event.getCurrentItem().getType() == Material.MOB_SPAWNER && !player.hasPermission("spawner.anvil.spawners")) {
+		if (type == Material.MOB_SPAWNER && !player.hasPermission("spawner.anvil.spawners")) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
 			event.setCancelled(true);
 			return;
 		}
-		if (event.getCurrentItem().getType() == Material.MONSTER_EGG && !player.hasPermission("spawner.anvil.eggs")) {
+		if (type == Material.MONSTER_EGG && !player.hasPermission("spawner.anvil.eggs")) {
 			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
 			event.setCancelled(true);
 		}
