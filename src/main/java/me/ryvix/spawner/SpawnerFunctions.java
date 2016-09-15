@@ -268,7 +268,11 @@ public class SpawnerFunctions {
 	 * @return
 	 */
 	public static boolean chance(String configKey) {
-		int chance = Main.getSpawnerConfig().getInt(configKey);
+		int chance = Main.getSpawnerConfig().getInt(configKey.toLowerCase());
+		if (chance == 0) {
+			return false;
+		}
+
 		if (chance < 100) {
 			int randomChance = (int) (Math.random() * 100);
 			if (chance < randomChance) {

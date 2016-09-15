@@ -42,8 +42,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -421,37 +421,41 @@ public class SpawnerEvents implements Listener {
 	}
 
 	/**
-	 * Spigot SpawnerSpawnEvent for spawn frequency chance
-	 * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse/Bukkit-Patches/0007-Define-EntitySpawnEvent-and-SpawnerSpawnEvent.patch
+	 * CreatureSpawnEvent for spawn frequency chance
 	 *
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
-	private void onSpawnerSpawn(SpawnerSpawnEvent event) {
-		String spawnerType = event.getSpawner().getCreatureTypeName();
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+	private void onCreatureSpawn(CreatureSpawnEvent event) {
+		if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
 
-		// apply spawn frequency chance
-		if (!SpawnerFunctions.chance("frequency." + spawnerType)) {
+			// get type of entity
+			String entityName = event.getEntityType().name();
 
-			// stop spawner event
-			event.setCancelled(true);
-			return;
-		}
+			// apply spawn frequency chance
+			boolean doSpawn = SpawnerFunctions.chance("frequency." + entityName);
+			if (!doSpawn) {
 
-		// handle specific spawner types
-		switch (spawnerType) {
-			case "FireworksRocketEntity":
-				// make fireworks!
-				SpawnerFunctions.spawnRandomFirework(event.getLocation());
-				break;
-			case "XPOrb":
-				// make xp orbs drop xp worth something
-				ExperienceOrb xpOrb = (ExperienceOrb) event.getEntity();
-				Random random = new Random();
-				xpOrb.setExperience(random.nextInt(10 - 1) + 1);
-				break;
-			default:
-				break;
+				// stop creature from spawning
+				event.setCancelled(true);
+				return;
+			}
+
+			// handle specific spawner types
+			switch (entityName) {
+				case "FireworksRocketEntity":
+					// make fireworks!
+					SpawnerFunctions.spawnRandomFirework(event.getLocation());
+					break;
+				case "XPOrb":
+					// make xp orbs drop xp worth something
+					ExperienceOrb xpOrb = (ExperienceOrb) event.getEntity();
+					Random random = new Random();
+					xpOrb.setExperience(random.nextInt(10 - 1) + 1);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -502,5 +506,4 @@ public class SpawnerEvents implements Listener {
 			event.setCancelled(true);
 		}
 	}
-
 }
