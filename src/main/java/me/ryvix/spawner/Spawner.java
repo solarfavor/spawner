@@ -137,8 +137,12 @@ public class Spawner extends ItemStack {
 	public String getName() {
 
 		ItemMeta im = getItemMeta();
+		String name = im.getDisplayName();
+		if(name == null) {
+			name = "";
+		}
 
-		return im.getDisplayName();
+		return name;
 	}
 
 	/**
