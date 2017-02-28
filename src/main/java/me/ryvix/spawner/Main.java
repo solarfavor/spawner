@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,50 +26,84 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Language;
+import me.ryvix.spawner.api.Config;
+import me.ryvix.spawner.api.Language;
+import me.ryvix.spawner.api.NMS;
 import me.ryvix.spawner.metrics.Metrics;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
-	private static Configuration config;
-	public static Language language;
 	public static Main instance;
 
-	private static String nmsVersion;
+	private static String version;
+
+	private static Configuration config;
+
+	private NMS nmsHandler;
+	private Config configHandler;
+	private Language langHandler;
 
 	@Override
 	public void onEnable() {
 		instance = this;
 
-		setNmsVersion();
+		// Get full package string of CraftServer.
+		// org.bukkit.craftbukkit.version
+		String packageName = instance.getServer().getClass().getPackage().getName();
 
-		if (!ArrayUtils.contains(compatibleVersions(), getNmsVersion())) {
-			getLogger().log(Level.SEVERE, "Incompatible server version, disabling plugin! Must be: " + compatibleVersions().toString());
-			getPluginLoader().disablePlugin(this);
+		// Get the last element of the package
+		setVersion(packageName.substring(packageName.lastIndexOf('.') + 1));
+
+		try {
+			// NMS
+			final Class<?> nmsClazz = Class.forName("me.ryvix.spawner.nms." + getVersion() + ".NMSHandler");
+			// Check if we have a NMSHandler class at that location.
+			// Make sure it actually implements NMS
+			if (NMS.class.isAssignableFrom(nmsClazz)) {
+				// Set our handler
+				instance.setNmsHandler((NMS) nmsClazz.getConstructor().newInstance());
+			}
+
+			// Config
+			final Class<?> configClazz = Class.forName("me.ryvix.spawner.config." + getVersion() + ".ConfigHandler");
+			// Check if we have a ConfigHandler class at that location.
+			// Make sure it actually implements Config functions
+			if (Config.class.isAssignableFrom(configClazz)) {
+				// Set our handler
+				instance.setConfigHandler((Config) configClazz.getConstructor().newInstance());
+			}
+
+			// Language
+			final Class<?> langClazz = Class.forName("me.ryvix.spawner.language." + getVersion() + ".LangHandler");
+			// Check if we have a Language class at that location.
+			// Make sure it actually implements Language functions
+			if (Language.class.isAssignableFrom(langClazz)) {
+				// Set our handler
+				instance.setLangHandler((Language) langClazz.getConstructor().newInstance());
+			}
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+			instance.getLogger().severe("Could not find support for " + getVersion());
+			instance.getLogger().info("Check for updates at " + instance.getDescription().getWebsite());
+			instance.setEnabled(false);
+			return;
 		}
+		instance.getLogger().info("Loading support for " + getVersion());
 
 		// metrics
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			// Failed to submit the stats :-(
-		}
+		// https://bstats.org/
+		Metrics metrics = new Metrics(this);
+
+		// load entity map
+		loadEntityMap();
 
 		// load files
-		loadFiles();
+		getConfigHandler().loadFiles();
 
 		// register events
 		getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
@@ -81,7 +115,9 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		config = null;
-		language = null;
+		nmsHandler = null;
+		configHandler = null;
+		langHandler = null;
 	}
 
 	/**
@@ -89,191 +125,140 @@ public class Main extends JavaPlugin {
 	 */
 	public void reloadFiles() {
 		reloadConfig();
-		loadFiles();
+		getConfigHandler().loadFiles();
 	}
 
 	/**
-	 * Load Spawner's files from disk.
+	 * Load entity map.
+	 *
+	 * @link https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/entity/EntityType.java
 	 */
-	private void loadFiles() {
-
-		// load config file
-		config = null;
-		loadConfig();
-
-		// load language file
-		language = null;
-		language = new Language("language.yml");
-		language.loadText();
-
-		// create help and list files
-		try {
-			File file = new File(getDataFolder(), "help.txt");
-			if (!file.exists()) {
-				saveResource("help.txt", false);
-			}
-			file = new File(getDataFolder(), "list.txt");
-			if (!file.exists()) {
-				saveResource("list.txt", false);
-			}
-		} catch (Exception e) {
-		}
-	}
-
-	/**
-	 * Saves the config file.
-	 */
-	private void updateConfig() {
-
-		getConfig().options().copyDefaults(true);
-
-		// add header
-		getConfig().options().header("Spawner config file\n\n");
-		getConfig().options().copyHeader(true);
-
-		// save file
-		saveConfig();
-
-	}
-
-	/**
-	 * Load config values
-	 */
-	private void loadConfig() {
-
-		// create config file
-		File configFile = new File(this.getDataFolder(), "config.yml");
-		try {
-			if (!configFile.exists()) {
-				getDataFolder().mkdir();
-
-				updateConfig();
-			}
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Cannot make folder: {0}", getDataFolder());
-		}
-
-		// get config file
-		config = YamlConfiguration.loadConfiguration(configFile);
-
-		boolean updates = false;
-
-		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit", "Shulker", "PolarBear", "XPOrb");
-
-		// add defaults
-		if (!config.contains("valid_entities")) {
-			updates = true;
-			getConfig().addDefault("valid_entities", validEntities);
-		}
-		if (config.contains("bad_entities")) {
-			updates = true;
-			getConfig().set("bad_entities", null);
-		}
-		if (!config.contains("protect_from_explosions")) {
-			updates = true;
-			getConfig().addDefault("protect_from_explosions", true);
-		}
-		if (!config.contains("drop_from_explosions")) {
-			updates = true;
-			getConfig().addDefault("drop_from_explosions", false);
-		}
-		if (!config.contains("remove_radius")) {
-			updates = true;
-			getConfig().addDefault("remove_radius", 10);
-		}
-		if (!config.contains("luck")) {
-			updates = true;
-			getConfig().addDefault("luck", 100);
-		}
-		if (!config.contains("aliases")) {
-			List<String> wither = new ArrayList<>();
-			wither.add("wither");
-			getConfig().addDefault("aliases.WitherBoss", wither);
-
-			List<String> golems = new ArrayList<>();
-			golems.add("golem");
-			golems.add("irongolem");
-			getConfig().addDefault("aliases.VillagerGolem", golems);
-
-			List<String> horse = new ArrayList<>();
-			horse.add("horse");
-			getConfig().addDefault("aliases.EntityHorse", horse);
-
-			List<String> ozelot = new ArrayList<>();
-			ozelot.add("ocelot");
-			ozelot.add("cat");
-			getConfig().addDefault("aliases.Ozelot", ozelot);
-		}
-
-		ConfigurationSection frequency = getConfig().getConfigurationSection("frequency");
-		if (frequency == null) {
-			updates = true;
-			frequency = getConfig().createSection("frequency");
-		}
-
-		ConfigurationSection drops = getConfig().getConfigurationSection("drops");
-		if (drops == null) {
-			updates = true;
-			drops = getConfig().createSection("drops");
-		}
-
-		for (String entity : validEntities) {
-			ConfigurationSection frequencyEntity = frequency.getConfigurationSection(entity.toLowerCase());
-			if (frequencyEntity == null) {
-				updates = true;
-				frequency.addDefault(entity.toLowerCase(), 100);
-			}
-			ConfigurationSection dropsEntity = drops.getConfigurationSection(entity);
-			if (dropsEntity == null) {
-				updates = true;
-				drops.addDefault(entity, new ArrayList());
-			}
-		}
-
-		if (!config.contains("break_into_inventory")) {
-			updates = true;
-			getConfig().addDefault("break_into_inventory", false);
-		}
-		if (!config.contains("prevent_break_if_inventory_full")) {
-			updates = true;
-			getConfig().addDefault("prevent_break_if_inventory_full", false);
-		}
-
-		updateConfig();
-
-		if (updates) {
-			config = null;
-			config = YamlConfiguration.loadConfiguration(configFile);
-		}
+	private void loadEntityMap() {
+		EntityMap.addMap("Item", "item");
+		EntityMap.addMap("XPOrb", "xp_orb");
+		EntityMap.addMap("area_effect_cloud", "area_effect_cloud");
+		EntityMap.addMap("elder_guardian", "elder_guardian");
+		EntityMap.addMap("wither_skeleton", "wither_skeleton");
+		EntityMap.addMap("stray", "stray");
+		EntityMap.addMap("egg", "egg");
+		EntityMap.addMap("LeashKnot", "leash_knot");
+		EntityMap.addMap("Painting", "painting");
+		EntityMap.addMap("Arrow", "arrow");
+		EntityMap.addMap("Snowball", "snowball");
+		EntityMap.addMap("Fireball", "fireball");
+		EntityMap.addMap("SmallFireball", "small_fireball");
+		EntityMap.addMap("ThrownEnderpearl", "ender_pearl");
+		EntityMap.addMap("EyeOfEnderSignal", "eye_of_ender_signal");
+		EntityMap.addMap("potion", "potion");
+		EntityMap.addMap("ThrownExpBottle", "xp_bottle");
+		EntityMap.addMap("ItemFrame", "item_frame");
+		EntityMap.addMap("WitherSkull", "wither_skull");
+		EntityMap.addMap("PrimedTnt", "tnt");
+		EntityMap.addMap("FallingSand", "falling_block");
+		EntityMap.addMap("FireworksRocketEntity", "fireworks_rocket");
+		EntityMap.addMap("husk", "husk");
+		EntityMap.addMap("SpectralArrow", "spectral_arrow");
+		EntityMap.addMap("ShulkerBullet", "shulker_bullet");
+		EntityMap.addMap("DragonFireball", "dragon_fireball");
+		EntityMap.addMap("zombie_villager", "zombie_villager");
+		EntityMap.addMap("skeleton_horse", "skeleton_horse");
+		EntityMap.addMap("zombie_horse", "zombie_horse");
+		EntityMap.addMap("ArmorStand", "armor_stand");
+		EntityMap.addMap("donkey", "donkey");
+		EntityMap.addMap("mule", "mule");
+		EntityMap.addMap("evocation_fangs", "evocation_fangs");
+		EntityMap.addMap("evocation_illager", "evocation_illager");
+		EntityMap.addMap("vex", "vex");
+		EntityMap.addMap("vindication_illager", "vindication_illager");
+		EntityMap.addMap("MinecartCommandBlock", "commandblock_minecart");
+		EntityMap.addMap("Boat", "boat");
+		EntityMap.addMap("MinecartRideable", "minecart");
+		EntityMap.addMap("MinecartChest", "chest_minecart");
+		EntityMap.addMap("MinecartFurnace", "chest_minecart");
+		EntityMap.addMap("MinecartTNT", "tnt_minecart");
+		EntityMap.addMap("MinecartHopper", "hopper_minecart");
+		EntityMap.addMap("MinecartMobSpawner", "spawner_minecart");
+		EntityMap.addMap("Creeper", "creeper");
+		EntityMap.addMap("Skeleton", "skeleton");
+		EntityMap.addMap("Spider", "spider");
+		EntityMap.addMap("Giant", "giant");
+		EntityMap.addMap("Zombie", "zombie");
+		EntityMap.addMap("Slime", "slime");
+		EntityMap.addMap("Ghast", "ghast");
+		EntityMap.addMap("PigZombie", "zombie_pigman");
+		EntityMap.addMap("Enderman", "enderman");
+		EntityMap.addMap("CaveSpider", "cave_spider");
+		EntityMap.addMap("Silverfish", "silverfish");
+		EntityMap.addMap("Blaze", "blaze");
+		EntityMap.addMap("LavaSlime", "magma_cube");
+		EntityMap.addMap("EnderDragon", "ender_dragon");
+		EntityMap.addMap("WitherBoss", "wither");
+		EntityMap.addMap("Bat", "bat");
+		EntityMap.addMap("Witch", "witch");
+		EntityMap.addMap("Endermite", "endermite");
+		EntityMap.addMap("Guardian", "guardian");
+		EntityMap.addMap("Shulker", "shulker");
+		EntityMap.addMap("Pig", "pig");
+		EntityMap.addMap("Sheep", "sheep");
+		EntityMap.addMap("Cow", "cow");
+		EntityMap.addMap("Chicken", "chicken");
+		EntityMap.addMap("Squid", "squid");
+		EntityMap.addMap("Wolf", "wolf");
+		EntityMap.addMap("MushroomCow", "mooshroom");
+		EntityMap.addMap("SnowMan", "snowman");
+		EntityMap.addMap("Ozelot", "ocelot");
+		EntityMap.addMap("VillagerGolem", "villager_golem");
+		EntityMap.addMap("EntityHorse", "horse");
+		EntityMap.addMap("Rabbit", "rabbit");
+		EntityMap.addMap("PolarBear", "polar_bear");
+		EntityMap.addMap("llama", "llama");
+		EntityMap.addMap("llama_spit", "llama_spit");
+		EntityMap.addMap("Villager", "villager");
+		EntityMap.addMap("EnderCrystal", "ender_crystal");
+		EntityMap.addMap("TippedArrow", "TippedArrow");
 	}
 
 	public static Configuration getSpawnerConfig() {
 		return config;
 	}
 
-	private String[] compatibleVersions() {
-		String[] versions = {"v1_10_R1"};
-		return versions;
+	public static void setSpawnerConfig(Configuration config) {
+		Main.config = config;
 	}
 
-	public static String getNmsVersion() {
-		return nmsVersion;
+	public Config getConfigHandler() {
+		return configHandler;
 	}
 
-	public void setNmsVersion() {
-		String pkg = getServer().getClass().getPackage().getName();
-		nmsVersion = pkg.substring(pkg.lastIndexOf(".") + 1);
+	public void setConfigHandler(Config configHandler) {
+		this.configHandler = configHandler;
 	}
 
-	/*public String getNMS(String name) {
-		return "net.minecraft.server." + nmsVersion + "." + name;
+	public Language getLangHandler() {
+		return langHandler;
 	}
 
-	public String getCB(String name) {
-		return "org.bukkit.craftbukkit." + nmsVersion + "." + name;
+	public void setLangHandler(Language langHandler) {
+		this.langHandler = langHandler;
 	}
 
-	public static String getNMSClass(String className) {
-		return "me.ryvix.spawner." + getNmsVersion() + "." + className + "_" + getNmsVersion();
-	}*/
+	public NMS getNmsHandler() {
+		return nmsHandler;
+	}
+
+	public void setNmsHandler(NMS nmsHandler) {
+		this.nmsHandler = nmsHandler;
+	}
+
+	public static File spawnerGetDataFolder() {
+		return instance.getDataFolder();
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getVersion() {
+		return this.version;
+	}
 }

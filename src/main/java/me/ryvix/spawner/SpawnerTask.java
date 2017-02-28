@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Keys;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -45,9 +44,9 @@ public class SpawnerTask implements Runnable {
 	@Override
 	public void run() {
 		if (SpawnerFunctions.setSpawner(block, name)) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.PlacedSpawner, SpawnerType.getTextFromName(name)));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("PlacedSpawner", SpawnerType.getTextFromName(name)));
 		} else {
-			Main.language.sendMessage(player, Main.language.getText(Keys.NotPossible));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NotPossible"));
 		}
 	}
 }

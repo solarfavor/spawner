@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,6 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Keys;
-import net.minecraft.server.v1_10_R1.NBTTagCompound;
-import net.minecraft.server.v1_10_R1.NBTTagList;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -37,7 +34,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -61,146 +57,22 @@ public class SpawnerFunctions {
 
 	public static Spawner makeSpawner(Material material, int amount, String name) {
 		Spawner spawner = new Spawner(material, amount, name);
-		return new Spawner(setSpawnerNBT(spawner), amount);
+		return new Spawner(Main.instance.getNmsHandler().setSpawnerNBT(spawner), amount);
 	}
 
 	public static Spawner makeSpawner(ItemStack item) {
 		Spawner spawner = new Spawner(item);
-		return new Spawner(setSpawnerNBT(spawner), 1);
+		return new Spawner(Main.instance.getNmsHandler().setSpawnerNBT(spawner), 1);
 	}
 
 	public static Spawner makeSpawner(String name) {
 		Spawner spawner = new Spawner(name);
-		return new Spawner(setSpawnerNBT(spawner), 1);
+		return new Spawner(Main.instance.getNmsHandler().setSpawnerNBT(spawner), 1);
 	}
 
 	public static Spawner makeSpawner(String name, int amount) {
 		Spawner spawner = new Spawner(name, amount);
-		return new Spawner(setSpawnerNBT(spawner), amount);
-	}
-
-	/**
-	 * Get spawner type using NBT
-	 *
-	 * @return Entity Name string
-	 */
-	public static String getEntityNameFromSpawnerNBT(Spawner spawner) {
-		if (!(spawner.getType() == Material.MOB_SPAWNER)) {
-			return null;
-		}
-
-		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(spawner);
-
-		if (nmsStack.hasTag()) {
-			NBTTagCompound tag = nmsStack.getTag();
-
-			if (tag != null) {
-
-				if (tag.hasKey("BlockEntityTag")) {
-					NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
-
-					if (blockEntityTag.hasKey("SpawnPotentials")) {
-						NBTTagList spawnPotentials = blockEntityTag.getList("SpawnPotentials", 10);
-						if (!spawnPotentials.isEmpty()) {
-							// TODO: show all entity types in mob spawner name
-							NBTTagCompound entity = spawnPotentials.get(0).getCompound("Entity");
-							return entity.getString("id");
-						}
-					}
-
-				} else if (tag.hasKey("SpawnData")) {
-					NBTTagCompound spawnData = tag.getCompound("SpawnData");
-					if (spawnData.hasKey("id")) {
-						return spawnData.getString("id");
-					}
-
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * Set spawner type using NBT
-	 *
-	 * @param spawner
-	 * @return
-	 */
-	public static ItemStack setSpawnerNBT(Spawner spawner) {
-		if (!(spawner.getType() == Material.MOB_SPAWNER)) {
-			return null;
-		}
-
-		String cleanEntity = Main.language.translateEntity(spawner.getEntityName(), "key");
-
-		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(spawner);
-
-		NBTTagCompound tag;
-		if (nmsStack.hasTag()) {
-			tag = nmsStack.getTag();
-		} else {
-			tag = new NBTTagCompound();
-			nmsStack.setTag(tag);
-		}
-
-		if (!tag.hasKey("SpawnData")) {
-			tag.set("SpawnData", new NBTTagCompound());
-		}
-
-		NBTTagCompound spawnData = tag.getCompound("SpawnData");
-		spawnData.setString("id", cleanEntity);
-
-		if (!tag.hasKey("BlockEntityTag")) {
-			tag.set("BlockEntityTag", new NBTTagCompound());
-		}
-
-		NBTTagCompound blockEntityTag = tag.getCompound("BlockEntityTag");
-
-		if (!blockEntityTag.hasKey("SpawnPotentials")) {
-			blockEntityTag.set("SpawnPotentials", new NBTTagCompound());
-		}
-
-		NBTTagCompound spawnPotentials = new NBTTagCompound();
-
-		spawnPotentials.setInt("Weight", 1);
-		spawnPotentials.set("Entity", new NBTTagCompound());
-
-		NBTTagCompound spawnPotentialsEntity = spawnPotentials.getCompound("Entity");
-		spawnPotentialsEntity.setString("id", cleanEntity);
-
-		NBTTagList tags = new NBTTagList();
-
-		tags.add(spawnPotentials);
-
-		blockEntityTag.set("SpawnPotentials", tags);
-
-		return CraftItemStack.asCraftMirror(nmsStack);
-	}
-
-	/**
-	 * Get entity name from spawn egg using NBT
-	 *
-	 * @param is
-	 * @return
-	 * @url https://www.spigotmc.org/threads/tutorial-mob-eggs-in-1-9.131474/
-	 */
-	public static String getEntityNameFromSpawnEgg(ItemStack is) {
-		if (!(is.getType() == Material.MONSTER_EGG)) {
-			return null;
-		}
-
-		net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(is);
-
-		if (nmsStack.hasTag()) {
-			NBTTagCompound tag = nmsStack.getTag();
-			NBTTagCompound entityTag = tag.getCompound("EntityTag");
-			if (entityTag.hasKey("id")) {
-				return entityTag.getString("id");
-			}
-		}
-
-		return null;
+		return new Spawner(Main.instance.getNmsHandler().setSpawnerNBT(spawner), amount);
 	}
 
 	/**
@@ -327,7 +199,7 @@ public class SpawnerFunctions {
 		int count = 0;
 		SpawnerType type = getSpawnerType(entityArg);
 		if (type == null) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.InvalidEntity));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("InvalidEntity"));
 			return false;
 		}
 
@@ -341,13 +213,13 @@ public class SpawnerFunctions {
 				}
 			}
 		} catch (Exception e) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.ErrorRemovingEntities));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("ErrorRemovingEntities"));
 		}
 
 		String[] vars = new String[2];
 		vars[0] = "" + count;
 		vars[1] = SpawnerType.getTextFromName(entityArg);
-		Main.language.sendMessage(player, Main.language.getText(Keys.EntitiesRemoved, vars));
+		Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("EntitiesRemoved", vars));
 
 		return true;
 	}
@@ -440,7 +312,7 @@ public class SpawnerFunctions {
 	 * @return SpawnerType
 	 */
 	public static SpawnerType getSpawnerType(Spawner spawner) {
-		String name = getEntityNameFromSpawnerNBT(spawner);
+		String name = Main.instance.getNmsHandler().getEntityNameFromSpawnerNBT(spawner);
 		return SpawnerType.fromName(name);
 	}
 
@@ -497,7 +369,7 @@ public class SpawnerFunctions {
 		} else {
 			testName = convertAlias(cleanName.split(" ")[0]);
 		}
-		String returnName = Main.language.translateEntity(testName, type);
+		String returnName = Main.instance.getLangHandler().translateEntity(testName, type);
 
 		// if still default spawner name try getting value from durability
 		if (returnName.equals("default")) {

@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -76,7 +75,7 @@ public class SpawnerEvents implements Listener {
 			String spawnerName = spawnerType.getName();
 			if (spawnerName == null) {
 				// prevent from breaking invalid spawners
-				Main.language.sendMessage(player, Main.language.getText(Keys.InvalidSpawner));
+				Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("InvalidSpawner"));
 				event.setCancelled(true);
 				return;
 			}
@@ -119,7 +118,7 @@ public class SpawnerEvents implements Listener {
 
 			// prevent break if inv is full and prevent_break_if_inventory_full option is true
 			if (break_into_inventory && playerInv.firstEmpty() == -1 && prevent_break_if_inventory_full) {
-				Main.language.sendMessage(player, Main.language.getText(Keys.InventoryFull));
+				Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("InventoryFull"));
 				event.setCancelled(true);
 				return;
 			}
@@ -233,9 +232,9 @@ public class SpawnerEvents implements Listener {
 
 			SpawnerType spawnerTypeHand = null;
 			PlayerInventory playerInv = player.getInventory();
-			if (playerInv.getItemInMainHand().getType().equals(Material.MOB_SPAWNER)) {
+			if (playerInv.getItemInMainHand().getType() == Material.MOB_SPAWNER) {
 				spawnerTypeHand = SpawnerFunctions.getSpawnerType(playerInv.getItemInMainHand());
-			} else if (playerInv.getItemInOffHand().getType().equals(Material.MOB_SPAWNER)) {
+			} else if (playerInv.getItemInOffHand().getType() == Material.MOB_SPAWNER) {
 				spawnerTypeHand = SpawnerFunctions.getSpawnerType(playerInv.getItemInOffHand());
 			}
 
@@ -255,7 +254,7 @@ public class SpawnerEvents implements Listener {
 			if (!player.hasPermission("spawner.place.all") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
 				event.setCancelled(true);
 				String spawnerText = SpawnerType.getTextFromType(spawnerTypeBlock);
-				Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.NoPermission, spawnerText));
+				Main.instance.getLangHandler().sendMessage(event.getPlayer(), Main.instance.getLangHandler().getText("NoPermission", spawnerText));
 				return;
 			}
 
@@ -271,7 +270,7 @@ public class SpawnerEvents implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onEntityExplode(EntityExplodeEvent event) {
 
-		if (Main.instance.getSpawnerConfig().getBoolean("protect_from_explosions")) {
+		if (Main.getSpawnerConfig().getBoolean("protect_from_explosions")) {
 			// protect_from_explosions
 
 			if (event.blockList().isEmpty()) {
@@ -291,7 +290,7 @@ public class SpawnerEvents implements Listener {
 				}
 			}
 
-		} else if (Main.instance.getSpawnerConfig().getBoolean("drop_from_explosions")) {
+		} else if (Main.getSpawnerConfig().getBoolean("drop_from_explosions")) {
 			// drop_from_explosions
 
 			if (event.blockList().isEmpty()) {
@@ -322,7 +321,7 @@ public class SpawnerEvents implements Listener {
 	/**
 	 * When a spawner is picked up.
 	 *
-	 * @param event
+	 * @param event PlayerPickupItemEvent
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	private void onPlayerPickupItem(PlayerPickupItemEvent event) {
@@ -330,7 +329,7 @@ public class SpawnerEvents implements Listener {
 
 			Spawner spawner = SpawnerFunctions.makeSpawner(event.getItem().getItemStack());
 
-			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.YouPickedUp, spawner.getFormattedEntityName()));
+			Main.instance.getLangHandler().sendMessage(event.getPlayer(), Main.instance.getLangHandler().getText("YouPickedUp", spawner.getFormattedEntityName()));
 
 			event.getPlayer().updateInventory();
 		}
@@ -339,7 +338,7 @@ public class SpawnerEvents implements Listener {
 	/**
 	 * When a spawner is held.
 	 *
-	 * @param event
+	 * @param event PlayerItemHeldEvent
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onPlayerItemHeld(PlayerItemHeldEvent event) {
@@ -354,14 +353,14 @@ public class SpawnerEvents implements Listener {
 
 			event.getPlayer().updateInventory();
 
-			Main.language.sendMessage(event.getPlayer(), Main.language.getText(Keys.HoldingSpawner, spawner.getFormattedEntityName()));
+			Main.instance.getLangHandler().sendMessage(event.getPlayer(), Main.instance.getLangHandler().getText("HoldingSpawner", spawner.getFormattedEntityName()));
 		}
 	}
 
 	/**
 	 * When a player interacts with a spawner.
 	 *
-	 * @param event
+	 * @param event PlayerInteractEvent
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
 	private void onPlayerInteract(PlayerInteractEvent event) {
@@ -396,25 +395,25 @@ public class SpawnerEvents implements Listener {
 					// formatted name
 					String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
 
-					Main.language.sendMessage(player, Main.language.getText(Keys.SpawnerType, spawnerName));
+					Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("SpawnerType", spawnerName));
 				}
 			}
 
 			if (itemInHand != null) {
 
-				String eggId = SpawnerFunctions.getEntityNameFromSpawnEgg(itemInHand);
+				String eggId = Main.instance.getNmsHandler().getEntityNameFromSpawnEgg(itemInHand);
 
 				Spawner spawner = SpawnerFunctions.makeSpawner(eggId);
 				String spawnerName = spawner.getEntityName();
 
 				if (!player.hasPermission("spawner.eggs.all") && !player.hasPermission("spawner.eggs." + spawnerName.toLowerCase())) {
-					Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+					Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NoPermission"));
 					event.setCancelled(true);
 
 				} else {
 					// formatted name
 					spawnerName = SpawnerType.getTextFromName(eggId);
-					Main.language.sendMessage(player, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
+					Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("SpawnerChangedTo", spawnerName));
 				}
 			}
 		}
@@ -423,7 +422,7 @@ public class SpawnerEvents implements Listener {
 	/**
 	 * CreatureSpawnEvent for spawn frequency chance
 	 *
-	 * @param event
+	 * @param event CreatureSpawnEvent
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onCreatureSpawn(CreatureSpawnEvent event) {
@@ -462,7 +461,7 @@ public class SpawnerEvents implements Listener {
 	/**
 	 * Prevent anvil renaming of spawners.
 	 *
-	 * @param event
+	 * @param event InventoryClickEvent
 	 */
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	private void onInventoryClickEvent(InventoryClickEvent event) {
@@ -483,7 +482,7 @@ public class SpawnerEvents implements Listener {
 
 		// can we stop creative mode messing spawners up? A: Somewhat
 		if (type == Material.MOB_SPAWNER && player.getGameMode() == GameMode.CREATIVE) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.NoCreative));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NoCreative"));
 			event.setCancelled(true);
 			player.updateInventory();
 			return;
@@ -497,12 +496,12 @@ public class SpawnerEvents implements Listener {
 		}
 
 		if (type == Material.MOB_SPAWNER && !player.hasPermission("spawner.anvil.spawners")) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NoPermission"));
 			event.setCancelled(true);
 			return;
 		}
 		if (type == Material.MONSTER_EGG && !player.hasPermission("spawner.anvil.eggs")) {
-			Main.language.sendMessage(player, Main.language.getText(Keys.NoPermission));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NoPermission"));
 			event.setCancelled(true);
 		}
 	}

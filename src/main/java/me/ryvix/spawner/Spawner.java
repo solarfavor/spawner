@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,19 +26,12 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Keys;
-import net.minecraft.server.v1_10_R1.NBTTagCompound;
-import net.minecraft.server.v1_10_R1.NBTTagList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class Spawner extends ItemStack {
 
@@ -94,7 +87,7 @@ public class Spawner extends ItemStack {
 			returnName = displayName.split(" ")[0];
 		}
 		returnName = SpawnerFunctions.convertAlias(returnName);
-		returnName = Main.language.translateEntity(returnName, "key");
+		returnName = Main.instance.getLangHandler().translateEntity(returnName, "key");
 
 		return returnName;
 	}
@@ -123,7 +116,7 @@ public class Spawner extends ItemStack {
 	public Spawner setFormattedName(String name) {
 
 		ItemMeta im = getItemMeta();
-		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', Main.language.translateEntity(name, "value") + " " + Main.language.getText(Keys.Spawner)));
+		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', Main.instance.getLangHandler().translateEntity(name, "value") + " " + Main.instance.getLangHandler().getText("Spawner")));
 		setItemMeta(im);
 
 		return this;
@@ -145,56 +138,6 @@ public class Spawner extends ItemStack {
 		return name;
 	}
 
-	/**
-	 * Set lore
-	 *
-	 * @param lore
-	 * @return
-	 */
-	public Spawner setLore(String lore) {
-
-		ItemMeta im = getItemMeta();
-		if (lore.isEmpty() && im.hasLore()) {
-			im.setLore(null);
-		} else {
-			im.setLore(Arrays.asList(lore));
-		}
-		setItemMeta(im);
-
-		return this;
-	}
-
-	/**
-	 * Add lore
-	 *
-	 * @param lore
-	 * @return
-	 */
-	public Spawner addLore(String lore) {
-
-		ItemMeta im = getItemMeta();
-		List<String> newLore = im.getLore();
-		newLore.add(lore);
-		im.setLore(newLore);
-		setItemMeta(im);
-
-		return this;
-	}
-
-	/**
-	 * Get lore
-	 *
-	 * @return
-	 */
-	public List<String> getLore() {
-
-		ItemMeta im = getItemMeta();
-		if (im.hasLore()) {
-			return im.getLore();
-		}
-		return null;
-	}
-
 	public short updateDurability() {
 		// set correct durability
 		SpawnerType type = getSpawnerType();
@@ -209,15 +152,28 @@ public class Spawner extends ItemStack {
 
 	public String getEntityName() {
 		if (entityName == null) {
-			entityName = SpawnerFunctions.getEntityNameFromSpawnerNBT(this);
+			entityName = Main.instance.getNmsHandler().getEntityNameFromSpawnerNBT(this);
 			if (entityName == null || entityName.isEmpty()) {
 				entityName = getEntityNameFromDisplay();
 				if (entityName == null || entityName.isEmpty()) {
 					entityName = "";
 				}
+			} else {
+				entityName = getEntityNameFromNbtName(entityName);
 			}
 		}
 		return SpawnerFunctions.convertAlias(entityName);
+	}
+
+	public String getEntityNameFromNbtName(String nbtName) {
+
+		// Split string if it contains a semicolon i.e. minecraft:horse
+		if(nbtName.contains(":")) {
+			String[] parts = nbtName.split(":");
+			return parts[1];
+		}
+
+		return nbtName;
 	}
 
 	public void setEntityName(String entityName) {
@@ -225,8 +181,7 @@ public class Spawner extends ItemStack {
 	}
 
 	public String getFormattedEntityName() {
-		String formattedEntityName = Main.language.translateEntity(getEntityName(), "value");
-		return formattedEntityName;
+		return Main.instance.getLangHandler().translateEntity(getEntityName(), "value");
 	}
 
 	public SpawnerType getSpawnerType() {
@@ -235,6 +190,7 @@ public class Spawner extends ItemStack {
 			String name = getEntityName();
 			setSpawnerType(name);
 		}
+
 		return this.spawnerType;
 	}
 

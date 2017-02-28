@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Keys;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +36,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.io.File;
 
 public class SpawnerCommands implements CommandExecutor {
 
@@ -58,7 +59,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 				// catch console
 				if (!(sender instanceof Player)) {
-					Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+					Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("ConsoleUsageGive"));
 					return true;
 				}
 
@@ -69,23 +70,23 @@ public class SpawnerCommands implements CommandExecutor {
 					if (target.getType() == Material.MOB_SPAWNER) {
 						SpawnerType spawnerType = SpawnerFunctions.getSpawner(target);
 						if (spawnerType == null) {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							// it's no longer a valid spawner for some reason
 							// maybe no longer in valid_entities so lets break it to stop spawns
 							// target.breakNaturally();
 							return true;
 						}
 						String text = SpawnerType.getTextFromType(spawnerType);
-						Main.language.sendMessage(sender, text + " " + Main.language.getText(Keys.Spawner));
+						Main.instance.getLangHandler().sendMessage(sender, text + " " + Main.instance.getLangHandler().getText("Spawner"));
 						return true;
 
 					} else {
-						Main.language.sendMessage(sender, Main.language.getText(Keys.LookAtASpawner));
+						Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("LookAtASpawner"));
 						return true;
 					}
 
 				} else {
-					Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
+					Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NoPermission"));
 					return true;
 				}
 
@@ -96,7 +97,7 @@ public class SpawnerCommands implements CommandExecutor {
 					Main.instance.reloadFiles();
 					Main.instance.getLogger().info("Reloaded");
 					if ((sender instanceof Player)) {
-						Main.language.sendMessage(sender, ChatColor.GREEN + "Spawner has been reloaded.");
+						Main.instance.getLangHandler().sendMessage(sender, ChatColor.GREEN + "Spawner has been reloaded.");
 					}
 					return true;
 				}
@@ -104,24 +105,24 @@ public class SpawnerCommands implements CommandExecutor {
 				// spawner help
 				if (args[0].equalsIgnoreCase("help") && sender.hasPermission("spawner.help")) {
 
-					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "help.txt");
+					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + File.separator + Main.instance.getVersion() + File.separator + "help.txt");
 
-					Main.language.sendMessage(sender, contents);
+					Main.instance.getLangHandler().sendMessage(sender, contents);
 					return true;
 				}
 
 				// list entities
 				if (args[0].equalsIgnoreCase("list") && sender.hasPermission("spawner.list")) {
 
-					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + System.getProperty("file.separator") + "list.txt");
+					String contents = SpawnerFunctions.readFile(Main.instance.getDataFolder() + File.separator + Main.instance.getVersion() + File.separator + "list.txt");
 
-					Main.language.sendMessage(sender, contents);
+					Main.instance.getLangHandler().sendMessage(sender, contents);
 					return true;
 				}
 
 				// catch console
 				if (!(sender instanceof Player)) {
-					Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+					Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("ConsoleUsageGive"));
 					return true;
 				}
 
@@ -136,14 +137,14 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.setSpawner(target, args[0])) {
 							String type = SpawnerType.getTextFromName(args[0]);
 							if (type == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
-							Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, type));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("SpawnerChangedTo", type));
 							return true;
 
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 
@@ -160,13 +161,13 @@ public class SpawnerCommands implements CommandExecutor {
 								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
 
 								if (spawnerType == null) {
-									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 									return true;
 								}
 
 								String spawnerName = SpawnerType.getTextFromName(args[0]);
 								if (spawnerName == null) {
-									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 									return true;
 								}
 
@@ -187,19 +188,19 @@ public class SpawnerCommands implements CommandExecutor {
 									playerInv.setItemInOffHand(newSpawner);
 								}
 
-								Main.language.sendMessage(sender, Main.language.getText(Keys.SpawnerChangedTo, spawnerName));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("SpawnerChangedTo", spawnerName));
 								return true;
 							} else {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.NotPossible));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotPossible"));
 							return true;
 						}
 					}
 				} else {
-					Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
+					Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NoPermission"));
 				}
 
 				return true;
@@ -211,7 +212,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 					// catch console
 					if (!(sender instanceof Player)) {
-						Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+						Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("ConsoleUsageGive"));
 						return true;
 					}
 
@@ -221,13 +222,13 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
 							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
 							String spawnerName = SpawnerType.getTextFromName(args[1]);
 							if (spawnerName == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
@@ -246,14 +247,14 @@ public class SpawnerCommands implements CommandExecutor {
 								player.updateInventory();
 							}
 
-							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, spawnerName));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
 							return true;
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 					} else {
-						Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
+						Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NoPermission"));
 					}
 
 					return true;
@@ -263,10 +264,10 @@ public class SpawnerCommands implements CommandExecutor {
 					// /spawner remove <entity>
 					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
-							int radius = Main.instance.getSpawnerConfig().getInt("remove_radius");
+							int radius = Main.getSpawnerConfig().getInt("remove_radius");
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 					}
@@ -282,7 +283,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 						// catch console
 						if (!(sender instanceof Player)) {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.ConsoleUsageGive));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("ConsoleUsageGive"));
 							return true;
 						}
 						Player player = (Player) sender;
@@ -290,13 +291,13 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
 							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
 							String spawnerName = SpawnerType.getTextFromName(args[1]);
 							if (spawnerName == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
@@ -315,10 +316,10 @@ public class SpawnerCommands implements CommandExecutor {
 								player.updateInventory();
 							}
 
-							Main.language.sendMessage(sender, Main.language.getText(Keys.GivenSpawner, spawnerName));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
 							return true;
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 
@@ -332,13 +333,13 @@ public class SpawnerCommands implements CommandExecutor {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
 							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
 							String spawnerName = SpawnerType.getTextFromName(args[1]);
 							if (spawnerName == null) {
-								Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
@@ -355,7 +356,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 									// if target player is online drop it at their feet and tell them
 									targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-									Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, spawnerName));
+									Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("SpawnerDropped", spawnerName));
 									return true;
 
 								} else {
@@ -366,32 +367,32 @@ public class SpawnerCommands implements CommandExecutor {
 									targetPlayer.updateInventory();
 
 									if (targetPlayer != null) {
-										Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, spawnerName));
+										Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
 									} else {
-										Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotDeliveredOffline", args[2]));
 										return true;
 									}
 
 									String[] vars = new String[2];
 									vars[0] = spawnerName;
 									vars[1] = targetPlayer.getName();
-									Main.language.sendMessage(sender, Main.language.getText(Keys.YouGaveSpawner, vars));
+									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("YouGaveSpawner", vars));
 								}
 
 								return true;
 
 							} else {
 								// tell sender the target didn't get the spawner
-								Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotDeliveredOffline", args[2]));
 								return true;
 							}
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 
 					} else {
-						Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
+						Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NoPermission"));
 					}
 
 					return true;
@@ -405,13 +406,13 @@ public class SpawnerCommands implements CommandExecutor {
 							try {
 								radius = Integer.parseInt(args[2]);
 							} catch (NumberFormatException e) {
-								Main.language.sendMessage(sender, ChatColor.RED + Main.language.getText(Keys.InvalidRadius));
+								Main.instance.getLangHandler().sendMessage(sender, ChatColor.RED + Main.instance.getLangHandler().getText("InvalidRadius"));
 								return false;
 							}
 
 							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
 						} else {
-							Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
 						}
 					}
@@ -434,13 +435,13 @@ public class SpawnerCommands implements CommandExecutor {
 								if (SpawnerFunctions.isValidEntity(args[1])) {
 									SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 									if (spawnerType == null) {
-										Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 										return true;
 									}
 
 									String spawnerName = SpawnerType.getTextFromName(args[1]);
 									if (spawnerName == null) {
-										Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 										return true;
 									}
 
@@ -459,7 +460,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 											// if target player is online drop it at their feet and tell them
 											targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-											Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.SpawnerDropped, spawnerName));
+											Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("SpawnerDropped", spawnerName));
 											return true;
 
 										} else {
@@ -470,27 +471,27 @@ public class SpawnerCommands implements CommandExecutor {
 											targetPlayer.updateInventory();
 
 											if (targetPlayer != null) {
-												Main.language.sendMessage(targetPlayer, Main.language.getText(Keys.GivenSpawner, spawnerName));
+												Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
 											} else {
-												Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+												Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotDeliveredOffline", args[2]));
 												return true;
 											}
 
 											String[] vars = new String[2];
 											vars[0] = spawnerName;
 											vars[1] = targetPlayer.getName();
-											Main.language.sendMessage(sender, Main.language.getText(Keys.YouGaveSpawner, vars));
+											Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("YouGaveSpawner", vars));
 										}
 
 										return true;
 
 									} else {
 										// tell sender the target didn't get the spawner
-										Main.language.sendMessage(sender, Main.language.getText(Keys.NotDeliveredOffline, args[2]));
+										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotDeliveredOffline", args[2]));
 										return true;
 									}
 								} else {
-									Main.language.sendMessage(sender, Main.language.getText(Keys.InvalidSpawner));
+									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 									return true;
 								}
 
@@ -499,7 +500,7 @@ public class SpawnerCommands implements CommandExecutor {
 					}
 				}
 			} else {
-				Main.language.sendMessage(sender, Main.language.getText(Keys.NoPermission));
+				Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NoPermission"));
 			}
 		}
 

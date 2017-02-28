@@ -4,7 +4,7 @@
  *
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
  *
  */
 
-[Bukkit plugin page](http://dev.bukkit.org/bukkit-plugins/spawner/)
+[Bukkit plugin page](https://dev.bukkit.org/projects/spawner)
 [Source](https://github.com/ty2u/spawner)
 [Documentation](https://github.com/ty2u/spawner/wiki/Main)
 [Creating a Spawner From Another Plugin](https://github.com/ty2u/spawner/wiki/Creating-a-Spawner-From-Another-Plugin)

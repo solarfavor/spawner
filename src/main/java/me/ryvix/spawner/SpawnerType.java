@@ -4,7 +4,7 @@
  * <p>
  * The MIT License (MIT)
  * <p>
- * Copyright (c) 2016 Ryan Rhode
+ * Copyright (c) 2017 Ryan Rhode
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,6 @@
  */
 package me.ryvix.spawner;
 
-import me.ryvix.spawner.language.Entities;
 import org.bukkit.entity.EntityType;
 
 import java.util.Arrays;
@@ -41,64 +40,76 @@ import java.util.Map;
  * https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/entity/EntityType.java
  */
 public enum SpawnerType {
-
-	EXPERIENCE_ORB("XPOrb", Main.language.getEntity(Entities.XPOrb), 2),
-	LEASH_HITCH("LeashKnot", Main.language.getEntity(Entities.LeashKnot), 8),
-	PAINTING("Painting", Main.language.getEntity(Entities.Painting), 9),
-	ARROW("Arrow", Main.language.getEntity(Entities.Arrow), 10),
-	SNOWBALL("Snowball", Main.language.getEntity(Entities.Snowball), 11),
-	FIREBALL("Fireball", Main.language.getEntity(Entities.Fireball), 12),
-	SMALL_FIREBALL("SmallFireball", Main.language.getEntity(Entities.SmallFireball), 13),
-	ENDER_PEARL("ThrownEnderpearl", Main.language.getEntity(Entities.ThrownEnderpearl), 14),
-	ENDER_SIGNAL("EyeOfEnderSignal", Main.language.getEntity(Entities.EyeOfEnderSignal), 15),
-	THROWN_EXP_BOTTLE("ThrownExpBottle", Main.language.getEntity(Entities.ThrownExpBottle), 17),
-	ITEM_FRAME("ItemFrame", Main.language.getEntity(Entities.ItemFrame), 18),
-	WITHER_SKULL("WitherSkull", Main.language.getEntity(Entities.WitherSkull), 19),
-	PRIMED_TNT("PrimedTnt", Main.language.getEntity(Entities.PrimedTnt), 20),
-	MINECART_COMMAND("MinecartCommandBlock", Main.language.getEntity(Entities.MinecartCommandBlock), 40),
-	BOAT("Boat", Main.language.getEntity(Entities.Boat), 41),
-	MINECART("MinecartRideable", Main.language.getEntity(Entities.MinecartRideable), 42),
-	MINECART_CHEST("MinecartChest", Main.language.getEntity(Entities.MinecartChest), 43),
-	MINECART_FURNACE("MinecartFurnace", Main.language.getEntity(Entities.MinecartFurnace), 44),
-	MINECART_TNT("MinecartTNT", Main.language.getEntity(Entities.MinecartTNT), 45),
-	MINECART_HOPPER("MinecartHopper", Main.language.getEntity(Entities.MinecartHopper), 46),
-	MINECART_MOB_SPAWNER("MinecartMobSpawner", Main.language.getEntity(Entities.MinecartMobSpawner), 47),
-	CREEPER("Creeper", Main.language.getEntity(Entities.Creeper), 50),
-	SKELETON("Skeleton", Main.language.getEntity(Entities.Skeleton), 51),
-	SPIDER("Spider", Main.language.getEntity(Entities.Spider), 52),
-	GIANT("Giant", Main.language.getEntity(Entities.Giant), 53),
-	ZOMBIE("Zombie", Main.language.getEntity(Entities.Zombie), 54),
-	SLIME("Slime", Main.language.getEntity(Entities.Slime), 55),
-	GHAST("Ghast", Main.language.getEntity(Entities.Ghast), 56),
-	PIG_ZOMBIE("PigZombie", Main.language.getEntity(Entities.PigZombie), 57),
-	ENDERMAN("Enderman", Main.language.getEntity(Entities.Enderman), 58),
-	CAVE_SPIDER("CaveSpider", Main.language.getEntity(Entities.CaveSpider), 59),
-	SILVERFISH("Silverfish", Main.language.getEntity(Entities.Silverfish), 60),
-	BLAZE("Blaze", Main.language.getEntity(Entities.Blaze), 61),
-	MAGMA_CUBE("LavaSlime", Main.language.getEntity(Entities.LavaSlime), 62),
-	ENDER_DRAGON("EnderDragon", Main.language.getEntity(Entities.EnderDragon), 63),
-	WITHER("WitherBoss", Main.language.getEntity(Entities.WitherBoss), 64),
-	BAT("Bat", Main.language.getEntity(Entities.Bat), 65),
-	WITCH("Witch", Main.language.getEntity(Entities.Witch), 66),
-	PIG("Pig", Main.language.getEntity(Entities.Pig), 90),
-	SHEEP("Sheep", Main.language.getEntity(Entities.Sheep), 91),
-	COW("Cow", Main.language.getEntity(Entities.Cow), 92),
-	CHICKEN("Chicken", Main.language.getEntity(Entities.Chicken), 93),
-	SQUID("Squid", Main.language.getEntity(Entities.Squid), 94),
-	WOLF("Wolf", Main.language.getEntity(Entities.Wolf), 95),
-	MUSHROOM_COW("MushroomCow", Main.language.getEntity(Entities.MushroomCow), 96),
-	SNOWMAN("SnowMan", Main.language.getEntity(Entities.SnowMan), 97),
-	OCELOT("Ozelot", Main.language.getEntity(Entities.Ozelot), 98),
-	IRON_GOLEM("VillagerGolem", Main.language.getEntity(Entities.VillagerGolem), 99),
-	HORSE("EntityHorse", Main.language.getEntity(Entities.EntityHorse), 100),
-	VILLAGER("Villager", Main.language.getEntity(Entities.Villager), 120),
-	ENDER_CRYSTAL("EnderCrystal", Main.language.getEntity(Entities.EnderCrystal), 200),
-	FIREWORK("FireworksRocketEntity", Main.language.getEntity(Entities.FireworksRocketEntity), 22),
-	GUARDIAN("Guardian", Main.language.getEntity(Entities.Guardian), 68),
-	ENDERMITE("Endermite", Main.language.getEntity(Entities.Endermite), 67),
-	RABBIT("Rabbit", Main.language.getEntity(Entities.Rabbit), 101),
-	SHULKER("Shulker", Main.language.getEntity(Entities.Shulker), 69),
-	POLAR_BEAR("PolarBear", Main.language.getEntity(Entities.PolarBear), 102);
+	EXPERIENCE_ORB("xp_orb", Main.instance.getLangHandler().getEntity("xp_orb"), 2),
+	LEASH_HITCH("leash_knot", Main.instance.getLangHandler().getEntity("leash_knot"), 8),
+	PAINTING("painting", Main.instance.getLangHandler().getEntity("painting"), 9),
+	ARROW("arrow", Main.instance.getLangHandler().getEntity("arrow"), 10),
+	SNOWBALL("snowball", Main.instance.getLangHandler().getEntity("snowball"), 11),
+	FIREBALL("fireball", Main.instance.getLangHandler().getEntity("fireball"), 12),
+	SMALL_FIREBALL("small_fireball", Main.instance.getLangHandler().getEntity("small_fireball"), 13),
+	ENDER_PEARL("ender_pearl", Main.instance.getLangHandler().getEntity("ender_pearl"), 14),
+	ENDER_SIGNAL("eye_of_ender_signal", Main.instance.getLangHandler().getEntity("eye_of_ender_signal"), 15),
+	THROWN_EXP_BOTTLE("xp_bottle", Main.instance.getLangHandler().getEntity("xp_bottle"), 17),
+	ITEM_FRAME("item_frame", Main.instance.getLangHandler().getEntity("item_frame"), 18),
+	WITHER_SKULL("wither_skull", Main.instance.getLangHandler().getEntity("wither_skull"), 19),
+	PRIMED_TNT("tnt", Main.instance.getLangHandler().getEntity("tnt"), 20),
+	MINECART_COMMAND("commandblock_minecart", Main.instance.getLangHandler().getEntity("commandblock_minecart"), 40),
+	BOAT("boat", Main.instance.getLangHandler().getEntity("boat"), 41),
+	MINECART("minecart", Main.instance.getLangHandler().getEntity("minecart"), 42),
+	MINECART_CHEST("chest_minecart", Main.instance.getLangHandler().getEntity("chest_minecart"), 43),
+	MINECART_FURNACE("chest_minecart", Main.instance.getLangHandler().getEntity("chest_minecart"), 44),
+	MINECART_TNT("tnt_minecart", Main.instance.getLangHandler().getEntity("tnt_minecart"), 45),
+	MINECART_HOPPER("hopper_minecart", Main.instance.getLangHandler().getEntity("hopper_minecart"), 46),
+	MINECART_MOB_SPAWNER("spawner_minecart", Main.instance.getLangHandler().getEntity("spawner_minecart"), 47),
+	CREEPER("creeper", Main.instance.getLangHandler().getEntity("creeper"), 50),
+	SKELETON("skeleton", Main.instance.getLangHandler().getEntity("skeleton"), 51),
+	SPIDER("spider", Main.instance.getLangHandler().getEntity("spider"), 52),
+	GIANT("giant", Main.instance.getLangHandler().getEntity("giant"), 53),
+	ZOMBIE("zombie", Main.instance.getLangHandler().getEntity("zombie"), 54),
+	SLIME("slime", Main.instance.getLangHandler().getEntity("slime"), 55),
+	GHAST("ghast", Main.instance.getLangHandler().getEntity("ghast"), 56),
+	PIG_ZOMBIE("zombie_pigman", Main.instance.getLangHandler().getEntity("zombie_pigman"), 57),
+	ENDERMAN("enderman", Main.instance.getLangHandler().getEntity("enderman"), 58),
+	CAVE_SPIDER("cave_spider", Main.instance.getLangHandler().getEntity("cave_spider"), 59),
+	SILVERFISH("silverfish", Main.instance.getLangHandler().getEntity("silverfish"), 60),
+	BLAZE("blaze", Main.instance.getLangHandler().getEntity("blaze"), 61),
+	MAGMA_CUBE("magma_cube", Main.instance.getLangHandler().getEntity("magma_cube"), 62),
+	ENDER_DRAGON("ender_dragon", Main.instance.getLangHandler().getEntity("ender_dragon"), 63),
+	WITHER("wither", Main.instance.getLangHandler().getEntity("wither"), 64),
+	BAT("bat", Main.instance.getLangHandler().getEntity("bat"), 65),
+	WITCH("witch", Main.instance.getLangHandler().getEntity("witch"), 66),
+	PIG("pig", Main.instance.getLangHandler().getEntity("pig"), 90),
+	SHEEP("sheep", Main.instance.getLangHandler().getEntity("sheep"), 91),
+	COW("cow", Main.instance.getLangHandler().getEntity("cow"), 92),
+	CHICKEN("chicken", Main.instance.getLangHandler().getEntity("chicken"), 93),
+	SQUID("squid", Main.instance.getLangHandler().getEntity("squid"), 94),
+	WOLF("wolf", Main.instance.getLangHandler().getEntity("wolf"), 95),
+	MUSHROOM_COW("mooshroom", Main.instance.getLangHandler().getEntity("mooshroom"), 96),
+	SNOWMAN("snowMan", Main.instance.getLangHandler().getEntity("snowMan"), 97),
+	OCELOT("ocelot", Main.instance.getLangHandler().getEntity("ocelot"), 98),
+	IRON_GOLEM("villager_golem", Main.instance.getLangHandler().getEntity("villager_golem"), 99),
+	HORSE("horse", Main.instance.getLangHandler().getEntity("horse"), 100),
+	VILLAGER("villager", Main.instance.getLangHandler().getEntity("villager"), 120),
+	ENDER_CRYSTAL("ender_crystal", Main.instance.getLangHandler().getEntity("ender_crystal"), 200),
+	FIREWORK("fireworks_rocket", Main.instance.getLangHandler().getEntity("fireworks_rocket"), 22),
+	GUARDIAN("guardian", Main.instance.getLangHandler().getEntity("guardian"), 68),
+	ENDERMITE("endermite", Main.instance.getLangHandler().getEntity("endermite"), 67),
+	RABBIT("rabbit", Main.instance.getLangHandler().getEntity("rabbit"), 101),
+	SHULKER("shulker", Main.instance.getLangHandler().getEntity("shulker"), 69),
+	POLAR_BEAR("polar_bear", Main.instance.getLangHandler().getEntity("polar_bear"), 102),
+	VINDICATOR("vindication_illager", Main.instance.getLangHandler().getEntity("vindication_illager"), 36),
+	VEX("vex", Main.instance.getLangHandler().getEntity("vex"), 35),
+	EVOKER("evocation_illager", Main.instance.getLangHandler().getEntity("evocation_illager"), 34),
+	MULE("mule", Main.instance.getLangHandler().getEntity("mule"), 32),
+	DONKEY("donkey", Main.instance.getLangHandler().getEntity("donkey"), 31),
+	ZOMBIE_HORSE("zombie_horse", Main.instance.getLangHandler().getEntity("zombie_horse"), 29),
+	SKELETON_HORSE("skeleton_horse", Main.instance.getLangHandler().getEntity("skeleton_horse"), 28),
+	ZOMBIE_VILLAGER("zombie_villager", Main.instance.getLangHandler().getEntity("zombie_villager"), 27),
+	HUSK("husk", Main.instance.getLangHandler().getEntity("husk"), 23),
+	WITHER_SKELETON("wither_skeleton", Main.instance.getLangHandler().getEntity("wither_skeleton"), 5),
+	ELDER_GUARDIAN("elder_guardian", Main.instance.getLangHandler().getEntity("elder_guardian"), 4),
+	STRAY("stray", Main.instance.getLangHandler().getEntity("stray"), 6),
+	LLAMA("llama", Main.instance.getLangHandler().getEntity("llama"), 103);
 
 	private String name;
 	private String text;
@@ -125,7 +136,7 @@ public enum SpawnerType {
 				if (type.typeId > 0) {
 					ID_MAP.put(type.typeId, type);
 				}
-				if (type.text != null) {
+				if (type.name != null && type.text != null) {
 					TEXT_NAME_MAP.put(type.name.toLowerCase(), type.text);
 				}
 				if (type.text != null) {
