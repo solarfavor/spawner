@@ -143,6 +143,18 @@ public class ConfigHandler implements Config {
 			aliases.add("cat");
 			Main.instance.getConfig().addDefault("aliases.Ozelot", aliases);
 			aliases.clear();
+
+			aliases.add("bunny");
+			Main.instance.getConfig().addDefault("aliases.Rabbit", aliases);
+			aliases.clear();
+
+			aliases.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.FireworksRocketEntity", aliases);
+			aliases.clear();
+
+			aliases.add("xp");
+			Main.instance.getConfig().addDefault("aliases.XPOrb", aliases);
+			aliases.clear();
 		}
 
 		ConfigurationSection frequency = Main.instance.getConfig().getConfigurationSection("frequency");

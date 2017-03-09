@@ -209,14 +209,36 @@ public class ConfigHandler implements Config {
 
 			List<String> aliases = new ArrayList<>();
 
+			aliases.add("WitherBoss");
+			Main.instance.getConfig().addDefault("aliases.wither", aliases);
+			aliases.clear();
+
 			aliases.add("golem");
 			aliases.add("irongolem");
 			Main.instance.getConfig().addDefault("aliases.villager_golem", aliases);
 			aliases.clear();
 
-			aliases.add("ozelot");
+			aliases.add("EntityHorse");
+			Main.instance.getConfig().addDefault("aliases.horse", aliases);
+			aliases.clear();
+
+			aliases.add("Ozelot");
 			aliases.add("cat");
 			Main.instance.getConfig().addDefault("aliases.ocelot", aliases);
+			aliases.clear();
+
+			aliases.add("bunny");
+			Main.instance.getConfig().addDefault("aliases.rabbit", aliases);
+			aliases.clear();
+
+			aliases.add("FireworksRocketEntity");
+			aliases.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.fireworks_rocket", aliases);
+			aliases.clear();
+
+			aliases.add("XPOrb");
+			aliases.add("xp");
+			Main.instance.getConfig().addDefault("aliases.xp_orb", aliases);
 			aliases.clear();
 		}
 
