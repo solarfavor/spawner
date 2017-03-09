@@ -532,7 +532,7 @@ public class LangHandler implements Language {
 			Player player = Main.instance.getServer().getPlayer(playerUuid);
 			if(player != null) {
 				player.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
-
+			}
 		}
 	}
 
