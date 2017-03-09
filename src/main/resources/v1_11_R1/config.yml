@@ -63,15 +63,15 @@ valid_entities:
 aliases:
     wither:
         - WitherBoss
-    VillagerGolem:
+    villager_golem:
         - irongolem
         - golem
-    Horse:
+    horse:
         - entityhorse
     ocelot:
         - Ozelot
         - cat
-    Rabbit:
+    rabbit:
         - bunny
     fireworks_rocket:
         - FireworksRocketEntity
