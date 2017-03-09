@@ -67,7 +67,7 @@ aliases:
         - irongolem
         - golem
     horse:
-        - entityhorse
+        - EntityHorse
     ocelot:
         - Ozelot
         - cat
