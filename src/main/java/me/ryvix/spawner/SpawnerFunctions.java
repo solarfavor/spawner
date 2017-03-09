@@ -45,6 +45,7 @@ import org.bukkit.util.BlockIterator;
 import java.io.*;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,7 +80,7 @@ public class SpawnerFunctions {
 	 * Check config for alias and return the entity type.
 	 * Returns input string if no aliases are found.
 	 *
-	 * @param entity
+	 * @param entity String
 	 * @return String
 	 */
 	public static String convertAlias(String entity) {
@@ -105,8 +106,8 @@ public class SpawnerFunctions {
 	/**
 	 * Checks if entity is valid.
 	 *
-	 * @param arg
-	 * @return
+	 * @param arg String
+	 * @return boolean
 	 */
 	public static boolean isValidEntity(String arg) {
 
@@ -136,8 +137,8 @@ public class SpawnerFunctions {
 	 * A chance to return true or false based on the given config key integer.
 	 * A configKey with a value less than 100 will have a chance to return false.
 	 *
-	 * @param configKey
-	 * @return
+	 * @param configKey String
+	 * @return boolean
 	 */
 	public static boolean chance(String configKey) {
 		int chance = Main.getSpawnerConfig().getInt(configKey.toLowerCase());
@@ -157,7 +158,7 @@ public class SpawnerFunctions {
 	/**
 	 * Reads a file to a string Lines starting with # will be ignored
 	 *
-	 * @param fileName
+	 * @param fileName String
 	 * @return String
 	 */
 	public static String readFile(String fileName) {
@@ -190,14 +191,15 @@ public class SpawnerFunctions {
 	/**
 	 * Remove entities around the player
 	 *
-	 * @param player
-	 * @param entityArg
-	 * @param radius
-	 * @return
+	 * @param playerUuid String
+	 * @param entityArg String
+	 * @param radius int
+	 * @return boolean
 	 */
-	public static boolean removeEntities(Player player, String entityArg, int radius) {
+	public static boolean removeEntities(UUID playerUuid, String entityArg, int radius) {
+		Player player = Main.instance.getServer().getPlayer(playerUuid);
 		int count = 0;
-		SpawnerType type = getSpawnerType(entityArg);
+		EntityType type = getSpawnerType(entityArg);
 		if (type == null) {
 			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("InvalidEntity"));
 			return false;
@@ -207,7 +209,7 @@ public class SpawnerFunctions {
 
 		try {
 			for (Entity entity : entities) {
-				if (entity.getType() == type.getEntityType()) {
+				if (entity.getType() == type) {
 					entity.remove();
 					count++;
 				}
@@ -218,7 +220,7 @@ public class SpawnerFunctions {
 
 		String[] vars = new String[2];
 		vars[0] = "" + count;
-		vars[1] = SpawnerType.getTextFromName(entityArg);
+		vars[1] = getTextFromName(entityArg);
 		Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("EntitiesRemoved", vars));
 
 		return true;
@@ -227,11 +229,12 @@ public class SpawnerFunctions {
 	/**
 	 * Try to find a spawner block targeted by the player.
 	 *
-	 * @param player
-	 * @param distance
-	 * @return
+	 * @param playerUuid Player
+	 * @param distance int
+	 * @return Block
 	 */
-	public static Block findSpawnerBlock(Player player, int distance) {
+	public static Block findSpawnerBlock(UUID playerUuid, int distance) {
+		Player player = Main.instance.getServer().getPlayer(playerUuid);
 		BlockIterator bit = new BlockIterator(player, distance);
 		Block blockToCheck = null;
 		while (bit.hasNext()) {
@@ -247,16 +250,16 @@ public class SpawnerFunctions {
 	/**
 	 * Get the name from the durability/typeid value
 	 *
-	 * @param durability
-	 * @param noDefault
-	 * @return Formated name
+	 * @param durability short
+	 * @param noDefault boolean
+	 * @return String
 	 */
 	public static String nameFromDurability(short durability, boolean... noDefault) {
 
-		SpawnerType spawnerType = getSpawnerType(durability);
+		EntityType spawnerType = getSpawnerType(durability);
 		String spawnerName = "default";
 		if (spawnerType != null) {
-			spawnerName = SpawnerType.getTextFromType(spawnerType);
+			spawnerName = getTextFromType(spawnerType);
 		} else if (noDefault.length > 0 && noDefault[0]) {
 			return "";
 		}
@@ -276,53 +279,53 @@ public class SpawnerFunctions {
 	/**
 	 * Get the durability/typeid value from the EntityType
 	 *
-	 * @param entityType
+	 * @param entityType EntityType
 	 * @return short
 	 */
 	public static short durabilityFromEntityType(EntityType entityType) {
-		SpawnerType spawnerType = SpawnerType.fromEntityType(entityType);
+		EntityType spawnerType = fromEntityType(entityType);
 		return spawnerType.getTypeId();
 	}
 
 	/**
-	 * Return the SpawnerType of the given id/durability.
+	 * Return the EntityType of the given id/durability.
 	 *
-	 * @param d
-	 * @return
+	 * @param d short
+	 * @return EntityType
 	 */
-	public static SpawnerType getSpawnerType(short d) {
-		SpawnerType type = SpawnerType.fromId(d);
+	public static EntityType getSpawnerType(short d) {
+		EntityType type = EntityType.fromId(d);
 		return type;
 	}
 
 	/**
-	 * Return the SpawnerType of the given string.
+	 * Return the EntityType of the given string.
 	 *
-	 * @param arg
-	 * @return
+	 * @param arg String
+	 * @return EntityType
 	 */
-	public static SpawnerType getSpawnerType(String arg) {
-		return SpawnerType.fromName(arg);
+	public static EntityType getSpawnerType(String arg) {
+		return EntityType.fromName(arg);
 	}
 
 	/**
-	 * Return the SpawnerType of the given ItemStack.
+	 * Return the EntityType of the given ItemStack.
 	 *
-	 * @param spawner
-	 * @return SpawnerType
+	 * @param spawner Spawner
+	 * @return EntityType
 	 */
-	public static SpawnerType getSpawnerType(Spawner spawner) {
+	public static EntityType getSpawnerType(Spawner spawner) {
 		String name = Main.instance.getNmsHandler().getEntityNameFromSpawnerNBT(spawner);
-		return SpawnerType.fromName(name);
+		return EntityType.fromName(name);
 	}
 
 	/**
-	 * Return the SpawnerType of the given ItemStack.
+	 * Return the EntityType of the given ItemStack.
 	 *
-	 * @param is
-	 * @return SpawnerType
+	 * @param is ItemStack
+	 * @return EntityType
 	 */
-	public static SpawnerType getSpawnerType(ItemStack is) {
+	public static EntityType getSpawnerType(ItemStack is) {
 		Spawner spawner = SpawnerFunctions.makeSpawner(is);
 		return spawner.getSpawnerType();
 	}
@@ -330,13 +333,13 @@ public class SpawnerFunctions {
 	/**
 	 * Get a spawner name.
 	 *
-	 * @param inputName
-	 * @param type
+	 * @param inputName String
+	 * @param type String
 	 * @param options   0 = default, no convert
 	 *                  unset, 1 = default, convert
 	 *                  2 = no default, convert
 	 *                  3 = no default, no convert
-	 * @return
+	 * @return String
 	 */
 	public static String getSpawnerName(String inputName, String type, int... options) {
 		Spawner spawner = makeSpawner(Material.MOB_SPAWNER, 1, inputName);
@@ -347,13 +350,13 @@ public class SpawnerFunctions {
 	/**
 	 * Get a spawner name.
 	 *
-	 * @param spawner
-	 * @param type
+	 * @param spawner Spawner
+	 * @param type String
 	 * @param options 0 = default, no convert
 	 *                unset, 1 = default, convert
 	 *                2 = no default, convert
 	 *                3 = no default, no convert
-	 * @return
+	 * @return String
 	 */
 	public static String getSpawnerName(Spawner spawner, String type, int... options) {
 		String cleanName = spawner.getEntityName();
@@ -389,10 +392,10 @@ public class SpawnerFunctions {
 	/**
 	 * Get spawner EntityType
 	 *
-	 * @param target
-	 * @return
+	 * @param target Block
+	 * @return EntityType
 	 */
-	public static SpawnerType getSpawner(Block target) {
+	public static EntityType getSpawner(Block target) {
 		CreatureSpawner testSpawner;
 		try {
 			testSpawner = (CreatureSpawner) target.getState();
@@ -402,23 +405,23 @@ public class SpawnerFunctions {
 			} catch (Pigception p) {
 				p.printStackTrace();
 			}
-			return SpawnerType.PIG;
+			return EntityType.PIG;
 		}
-		return SpawnerType.fromEntityType(testSpawner.getSpawnedType());
+		return fromEntityType(testSpawner.getSpawnedType());
 	}
 
 	/**
 	 * Set spawner type
 	 *
-	 * @param target
-	 * @param arg
-	 * @return
+	 * @param target Block
+	 * @param arg String
+	 * @return boolean
 	 */
 	public static boolean setSpawner(Block target, String arg) {
 		if (!SpawnerFunctions.isValidEntity(arg)) {
 			return false;
 		}
-		SpawnerType type = SpawnerFunctions.getSpawnerType(arg);
+		EntityType type = SpawnerFunctions.getSpawnerType(arg);
 		if (type == null) {
 			return false;
 		}
@@ -429,7 +432,7 @@ public class SpawnerFunctions {
 			return false;
 		}
 		if (testSpawner != null) {
-			testSpawner.setSpawnedType(type.getEntityType());
+			testSpawner.setSpawnedType(type);
 			target.getState().update();
 			return true;
 		}
@@ -465,6 +468,8 @@ public class SpawnerFunctions {
 			case 5:
 				type = Type.STAR;
 				break;
+			default:
+				type = Type.BALL;
 		}
 
 		FireworkEffect effect = FireworkEffect.builder()
@@ -479,6 +484,67 @@ public class SpawnerFunctions {
 		fireworkMeta.setPower(randomInt);
 
 		firework.setFireworkMeta(fireworkMeta);
+	}
+
+	/**
+	 * Get EntityType from EntityType
+	 *
+	 * @param entityType EntityType
+	 * @return EntityType
+	 */
+	public static EntityType fromEntityType(EntityType entityType) {
+		if (entityType == null) {
+			return null;
+		}
+
+		try {
+			return EntityType.valueOf(entityType.name());
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Get text from name
+	 *
+	 * @param arg String
+	 * @return String
+	 */
+	public static String getTextFromName(String arg) {
+		String name = getSpawnerName(convertAlias(arg), "key");
+
+		if (name == null) {
+			return null;
+		}
+
+		return getSpawnerName(name, "value");
+	}
+
+	/**
+	 * Get text from type
+	 *
+	 * @param type EntityType
+	 * @return String
+	 */
+	public static String getTextFromType(EntityType type) {
+		if (type == null) {
+			return null;
+		}
+
+		return getSpawnerName(type.name(), "value");
+	}
+
+	/**
+	 * Get type from clean name
+	 *
+	 * @param name String
+	 * @return EntityType
+	 */
+	public static EntityType fromCleanName(String name) {
+		if (name == null) {
+			return null;
+		}
+		return EntityType.fromName(name);
 	}
 
 }

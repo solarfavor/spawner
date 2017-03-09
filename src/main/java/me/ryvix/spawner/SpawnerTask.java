@@ -44,7 +44,7 @@ public class SpawnerTask implements Runnable {
 	@Override
 	public void run() {
 		if (SpawnerFunctions.setSpawner(block, name)) {
-			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("PlacedSpawner", SpawnerType.getTextFromName(name)));
+			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("PlacedSpawner", SpawnerFunctions.getTextFromName(name)));
 		} else {
 			Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("NotPossible"));
 		}

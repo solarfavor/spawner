@@ -90,14 +90,14 @@ public class ConfigHandler implements Config {
 		}
 
 		// set config file
-		Main.setSpawnerConfig(YamlConfiguration.loadConfiguration(configFile));
+		Main.instance.setSpawnerConfig(YamlConfiguration.loadConfiguration(configFile));
 
 		boolean updates = false;
 
 		List<String> validEntities = Arrays.asList(
 				//"item",
 				"xp_orb",
-				"area_effect_cloud",
+				//"area_effect_cloud",
 				"elder_guardian",
 				"wither_skeleton",
 				"stray",
@@ -132,13 +132,13 @@ public class ConfigHandler implements Config {
 				"vex",
 				"vindication_illager",
 				//"commandblock_minecart",
-				"boat",
-				"minecart",
-				"chest_minecart",
+				//"boat",
+				//"minecart",
 				//"chest_minecart",
-				"tnt_minecart",
-				"hopper_minecart",
-				"spawner_minecart",
+				//"chest_minecart",
+				//"tnt_minecart",
+				//"hopper_minecart",
+				//"spawner_minecart",
 				"creeper",
 				"skeleton",
 				"spider",
@@ -180,11 +180,11 @@ public class ConfigHandler implements Config {
 		);
 
 		// add defaults
-		if (!Main.getSpawnerConfig().contains("valid_entities")) {
+		if (!Main.instance.getSpawnerConfig().contains("valid_entities")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("valid_entities", validEntities);
 		}
-		if (Main.getSpawnerConfig().contains("bad_entities")) {
+		if (Main.instance.getSpawnerConfig().contains("bad_entities")) {
 			updates = true;
 			Main.instance.getConfig().set("bad_entities", null);
 		}
@@ -192,19 +192,19 @@ public class ConfigHandler implements Config {
 			updates = true;
 			Main.instance.getConfig().addDefault("protect_from_explosions", true);
 		}
-		if (!Main.getSpawnerConfig().contains("drop_from_explosions")) {
+		if (!Main.instance.getSpawnerConfig().contains("drop_from_explosions")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("drop_from_explosions", false);
 		}
-		if (!Main.getSpawnerConfig().contains("remove_radius")) {
+		if (!Main.instance.getSpawnerConfig().contains("remove_radius")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("remove_radius", 10);
 		}
-		if (!Main.getSpawnerConfig().contains("luck")) {
+		if (!Main.instance.getSpawnerConfig().contains("luck")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("luck", 100);
 		}
-		if (!Main.getSpawnerConfig().contains("aliases")) {
+		if (!Main.instance.getSpawnerConfig().contains("aliases")) {
 			updates = true;
 
 			List<String> wither = new ArrayList<>();

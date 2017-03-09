@@ -28,17 +28,19 @@ package me.ryvix.spawner.language.v1_11_R1;
 
 import me.ryvix.spawner.Main;
 import me.ryvix.spawner.api.Language;
+import me.ryvix.spawner.EntityMap;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LangHandler implements Language {
 
@@ -113,6 +115,11 @@ public class LangHandler implements Language {
 	 * @return
 	 */
 	public String getEntity(String entity) {
+		String mapped = EntityMap.getValue(entity);
+		if(mapped != null) {
+			entity = mapped;
+		}
+
 		String text;
 		try {
 			text = config.getString("Entities." + entity);
@@ -253,285 +260,202 @@ public class LangHandler implements Language {
 			updates = true;
 			config.createSection("Entities");
 		}
-		if (!config.isSet("Entities.xp_orb")) {
+
+		if (!config.isSet("Entities.bat")) {
 			updates = true;
-			config.set("Entities.xp_orb", "&exp_orb");
-		}
-		if (!config.isSet("Entities.leash_knot")) {
-			updates = true;
-			config.set("Entities.leash_knot", "&eleash_knot");
-		}
-		if (!config.isSet("Entities.painting")) {
-			updates = true;
-			config.set("Entities.painting", "&epainting");
-		}
-		if (!config.isSet("Entities.arrow")) {
-			updates = true;
-			config.set("Entities.arrow", "&earrow");
-		}
-		if (!config.isSet("Entities.snowball")) {
-			updates = true;
-			config.set("Entities.snowball", "&esnowball");
-		}
-		if (!config.isSet("Entities.fireball")) {
-			updates = true;
-			config.set("Entities.fireball", "&efireball");
-		}
-		if (!config.isSet("Entities.small_fireball")) {
-			updates = true;
-			config.set("Entities.small_fireball", "&esmall_fireball");
-		}
-		if (!config.isSet("Entities.ender_pearl")) {
-			updates = true;
-			config.set("Entities.ender_pearl", "&eender_pearl");
-		}
-		if (!config.isSet("Entities.eye_of_ender_signal")) {
-			updates = true;
-			config.set("Entities.eye_of_ender_signal", "&eeye_of_ender_signal");
-		}
-		if (!config.isSet("Entities.xp_bottle")) {
-			updates = true;
-			config.set("Entities.xp_bottle", "&exp_bottle");
-		}
-		if (!config.isSet("Entities.item_frame")) {
-			updates = true;
-			config.set("Entities.item_frame", "&eitem_frame");
-		}
-		if (!config.isSet("Entities.wither_skull")) {
-			updates = true;
-			config.set("Entities.wither_skull", "&ewither_skull");
-		}
-		if (!config.isSet("Entities.tnt")) {
-			updates = true;
-			config.set("Entities.tnt", "&etnt");
-		}
-		if (!config.isSet("Entities.commandblock_minecart")) {
-			updates = true;
-			config.set("Entities.commandblock_minecart", "&ecommandblock_minecart");
-		}
-		if (!config.isSet("Entities.boat")) {
-			updates = true;
-			config.set("Entities.boat", "&eboat");
-		}
-		if (!config.isSet("Entities.minecart")) {
-			updates = true;
-			config.set("Entities.minecart", "&minecart");
-		}
-		if (!config.isSet("Entities.chest_minecart")) {
-			updates = true;
-			config.set("Entities.chest_minecart", "&echest_minecart");
-		}
-		if (!config.isSet("Entities.chest_minecart")) {
-			updates = true;
-			config.set("Entities.chest_minecart", "&echest_minecart");
-		}
-		if (!config.isSet("Entities.tnt_minecart")) {
-			updates = true;
-			config.set("Entities.tnt_minecart", "&etnt_minecart");
-		}
-		if (!config.isSet("Entities.hopper_minecart")) {
-			updates = true;
-			config.set("Entities.hopper_minecart", "&ehopper_minecart");
-		}
-		if (!config.isSet("Entities.spawner_minecart")) {
-			updates = true;
-			config.set("Entities.spawner_minecart", "&espawner_minecart");
-		}
-		if (!config.isSet("Entities.creeper")) {
-			updates = true;
-			config.set("Entities.creeper", "&ecreeper");
-		}
-		if (!config.isSet("Entities.skeleton")) {
-			updates = true;
-			config.set("Entities.skeleton", "&eskeleton");
-		}
-		if (!config.isSet("Entities.spider")) {
-			updates = true;
-			config.set("Entities.spider", "&espider");
-		}
-		if (!config.isSet("Entities.giant")) {
-			updates = true;
-			config.set("Entities.giant", "&egiant");
-		}
-		if (!config.isSet("Entities.zombie")) {
-			updates = true;
-			config.set("Entities.zombie", "&ezombie");
-		}
-		if (!config.isSet("Entities.slime")) {
-			updates = true;
-			config.set("Entities.slime", "&eslime");
-		}
-		if (!config.isSet("Entities.ghast")) {
-			updates = true;
-			config.set("Entities.ghast", "&eghast");
-		}
-		if (!config.isSet("Entities.zombie_pigman")) {
-			updates = true;
-			config.set("Entities.zombie_pigman", "&ezombie_pigman");
-		}
-		if (!config.isSet("Entities.enderman")) {
-			updates = true;
-			config.set("Entities.enderman", "&eenderman");
-		}
-		if (!config.isSet("Entities.cave_spider")) {
-			updates = true;
-			config.set("Entities.cave_spider", "&ecave_spider");
-		}
-		if (!config.isSet("Entities.silverfish")) {
-			updates = true;
-			config.set("Entities.silverfish", "&esilverfish");
+			config.set("Entities.bat", "&ebat");
 		}
 		if (!config.isSet("Entities.blaze")) {
 			updates = true;
 			config.set("Entities.blaze", "&eblaze");
 		}
-		if (!config.isSet("Entities.magma_cube")) {
+		if (!config.isSet("Entities.cave_spider")) {
 			updates = true;
-			config.set("Entities.magma_cube", "&emagma_cube");
-		}
-		if (!config.isSet("Entities.ender_dragon")) {
-			updates = true;
-			config.set("Entities.ender_dragon", "&eender_dragon");
-		}
-		if (!config.isSet("Entities.wither")) {
-			updates = true;
-			config.set("Entities.wither", "&ewither");
-		}
-		if (!config.isSet("Entities.bat")) {
-			updates = true;
-			config.set("Entities.bat", "&ebat");
-		}
-		if (!config.isSet("Entities.witch")) {
-			updates = true;
-			config.set("Entities.witch", "&ewitch");
-		}
-		if (!config.isSet("Entities.pig")) {
-			updates = true;
-			config.set("Entities.pig", "&epig");
-		}
-		if (!config.isSet("Entities.sheep")) {
-			updates = true;
-			config.set("Entities.sheep", "&esheep");
-		}
-		if (!config.isSet("Entities.cow")) {
-			updates = true;
-			config.set("Entities.cow", "&ecow");
+			config.set("Entities.cave_spider", "&ecave_spider");
 		}
 		if (!config.isSet("Entities.chicken")) {
 			updates = true;
 			config.set("Entities.chicken", "&echicken");
 		}
-		if (!config.isSet("Entities.squid")) {
+		if (!config.isSet("Entities.cow")) {
 			updates = true;
-			config.set("Entities.squid", "&esquid");
+			config.set("Entities.cow", "&ecow");
 		}
-		if (!config.isSet("Entities.wolf")) {
+		if (!config.isSet("Entities.creeper")) {
 			updates = true;
-			config.set("Entities.wolf", "&ewolf");
-		}
-		if (!config.isSet("Entities.mooshroom")) {
-			updates = true;
-			config.set("Entities.mooshroom", "&emooshroom");
-		}
-		if (!config.isSet("Entities.snowMan")) {
-			updates = true;
-			config.set("Entities.snowMan", "&esnowMan");
-		}
-		if (!config.isSet("Entities.ocelot")) {
-			updates = true;
-			config.set("Entities.ocelot", "&eocelot");
-		}
-		if (!config.isSet("Entities.villager_golem")) {
-			updates = true;
-			config.set("Entities.villager_golem", "&evillager_golem");
-		}
-		if (!config.isSet("Entities.horse")) {
-			updates = true;
-			config.set("Entities.horse", "&ehorse");
-		}
-		if (!config.isSet("Entities.villager")) {
-			updates = true;
-			config.set("Entities.villager", "&evillager");
-		}
-		if (!config.isSet("Entities.ender_crystal")) {
-			updates = true;
-			config.set("Entities.ender_crystal", "&eender_crystal");
-		}
-		if (!config.isSet("Entities.fireworks_rocket")) {
-			updates = true;
-			config.set("Entities.fireworks_rocket", "&efireworks_rocket");
-		}
-		if (!config.isSet("Entities.guardian")) {
-			updates = true;
-			config.set("Entities.guardian", "&eguardian");
-		}
-		if (!config.isSet("Entities.endermite")) {
-			updates = true;
-			config.set("Entities.endermite", "&eendermite");
-		}
-		if (!config.isSet("Entities.rabbit")) {
-			updates = true;
-			config.set("Entities.rabbit", "&erabbit");
-		}
-		if (!config.isSet("Entities.shulker")) {
-			updates = true;
-			config.set("Entities.shulker", "&eshulker");
-		}
-		if (!config.isSet("Entities.polar_bear")) {
-			updates = true;
-			config.set("Entities.polar_bear", "&epolar_bear");
-		}
-		if (!config.isSet("Entities.vindication_illager")) {
-			updates = true;
-			config.set("Entities.vindication_illager", "&evindication_illager");
-		}
-		if (!config.isSet("Entities.vex")) {
-			updates = true;
-			config.set("Entities.vex", "&evex");
-		}
-		if (!config.isSet("Entities.evocation_illager")) {
-			updates = true;
-			config.set("Entities.evocation_illager", "&eevocation_illager");
-		}
-		if (!config.isSet("Entities.mule")) {
-			updates = true;
-			config.set("Entities.mule", "&emule");
+			config.set("Entities.creeper", "&ecreeper");
 		}
 		if (!config.isSet("Entities.donkey")) {
 			updates = true;
 			config.set("Entities.donkey", "&edonkey");
 		}
-		if (!config.isSet("Entities.zombie_horse")) {
+		if (!config.isSet("Entities.elder_guardian")) {
 			updates = true;
-			config.set("Entities.zombie_horse", "&ezombie_horse");
+			config.set("Entities.elder_guardian", "&eelder_guardian");
 		}
-		if (!config.isSet("Entities.skeleton_horse")) {
+		if (!config.isSet("Entities.ender_dragon")) {
 			updates = true;
-			config.set("Entities.skeleton_horse", "&eskeleton_horse");
+			config.set("Entities.ender_dragon", "&eender_dragon");
 		}
-		if (!config.isSet("Entities.zombie_villager")) {
+		if (!config.isSet("Entities.ender_dragon")) {
 			updates = true;
-			config.set("Entities.zombie_villager", "&ezombie_villager");
+			config.set("Entities.enderman", "&eenderman");
+		}
+		if (!config.isSet("Entities.endermite")) {
+			updates = true;
+			config.set("Entities.endermite", "&eendermite");
+		}
+		if (!config.isSet("Entities.evocation_illager")) {
+			updates = true;
+			config.set("Entities.evocation_illager", "&eevocation_illager");
+		}
+		if (!config.isSet("Entities.fireworks_rocket")) {
+			updates = true;
+			config.set("Entities.fireworks_rocket", "&efireworks_rocket");
+		}
+		if (!config.isSet("Entities.ghast")) {
+			updates = true;
+			config.set("Entities.ghast", "&eghast");
+		}
+		if (!config.isSet("Entities.giant")) {
+			updates = true;
+			config.set("Entities.giant", "&egiant");
+		}
+		if (!config.isSet("Entities.guardian")) {
+			updates = true;
+			config.set("Entities.guardian", "&eguardian");
+		}
+		if (!config.isSet("Entities.horse")) {
+			updates = true;
+			config.set("Entities.horse", "&ehorse");
 		}
 		if (!config.isSet("Entities.husk")) {
 			updates = true;
 			config.set("Entities.husk", "&ehusk");
 		}
-		if (!config.isSet("Entities.wither_skeleton")) {
+		if (!config.isSet("Entities.llama")) {
 			updates = true;
-			config.set("Entities.wither_skeleton", "&ewither_skeleton");
+			config.set("Entities.llama", "&ellama");
 		}
-		if (!config.isSet("Entities.elder_guardian")) {
+		if (!config.isSet("Entities.magma_cube")) {
 			updates = true;
-			config.set("Entities.elder_guardian", "&eelder_guardian");
+			config.set("Entities.magma_cube", "&emagma_cube");
+		}
+		if (!config.isSet("Entities.mooshroom")) {
+			updates = true;
+			config.set("Entities.mooshroom", "&emooshroom");
+		}
+		if (!config.isSet("Entities.mule")) {
+			updates = true;
+			config.set("Entities.mule", "&emule");
+		}
+		if (!config.isSet("Entities.ocelot")) {
+			updates = true;
+			config.set("Entities.ocelot", "&eocelot");
+		}
+		if (!config.isSet("Entities.pig")) {
+			updates = true;
+			config.set("Entities.pig", "&epig");
+		}
+		if (!config.isSet("Entities.polar_bear")) {
+			updates = true;
+			config.set("Entities.polar_bear", "&epolar_bear");
+		}
+		if (!config.isSet("Entities.rabbit")) {
+			updates = true;
+			config.set("Entities.rabbit", "&erabbit");
+		}
+		if (!config.isSet("Entities.sheep")) {
+			updates = true;
+			config.set("Entities.sheep", "&esheep");
+		}
+		if (!config.isSet("Entities.shulker")) {
+			updates = true;
+			config.set("Entities.shulker", "&eshulker");
+		}
+		if (!config.isSet("Entities.silverfish")) {
+			updates = true;
+			config.set("Entities.silverfish", "&esilverfish");
+		}
+		if (!config.isSet("Entities.skeleton")) {
+			updates = true;
+			config.set("Entities.skeleton", "&eskeleton");
+		}
+		if (!config.isSet("Entities.skeleton_horse")) {
+			updates = true;
+			config.set("Entities.skeleton_horse", "&eskeleton_horse");
+		}
+		if (!config.isSet("Entities.slime")) {
+			updates = true;
+			config.set("Entities.slime", "&eslime");
+		}
+		if (!config.isSet("Entities.snowman")) {
+			updates = true;
+			config.set("Entities.snowman", "&esnowman");
+		}
+		if (!config.isSet("Entities.spider")) {
+			updates = true;
+			config.set("Entities.spider", "&espider");
+		}
+		if (!config.isSet("Entities.squid")) {
+			updates = true;
+			config.set("Entities.squid", "&esquid");
 		}
 		if (!config.isSet("Entities.stray")) {
 			updates = true;
 			config.set("Entities.stray", "&estray");
 		}
-		if (!config.isSet("Entities.llama")) {
+		if (!config.isSet("Entities.vex")) {
 			updates = true;
-			config.set("Entities.llama", "&ellama");
+			config.set("Entities.vex", "&evex");
+		}
+		if (!config.isSet("Entities.villager")) {
+			updates = true;
+			config.set("Entities.villager", "&evillager");
+		}
+		if (!config.isSet("Entities.villager_golem")) {
+			updates = true;
+			config.set("Entities.villager_golem", "&evillager_golem");
+		}
+		if (!config.isSet("Entities.vindication_illager")) {
+			updates = true;
+			config.set("Entities.vindication_illager", "&evindication_illager");
+		}
+		if (!config.isSet("Entities.witch")) {
+			updates = true;
+			config.set("Entities.witch", "&ewitch");
+		}
+		if (!config.isSet("Entities.wither")) {
+			updates = true;
+			config.set("Entities.wither", "&ewither");
+		}
+		if (!config.isSet("Entities.wither_skeleton")) {
+			updates = true;
+			config.set("Entities.wither_skeleton", "&ewither_skeleton");
+		}
+		if (!config.isSet("Entities.wolf")) {
+			updates = true;
+			config.set("Entities.wolf", "&ewolf");
+		}
+		if (!config.isSet("Entities.xp_orb")) {
+			updates = true;
+			config.set("Entities.xp_orb", "&exp_orb");
+		}
+		if (!config.isSet("Entities.zombie")) {
+			updates = true;
+			config.set("Entities.zombie", "&ezombie");
+		}
+		if (!config.isSet("Entities.zombie_horse")) {
+			updates = true;
+			config.set("Entities.zombie_horse", "&ezombie_horse");
+		}
+		if (!config.isSet("Entities.zombie_pigman")) {
+			updates = true;
+			config.set("Entities.zombie_pigman", "&ezombie_pigman");
+		}
+		if (!config.isSet("Entities.zombie_villager")) {
+			updates = true;
+			config.set("Entities.zombie_villager", "&ezombie_villager");
 		}
 	}
 
@@ -596,12 +520,15 @@ public class LangHandler implements Language {
 	 * Send a message to a Player if it isn't empty.
 	 * Supports color codes, i.e. &4Red text
 	 *
-	 * @param player
-	 * @param text
+	 * @param playerUuid UUID
+	 * @param text String
 	 */
-	public void sendMessage(String player, String text) {
+	public void sendMessage(UUID playerUuid, String text) {
 		if (!text.isEmpty()) {
-			Main.instance.getServer().getPlayer(player).sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
+			Player player = Main.instance.getServer().getPlayer(playerUuid);
+			if(player != null) {
+				player.sendMessage(ChatColor.translateAlternateColorCodes("&".charAt(0), text));
+			}
 		}
 	}
 

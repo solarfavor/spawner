@@ -254,11 +254,11 @@ public class Main extends JavaPlugin {
 		return instance.getDataFolder();
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setVersion(String ver) {
+		version = ver;
 	}
 
 	public String getVersion() {
-		return this.version;
+		return version;
 	}
 }

@@ -36,7 +36,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class Spawner extends ItemStack {
 
 	private String entityName;
-	private SpawnerType spawnerType;
+	private EntityType spawnerType;
 
 	Spawner(Material material, int amount, String name) {
 		super(material, amount);
@@ -140,12 +140,11 @@ public class Spawner extends ItemStack {
 
 	public short updateDurability() {
 		// set correct durability
-		SpawnerType type = getSpawnerType();
+		EntityType type = getSpawnerType();
 		if(type == null) {
 			return 0;
 		}
-		EntityType entityType = type.getEntityType();
-		short durability = SpawnerFunctions.durabilityFromEntityType(entityType);
+		short durability = SpawnerFunctions.durabilityFromEntityType(type);
 		this.setDurability(durability);
 		return this.getDurability();
 	}
@@ -184,7 +183,7 @@ public class Spawner extends ItemStack {
 		return Main.instance.getLangHandler().translateEntity(getEntityName(), "value");
 	}
 
-	public SpawnerType getSpawnerType() {
+	public EntityType getSpawnerType() {
 		// if spawner type is null try setting it
 		if (this.spawnerType == null) {
 			String name = getEntityName();
@@ -195,6 +194,6 @@ public class Spawner extends ItemStack {
 	}
 
 	public void setSpawnerType(String entityName) {
-		this.spawnerType = SpawnerType.fromCleanName(SpawnerFunctions.convertAlias(entityName));
+		this.spawnerType = SpawnerFunctions.fromCleanName(SpawnerFunctions.convertAlias(entityName));
 	}
 }

@@ -3,6 +3,8 @@ package me.ryvix.spawner.api;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.UUID;
+
 // https://bukkit.org/threads/support-multiple-minecraft-versions-with-abstraction-maven.115810/
 // https://github.com/mbax/AbstractionExamplePlugin
 public interface Language {
@@ -17,7 +19,7 @@ public interface Language {
 	void createConfig();
 	void saveConfig();
 	void loadConfig();
-	void sendMessage(String player, String text);
+	void sendMessage(UUID player, String text);
 	void sendMessage(CommandSender sender, String text);
 	String translateEntity(String inputName, String type);
 }

@@ -94,7 +94,44 @@ public class ConfigHandler implements Config {
 
 		boolean updates = false;
 
-		List<String> validEntities = Arrays.asList("Bat", "Blaze", "CaveSpider", "Chicken", "Cow", "Creeper", "Donkey", "ElderGuardian", "EnderDragon", "Enderman", "Endermite", "Evoker", "FireworksRocketEntity", "Ghast", "Giant", "Guardian", "Horse", "Husk", "LavaSlime", "Llama", "Mule", "MushroomCow", "Ozelot", "Pig", "PigZombie", "PolarBear", "Rabbit", "Sheep", "Shulker", "Silverfish", "Skeleton", "SkeletonHorse", "Slime", "SnowMan", "Spider", "Squid", "Stray", "Vex", "Villager", "VillagerGolem", "Vindicator", "Witch", "WitherBoss", "WitherSkeleton", "Wolf", "XPOrb", "Zombie", "ZombieHorse", "ZombieVillager");
+		List<String> validEntities = Arrays.asList(
+				"Bat",
+				"Blaze",
+				"CaveSpider",
+				"Chicken",
+				"Cow",
+				"Creeper",
+				"EnderDragon",
+				"Enderman",
+				"Endermite",
+				"FireworksRocketEntity",
+				"Ghast",
+				"Giant",
+				"Guardian",
+				"Horse",
+				"LavaSlime",
+				"MushroomCow",
+				"Ozelot",
+				"Pig",
+				"PigZombie",
+				"PolarBear",
+				"Rabbit",
+				"Sheep",
+				"Shulker",
+				"Silverfish",
+				"Skeleton",
+				"Slime",
+				"SnowMan",
+				"Spider",
+				"Squid",
+				"Villager",
+				"VillagerGolem",
+				"Witch",
+				"WitherBoss",
+				"Wolf",
+				"XPOrb",
+				"Zombie"
+		);
 
 		// add defaults
 		if (!Main.instance.getSpawnerConfig().contains("valid_entities")) {

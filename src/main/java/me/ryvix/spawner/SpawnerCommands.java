@@ -33,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -66,9 +67,9 @@ public class SpawnerCommands implements CommandExecutor {
 				// get spawner type
 				if (sender.hasPermission("spawner.get")) {
 					Player player = (Player) sender;
-					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
+					Block target = SpawnerFunctions.findSpawnerBlock(player.getUniqueId(), 20);
 					if (target.getType() == Material.MOB_SPAWNER) {
-						SpawnerType spawnerType = SpawnerFunctions.getSpawner(target);
+						EntityType spawnerType = SpawnerFunctions.getSpawner(target);
 						if (spawnerType == null) {
 							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							// it's no longer a valid spawner for some reason
@@ -76,7 +77,7 @@ public class SpawnerCommands implements CommandExecutor {
 							// target.breakNaturally();
 							return true;
 						}
-						String text = SpawnerType.getTextFromType(spawnerType);
+						String text = SpawnerFunctions.getTextFromType(spawnerType);
 						Main.instance.getLangHandler().sendMessage(sender, text + " " + Main.instance.getLangHandler().getText("Spawner"));
 						return true;
 
@@ -129,13 +130,13 @@ public class SpawnerCommands implements CommandExecutor {
 				// set spawner type
 				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerFunctions.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
-					Block target = SpawnerFunctions.findSpawnerBlock(player, 20);
+					Block target = SpawnerFunctions.findSpawnerBlock(player.getUniqueId(), 20);
 					if (target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
 
 						// setSpawner does it's own isValidEntity
 						if (SpawnerFunctions.setSpawner(target, args[0])) {
-							String type = SpawnerType.getTextFromName(args[0]);
+							String type = SpawnerFunctions.getTextFromName(args[0]);
 							if (type == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
@@ -158,14 +159,14 @@ public class SpawnerCommands implements CommandExecutor {
 						if (itemInMainHand.getType() == Material.MOB_SPAWNER || itemInOffHand.getType() == Material.MOB_SPAWNER) {
 
 							if (SpawnerFunctions.isValidEntity(args[0])) {
-								SpawnerType spawnerType = SpawnerType.fromName(args[0]);
+								EntityType spawnerType = EntityType.fromName(args[0]);
 
 								if (spawnerType == null) {
 									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 									return true;
 								}
 
-								String spawnerName = SpawnerType.getTextFromName(args[0]);
+								String spawnerName = SpawnerFunctions.getTextFromName(args[0]);
 								if (spawnerName == null) {
 									Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 									return true;
@@ -220,13 +221,13 @@ public class SpawnerCommands implements CommandExecutor {
 						Player player = (Player) sender;
 
 						if (SpawnerFunctions.isValidEntity(args[1])) {
-							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
-							String spawnerName = SpawnerType.getTextFromName(args[1]);
+							String spawnerName = SpawnerFunctions.getTextFromName(args[1]);
 							if (spawnerName == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
@@ -265,7 +266,8 @@ public class SpawnerCommands implements CommandExecutor {
 					if (sender instanceof Player && sender.hasPermission("spawner.remove")) {
 						if (SpawnerFunctions.isValidEntity(args[1])) {
 							int radius = Main.getSpawnerConfig().getInt("remove_radius");
-							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
+							Player player = (Player) sender;
+							SpawnerFunctions.removeEntities(player.getUniqueId(), args[1].toLowerCase(), radius);
 						} else {
 							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
@@ -289,13 +291,13 @@ public class SpawnerCommands implements CommandExecutor {
 						Player player = (Player) sender;
 
 						if (SpawnerFunctions.isValidEntity(args[1])) {
-							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
-							String spawnerName = SpawnerType.getTextFromName(args[1]);
+							String spawnerName = SpawnerFunctions.getTextFromName(args[1]);
 							if (spawnerName == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
@@ -331,13 +333,13 @@ public class SpawnerCommands implements CommandExecutor {
 						// /spawner give <entity> <player>
 
 						if (SpawnerFunctions.isValidEntity(args[1])) {
-							SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+							EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 							if (spawnerType == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
 							}
 
-							String spawnerName = SpawnerType.getTextFromName(args[1]);
+							String spawnerName = SpawnerFunctions.getTextFromName(args[1]);
 							if (spawnerName == null) {
 								Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 								return true;
@@ -356,7 +358,7 @@ public class SpawnerCommands implements CommandExecutor {
 
 									// if target player is online drop it at their feet and tell them
 									targetPlayer.getWorld().dropItem(targetPlayer.getLocation().add(0, 1, 0), newSpawner);
-									Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("SpawnerDropped", spawnerName));
+									Main.instance.getLangHandler().sendMessage(targetPlayer.getUniqueId(), Main.instance.getLangHandler().getText("SpawnerDropped", spawnerName));
 									return true;
 
 								} else {
@@ -367,7 +369,7 @@ public class SpawnerCommands implements CommandExecutor {
 									targetPlayer.updateInventory();
 
 									if (targetPlayer != null) {
-										Main.instance.getLangHandler().sendMessage(targetPlayer, Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
+										Main.instance.getLangHandler().sendMessage(targetPlayer.getUniqueId(), Main.instance.getLangHandler().getText("GivenSpawner", spawnerName));
 									} else {
 										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("NotDeliveredOffline", args[2]));
 										return true;
@@ -410,7 +412,8 @@ public class SpawnerCommands implements CommandExecutor {
 								return false;
 							}
 
-							SpawnerFunctions.removeEntities((Player) sender, args[1].toLowerCase(), radius);
+							Player player = (Player) sender;
+							SpawnerFunctions.removeEntities(player.getUniqueId(), args[1].toLowerCase(), radius);
 						} else {
 							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 							return true;
@@ -433,13 +436,13 @@ public class SpawnerCommands implements CommandExecutor {
 							if (StringUtils.isNumeric(args[3])) {
 
 								if (SpawnerFunctions.isValidEntity(args[1])) {
-									SpawnerType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
+									EntityType spawnerType = SpawnerFunctions.getSpawnerType(args[1]);
 									if (spawnerType == null) {
 										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 										return true;
 									}
 
-									String spawnerName = SpawnerType.getTextFromName(args[1]);
+									String spawnerName = SpawnerFunctions.getTextFromName(args[1]);
 									if (spawnerName == null) {
 										Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
 										return true;

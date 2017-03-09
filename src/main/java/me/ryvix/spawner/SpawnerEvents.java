@@ -33,6 +33,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -71,8 +72,8 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			SpawnerType spawnerType = SpawnerType.fromEntityType(csBlock.getSpawnedType());
-			String spawnerName = spawnerType.getName();
+			EntityType spawnerType = SpawnerFunctions.fromEntityType(csBlock.getSpawnedType());
+			String spawnerName = spawnerType.name();
 			if (spawnerName == null) {
 				// prevent from breaking invalid spawners
 				Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("InvalidSpawner"));
@@ -227,10 +228,10 @@ public class SpawnerEvents implements Listener {
 
 			// get spawner block
 			CreatureSpawner csBlock = (CreatureSpawner) event.getBlock().getState();
-			SpawnerType spawnerTypeBlock = SpawnerType.fromEntityType(csBlock.getSpawnedType());
-			String spawnerName = spawnerTypeBlock.getName();
+			EntityType spawnerTypeBlock = SpawnerFunctions.fromEntityType(csBlock.getSpawnedType());
+			String spawnerName = spawnerTypeBlock.name();
 
-			SpawnerType spawnerTypeHand = null;
+			EntityType spawnerTypeHand = null;
 			PlayerInventory playerInv = player.getInventory();
 			if (playerInv.getItemInMainHand().getType() == Material.MOB_SPAWNER) {
 				spawnerTypeHand = SpawnerFunctions.getSpawnerType(playerInv.getItemInMainHand());
@@ -253,7 +254,7 @@ public class SpawnerEvents implements Listener {
 			// if they can't place it cancel event
 			if (!player.hasPermission("spawner.place.all") && !player.hasPermission("spawner.place." + spawnerName.toLowerCase())) {
 				event.setCancelled(true);
-				String spawnerText = SpawnerType.getTextFromType(spawnerTypeBlock);
+				String spawnerText = SpawnerFunctions.getTextFromType(spawnerTypeBlock);
 				Main.instance.getLangHandler().sendMessage(event.getPlayer(), Main.instance.getLangHandler().getText("NoPermission", spawnerText));
 				return;
 			}
@@ -302,8 +303,8 @@ public class SpawnerEvents implements Listener {
 				// if block was a spawner drop a spawner
 				if (block.getType().equals(Material.MOB_SPAWNER)) {
 
-					SpawnerType spawnerType = SpawnerFunctions.getSpawner(block);
-					String spawnerName = spawnerType.getName();
+					EntityType spawnerType = SpawnerFunctions.getSpawner(block);
+					String spawnerName = spawnerType.name();
 					if (spawnerName != null) {
 
 						// get a new spawner
@@ -393,7 +394,7 @@ public class SpawnerEvents implements Listener {
 					CreatureSpawner csBlock = (CreatureSpawner) clicked.getState();
 
 					// formatted name
-					String spawnerName = SpawnerType.getTextFromType(SpawnerType.fromEntityType(csBlock.getSpawnedType()));
+					String spawnerName = SpawnerFunctions.getTextFromType(SpawnerFunctions.fromEntityType(csBlock.getSpawnedType()));
 
 					Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("SpawnerType", spawnerName));
 				}
@@ -412,7 +413,7 @@ public class SpawnerEvents implements Listener {
 
 				} else {
 					// formatted name
-					spawnerName = SpawnerType.getTextFromName(eggId);
+					spawnerName = SpawnerFunctions.getTextFromName(eggId);
 					Main.instance.getLangHandler().sendMessage(player, Main.instance.getLangHandler().getText("SpawnerChangedTo", spawnerName));
 				}
 			}
