@@ -15,7 +15,7 @@ valid_entities:
 - Ghast
 - Giant
 - Guardian
-- Horse
+- EntityHorse
 - LavaSlime
 - MushroomCow
 - Ozelot
@@ -87,7 +87,7 @@ frequency:
     ghast: 100
     giant: 100
     guardian: 100
-    horse: 100
+    entityhorse: 100
     lavaslime: 100
     mushroomcow: 100
     ozelot: 100
@@ -143,7 +143,7 @@ drops:
     Ghast: []
     Giant: []
     Guardian: []
-    Horse: []
+    EntityHorse: []
     LavaSlime: []
     MushroomCow: []
     Ozelot: []

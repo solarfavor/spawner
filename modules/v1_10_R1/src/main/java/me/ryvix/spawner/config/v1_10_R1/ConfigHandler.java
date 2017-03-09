@@ -108,7 +108,7 @@ public class ConfigHandler implements Config {
 				"Ghast",
 				"Giant",
 				"Guardian",
-				"Horse",
+				"EntityHorse",
 				"LavaSlime",
 				"MushroomCow",
 				"Ozelot",
