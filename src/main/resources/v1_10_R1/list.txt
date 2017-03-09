@@ -14,4 +14,4 @@
 &0-----------------------------------------------------
                    &aValid Spawner Entity Types
 &0-----------------------------------------------------
-&fCreeper, Skeleton, Spider, Giant, Zombie, Slime, Ghast, PigZombie, Enderman, CaveSpider, Silverfish, Blaze, LavaSlime, EnderDragon, WitherBoss, Bat, Witch, Pig, Sheep, Cow, Chicken, Squid, Wolf, MushroomCow, SnowMan, Ozelot, VillagerGolem, Horse, Villager, FireworksRocketEntity, Guardian, Endermite, Rabbit, Shulker, PolarBear, XPOrb, Vindicator, Vex, Evoker, Mule, Donkey, ZombieHorse, SkeletonHorse, ZombieVillager, Husk, WitherSkeleton, ElderGuardian, Stray, Llama
+&fBat, Blaze, CaveSpider, Chicken, Cow, Creeper, EnderDragon, Enderman, Endermite, EntityHorse, FireworksRocketEntity, Ghast, Giant, Guardian, LavaSlime, MushroomCow, Ozelot, Pig, PigZombie, PolarBear, Rabbit, Sheep, Shulker, Silverfish, Skeleton, Slime, SnowMan, Spider, Squid, Villager, VillagerGolem, Witch, WitherBoss, WitherSkeleton, Wolf, XPOrb, Zombie

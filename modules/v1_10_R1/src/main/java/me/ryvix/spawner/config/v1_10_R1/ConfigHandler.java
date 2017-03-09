@@ -104,11 +104,11 @@ public class ConfigHandler implements Config {
 				"EnderDragon",
 				"Enderman",
 				"Endermite",
+				"EntityHorse",
 				"FireworksRocketEntity",
 				"Ghast",
 				"Giant",
 				"Guardian",
-				"EntityHorse",
 				"LavaSlime",
 				"MushroomCow",
 				"Ozelot",
@@ -161,31 +161,31 @@ public class ConfigHandler implements Config {
 		if (!Main.instance.getSpawnerConfig().contains("aliases")) {
 			updates = true;
 
-			List<String> wither = new ArrayList<>();
-			wither.add("wither");
-			Main.instance.getConfig().addDefault("aliases.WitherBoss", wither);
-
-			List<String> golem = new ArrayList<>();
-			golem.add("golem");
-			golem.add("irongolem");
-			Main.instance.getConfig().addDefault("aliases.VillagerGolem", golem);
-
 			List<String> horse = new ArrayList<>();
 			horse.add("horse");
 			Main.instance.getConfig().addDefault("aliases.EntityHorse", horse);
 
+			List<String> fireworks = new ArrayList<>();
+			fireworks.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.FireworksRocketEntity", fireworks);
+
 			List<String> ocelot = new ArrayList<>();
-			ocelot.add("ocelot");
 			ocelot.add("cat");
+			ocelot.add("ocelot");
 			Main.instance.getConfig().addDefault("aliases.Ozelot", ocelot);
 
 			List<String> rabbit = new ArrayList<>();
 			rabbit.add("bunny");
 			Main.instance.getConfig().addDefault("aliases.Rabbit", rabbit);
 
-			List<String> fireworks = new ArrayList<>();
-			fireworks.add("fireworks");
-			Main.instance.getConfig().addDefault("aliases.FireworksRocketEntity", fireworks);
+			List<String> golem = new ArrayList<>();
+			golem.add("golem");
+			golem.add("irongolem");
+			Main.instance.getConfig().addDefault("aliases.VillagerGolem", golem);
+
+			List<String> wither = new ArrayList<>();
+			wither.add("wither");
+			Main.instance.getConfig().addDefault("aliases.WitherBoss", wither);
 
 			List<String> xp = new ArrayList<>();
 			xp.add("xp");

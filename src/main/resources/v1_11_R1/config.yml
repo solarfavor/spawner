@@ -55,23 +55,16 @@ valid_entities:
 
 # Aliases
 aliases:
-    wither:
-        - WitherBoss
-    villager_golem:
-        - irongolem
-        - golem
-    horse:
-        - EntityHorse
+    fireworks_rocket:
+        - fireworks
     ocelot:
-        - Ozelot
         - cat
     rabbit:
         - bunny
-    fireworks_rocket:
-        - FireworksRocketEntity
-        - fireworks
+    villager_golem:
+        - golem
+        - irongolem
     xp_orb:
-        - XPOrb
         - xp
 
 # Preventing spawners being destroyed by explosions.

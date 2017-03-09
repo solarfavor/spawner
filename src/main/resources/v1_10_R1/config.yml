@@ -11,11 +11,11 @@ valid_entities:
 - EnderDragon
 - Enderman
 - Endermite
+- EntityHorse
 - FireworksRocketEntity
 - Ghast
 - Giant
 - Guardian
-- EntityHorse
 - LavaSlime
 - MushroomCow
 - Ozelot
@@ -42,20 +42,20 @@ valid_entities:
 
 # Aliases
 aliases:
-    WitherBoss:
-        - wither
-    VillagerGolem:
-        - irongolem
-        - golem
     EntityHorse:
         - horse
-    Ozelot:
-        - ocelot
-        - cat
-    Rabbit:
-        - bunny
     FireworksRocketEntity:
         - fireworks
+    Ozelot:
+        - cat
+        - ocelot
+    Rabbit:
+        - bunny
+    VillagerGolem:
+        - golem
+        - irongolem
+    WitherBoss:
+        - wither
     XPOrb:
         - xp
 
@@ -83,11 +83,11 @@ frequency:
     enderdragon: 100
     enderman: 100
     endermite: 100
+    entityhorse: 100
     fireworksrocketentity: 100
     ghast: 100
     giant: 100
     guardian: 100
-    entityhorse: 100
     lavaslime: 100
     mushroomcow: 100
     ozelot: 100
@@ -139,11 +139,11 @@ drops:
     EnderDragon: []
     Enderman: []
     Endermite: []
+    EntityHorse: []
     FireworksRocketEntity: []
     Ghast: []
     Giant: []
     Guardian: []
-    EntityHorse: []
     LavaSlime: []
     MushroomCow: []
     Ozelot: []

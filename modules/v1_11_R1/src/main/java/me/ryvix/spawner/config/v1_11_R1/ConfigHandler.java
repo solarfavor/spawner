@@ -95,88 +95,55 @@ public class ConfigHandler implements Config {
 		boolean updates = false;
 
 		List<String> validEntities = Arrays.asList(
-				//"item",
-				"xp_orb",
-				//"area_effect_cloud",
-				"elder_guardian",
-				"wither_skeleton",
-				"stray",
-				//"egg",
-				//"leash_knot",
-				//"painting",
-				//"arrow",
-				//"snowball",
-				//"fireball",
-				//"small_fireball",
-				//"ender_pearl",
-				//"eye_of_ender_signal",
-				//"potion",
-				//"xp_bottle",
-				//"item_frame",
-				//"wither_skull",
-				//"tnt",
-				//"falling_block",
-				"fireworks_rocket",
-				"husk",
-				//"spectral_arrow",
-				//"shulker_bullet",
-				//"dragon_fireball",
-				"zombie_villager",
-				"skeleton_horse",
-				"zombie_horse",
-				//"armor_stand",
-				"donkey",
-				"mule",
-				//"evocation_fangs",
-				"evocation_illager",
-				"vex",
-				"vindication_illager",
-				//"commandblock_minecart",
-				//"boat",
-				//"minecart",
-				//"chest_minecart",
-				//"chest_minecart",
-				//"tnt_minecart",
-				//"hopper_minecart",
-				//"spawner_minecart",
-				"creeper",
-				"skeleton",
-				"spider",
-				"giant",
-				"zombie",
-				"slime",
-				"ghast",
-				"zombie_pigman",
-				"enderman",
-				"cave_spider",
-				"silverfish",
-				"blaze",
-				"magma_cube",
-				"ender_dragon",
-				"wither",
 				"bat",
-				"witch",
-				"endermite",
-				"guardian",
-				"shulker",
-				"pig",
-				"sheep",
-				"cow",
+				"blaze",
+				"cave_spider",
 				"chicken",
-				"squid",
-				"wolf",
-				"mooshroom",
-				"snowman",
-				"ocelot",
-				"villager_golem",
+				"cow",
+				"creeper",
+				"donkey",
+				"elder_guardian",
+				"ender_dragon",
+				"enderman",
+				"endermite",
+				"evocation_illager",
+				"fireworks_rocket",
+				"ghast",
+				"giant",
+				"guardian",
 				"horse",
-				"rabbit",
-				"polar_bear",
+				"husk",
 				"llama",
-				//"llama_spit",
-				"villager"
-				//"ender_crystal",
-				//"TippedArrow"
+				"magma_cube",
+				"mooshroom",
+				"mule",
+				"ocelot",
+				"pig",
+				"polar_bear",
+				"rabbit",
+				"sheep",
+				"shulker",
+				"silverfish",
+				"skeleton",
+				"skeleton_horse",
+				"slime",
+				"snowman",
+				"spider",
+				"squid",
+				"stray",
+				"vex",
+				"villager",
+				"villager_golem",
+				"vindication_illager",
+				"witch",
+				"wither",
+				"wither_skeleton",
+				"wolf",
+				"xp_orb",
+				"zombie",
+				"zombie_horse",
+				"zombie_pigman",
+				"zombie_villager"
 		);
 
 		// add defaults
@@ -207,21 +174,11 @@ public class ConfigHandler implements Config {
 		if (!Main.instance.getSpawnerConfig().contains("aliases")) {
 			updates = true;
 
-			List<String> wither = new ArrayList<>();
-			wither.add("WitherBoss");
-			Main.instance.getConfig().addDefault("aliases.wither", wither);
-
-			List<String> golem = new ArrayList<>();
-			golem.add("golem");
-			golem.add("irongolem");
-			Main.instance.getConfig().addDefault("aliases.villager_golem", golem);
-
-			List<String> horse = new ArrayList<>();
-			horse.add("EntityHorse");
-			Main.instance.getConfig().addDefault("aliases.horse", horse);
+			List<String> fireworks = new ArrayList<>();
+			fireworks.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.fireworks_rocket", fireworks);
 
 			List<String> ocelot = new ArrayList<>();
-			ocelot.add("Ozelot");
 			ocelot.add("cat");
 			Main.instance.getConfig().addDefault("aliases.ocelot", ocelot);
 
@@ -229,13 +186,12 @@ public class ConfigHandler implements Config {
 			rabbit.add("bunny");
 			Main.instance.getConfig().addDefault("aliases.rabbit", rabbit);
 
-			List<String> fireworks = new ArrayList<>();
-			fireworks.add("FireworksRocketEntity");
-			fireworks.add("fireworks");
-			Main.instance.getConfig().addDefault("aliases.fireworks_rocket", fireworks);
+			List<String> golem = new ArrayList<>();
+			golem.add("golem");
+			golem.add("irongolem");
+			Main.instance.getConfig().addDefault("aliases.villager_golem", golem);
 
 			List<String> xp = new ArrayList<>();
-			xp.add("XPOrb");
 			xp.add("xp");
 			Main.instance.getConfig().addDefault("aliases.xp_orb", xp);
 		}
