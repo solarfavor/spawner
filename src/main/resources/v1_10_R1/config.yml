@@ -8,21 +8,15 @@ valid_entities:
 - Chicken
 - Cow
 - Creeper
-- Donkey
-- ElderGuardian
 - EnderDragon
 - Enderman
 - Endermite
-- Evoker
 - FireworksRocketEntity
 - Ghast
 - Giant
 - Guardian
 - Horse
-- Husk
 - LavaSlime
-- Llama
-- Mule
 - MushroomCow
 - Ozelot
 - Pig
@@ -33,24 +27,18 @@ valid_entities:
 - Shulker
 - Silverfish
 - Skeleton
-- SkeletonHorse
 - Slime
 - SnowMan
 - Spider
 - Squid
-- Stray
-- Vex
 - Villager
 - VillagerGolem
-- Vindicator
 - Witch
 - WitherBoss
 - WitherSkeleton
 - Wolf
 - XPOrb
 - Zombie
-- ZombieHorse
-- ZombieVillager
 
 # Aliases
 aliases:
@@ -86,55 +74,42 @@ luck: 100
 
 # The frequency that spawns from spawners are successful.
 frequency:
-    creeper: 100
-    skeleton: 100
-    spider: 100
-    giant: 100
-    zombie: 100
-    slime: 100
-    ghast: 100
-    pigzombie: 100
-    enderman: 100
-    cavespider: 100
-    silverfish: 100
-    blaze: 100
-    lavaslime: 100
-    enderdragon: 100
-    witherboss: 100
     bat: 100
-    witch: 100
-    pig: 50
-    sheep: 100
-    cow: 100
+    blaze: 100
+    cavespider: 100
     chicken: 100
-    squid: 100
-    wolf: 100
-    mushroomcow: 100
-    snowman: 100
-    ozelot: 100
-    villagergolem: 100
-    horse: 100
-    villager: 100
-    fireworksrocketentity: 100
-    guardian: 100
+    cow: 100
+    creeper: 100
+    enderdragon: 100
+    enderman: 100
     endermite: 100
-    rabbit: 100
-    shulker: 100
+    fireworksrocketentity: 100
+    ghast: 100
+    giant: 100
+    guardian: 100
+    horse: 100
+    lavaslime: 100
+    mushroomcow: 100
+    ozelot: 100
+    pig: 50
+    pigzombie: 100
     polarbear: 100
+    rabbit: 100
+    sheep: 100
+    shulker: 100
+    silverfish: 100
+    skeleton: 100
+    slime: 100
+    snowman: 100
+    spider: 100
+    squid: 100
+    villager: 100
+    villagergolem: 100
+    witch: 100
+    witherboss: 100
+    wolf: 100
     xporb: 100
-    vindicator: 100
-    vex: 100
-    evoker: 100
-    mule: 100
-    donkey: 100
-    zombiehorse: 100
-    skeletonhorse: 100
-    zombievillager: 100
-    husk: 100
-    witherskeleton: 100
-    elderguardian: 100
-    stray: 100
-    llama: 100
+    zombie: 100
 
 # Spawner drops
 #
@@ -155,55 +130,42 @@ frequency:
 #        silk: false
 #
 drops:
-    Creeper: []
-    Skeleton: []
-    Spider: []
-    Giant: []
-    Zombie: []
-    Slime: []
-    Ghast: []
-    PigZombie: []
-    Enderman: []
-    CaveSpider: []
-    Silverfish: []
-    Blaze: []
-    LavaSlime: []
-    EnderDragon: []
-    WitherBoss: []
     Bat: []
-    Witch: []
-    Pig: []
-    Sheep: []
-    Cow: []
+    Blaze: []
+    CaveSpider: []
     Chicken: []
-    Squid: []
-    Wolf: []
-    MushroomCow: []
-    SnowMan: []
-    Ozelot: []
-    VillagerGolem: []
-    Horse: []
-    Villager: []
-    FireworksRocketEntity: []
-    Guardian: []
+    Cow: []
+    Creeper: []
+    EnderDragon: []
+    Enderman: []
     Endermite: []
-    Rabbit: []
-    Shulker: []
+    FireworksRocketEntity: []
+    Ghast: []
+    Giant: []
+    Guardian: []
+    Horse: []
+    LavaSlime: []
+    MushroomCow: []
+    Ozelot: []
+    Pig: []
+    PigZombie: []
     PolarBear: []
+    Rabbit: []
+    Sheep: []
+    Shulker: []
+    Silverfish: []
+    Skeleton: []
+    Slime: []
+    SnowMan: []
+    Spider: []
+    Squid: []
+    Villager: []
+    VillagerGolem: []
+    Witch: []
+    WitherBoss: []
+    Wolf: []
     XPOrb: []
-    Vindicator: []
-    Vex: []
-    Evoker: []
-    Mule: []
-    Donkey: []
-    ZombieHorse: []
-    SkeletonHorse: []
-    ZombieVillager: []
-    Husk: []
-    WitherSkeleton: []
-    ElderGuardian: []
-    Stray: []
-    Llama: []
+    Zombie: []
 
 # Place spawners directly into player inventories when broken?
 # true or false
