@@ -90,18 +90,18 @@ public class ConfigHandler implements Config {
 		}
 
 		// set config file
-		Main.setSpawnerConfig(YamlConfiguration.loadConfiguration(configFile));
+		Main.instance.setSpawnerConfig(YamlConfiguration.loadConfiguration(configFile));
 
 		boolean updates = false;
 
-		List<String> validEntities = Arrays.asList("Creeper", "Skeleton", "Spider", "Giant", "Zombie", "Slime", "Ghast", "PigZombie", "Enderman", "CaveSpider", "Silverfish", "Blaze", "LavaSlime", "EnderDragon", "WitherBoss", "Bat", "Witch", "Pig", "Sheep", "Cow", "Chicken", "Squid", "Wolf", "MushroomCow", "SnowMan", "Ozelot", "VillagerGolem", "EntityHorse", "Villager", "FireworksRocketEntity", "Guardian", "Endermite", "Rabbit", "Shulker", "PolarBear", "XPOrb", "Vindicator", "Vex", "Evoker", "Mule", "Donkey", "ZombieHorse", "SkeletonHorse", "ZombieVillager", "Husk", "WitherSkeleton", "ElderGuardian", "Stray", "Llama");
+		List<String> validEntities = Arrays.asList("Bat", "Blaze", "CaveSpider", "Chicken", "Cow", "Creeper", "Donkey", "ElderGuardian", "EnderDragon", "Enderman", "Endermite", "Evoker", "FireworksRocketEntity", "Ghast", "Giant", "Guardian", "Horse", "Husk", "LavaSlime", "Llama", "Mule", "MushroomCow", "Ozelot", "Pig", "PigZombie", "PolarBear", "Rabbit", "Sheep", "Shulker", "Silverfish", "Skeleton", "SkeletonHorse", "Slime", "SnowMan", "Spider", "Squid", "Stray", "Vex", "Villager", "VillagerGolem", "Vindicator", "Witch", "WitherBoss", "WitherSkeleton", "Wolf", "XPOrb", "Zombie", "ZombieHorse", "ZombieVillager");
 
 		// add defaults
-		if (!Main.getSpawnerConfig().contains("valid_entities")) {
+		if (!Main.instance.getSpawnerConfig().contains("valid_entities")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("valid_entities", validEntities);
 		}
-		if (Main.getSpawnerConfig().contains("bad_entities")) {
+		if (Main.instance.getSpawnerConfig().contains("bad_entities")) {
 			updates = true;
 			Main.instance.getConfig().set("bad_entities", null);
 		}
@@ -109,52 +109,50 @@ public class ConfigHandler implements Config {
 			updates = true;
 			Main.instance.getConfig().addDefault("protect_from_explosions", true);
 		}
-		if (!Main.getSpawnerConfig().contains("drop_from_explosions")) {
+		if (!Main.instance.getSpawnerConfig().contains("drop_from_explosions")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("drop_from_explosions", false);
 		}
-		if (!Main.getSpawnerConfig().contains("remove_radius")) {
+		if (!Main.instance.getSpawnerConfig().contains("remove_radius")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("remove_radius", 10);
 		}
-		if (!Main.getSpawnerConfig().contains("luck")) {
+		if (!Main.instance.getSpawnerConfig().contains("luck")) {
 			updates = true;
 			Main.instance.getConfig().addDefault("luck", 100);
 		}
-		if (!Main.getSpawnerConfig().contains("aliases")) {
+		if (!Main.instance.getSpawnerConfig().contains("aliases")) {
 			updates = true;
 
-			List<String> aliases = new ArrayList<>();
+			List<String> wither = new ArrayList<>();
+			wither.add("wither");
+			Main.instance.getConfig().addDefault("aliases.WitherBoss", wither);
 
-			aliases.add("wither");
-			Main.instance.getConfig().addDefault("aliases.WitherBoss", aliases);
-			aliases.clear();
+			List<String> golem = new ArrayList<>();
+			golem.add("golem");
+			golem.add("irongolem");
+			Main.instance.getConfig().addDefault("aliases.VillagerGolem", golem);
 
-			aliases.add("golem");
-			aliases.add("irongolem");
-			Main.instance.getConfig().addDefault("aliases.VillagerGolem", aliases);
-			aliases.clear();
+			List<String> horse = new ArrayList<>();
+			horse.add("horse");
+			Main.instance.getConfig().addDefault("aliases.EntityHorse", horse);
 
-			aliases.add("horse");
-			Main.instance.getConfig().addDefault("aliases.EntityHorse", aliases);
-			aliases.clear();
+			List<String> ocelot = new ArrayList<>();
+			ocelot.add("ocelot");
+			ocelot.add("cat");
+			Main.instance.getConfig().addDefault("aliases.Ozelot", ocelot);
 
-			aliases.add("ocelot");
-			aliases.add("cat");
-			Main.instance.getConfig().addDefault("aliases.Ozelot", aliases);
-			aliases.clear();
+			List<String> rabbit = new ArrayList<>();
+			rabbit.add("bunny");
+			Main.instance.getConfig().addDefault("aliases.Rabbit", rabbit);
 
-			aliases.add("bunny");
-			Main.instance.getConfig().addDefault("aliases.Rabbit", aliases);
-			aliases.clear();
+			List<String> fireworks = new ArrayList<>();
+			fireworks.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.FireworksRocketEntity", fireworks);
 
-			aliases.add("fireworks");
-			Main.instance.getConfig().addDefault("aliases.FireworksRocketEntity", aliases);
-			aliases.clear();
-
-			aliases.add("xp");
-			Main.instance.getConfig().addDefault("aliases.XPOrb", aliases);
-			aliases.clear();
+			List<String> xp = new ArrayList<>();
+			xp.add("xp");
+			Main.instance.getConfig().addDefault("aliases.XPOrb", xp);
 		}
 
 		ConfigurationSection frequency = Main.instance.getConfig().getConfigurationSection("frequency");

@@ -207,39 +207,37 @@ public class ConfigHandler implements Config {
 		if (!Main.getSpawnerConfig().contains("aliases")) {
 			updates = true;
 
-			List<String> aliases = new ArrayList<>();
+			List<String> wither = new ArrayList<>();
+			wither.add("WitherBoss");
+			Main.instance.getConfig().addDefault("aliases.wither", wither);
 
-			aliases.add("WitherBoss");
-			Main.instance.getConfig().addDefault("aliases.wither", aliases);
-			aliases.clear();
+			List<String> golem = new ArrayList<>();
+			golem.add("golem");
+			golem.add("irongolem");
+			Main.instance.getConfig().addDefault("aliases.villager_golem", golem);
 
-			aliases.add("golem");
-			aliases.add("irongolem");
-			Main.instance.getConfig().addDefault("aliases.villager_golem", aliases);
-			aliases.clear();
+			List<String> horse = new ArrayList<>();
+			horse.add("EntityHorse");
+			Main.instance.getConfig().addDefault("aliases.horse", horse);
 
-			aliases.add("EntityHorse");
-			Main.instance.getConfig().addDefault("aliases.horse", aliases);
-			aliases.clear();
+			List<String> ocelot = new ArrayList<>();
+			ocelot.add("Ozelot");
+			ocelot.add("cat");
+			Main.instance.getConfig().addDefault("aliases.ocelot", ocelot);
 
-			aliases.add("Ozelot");
-			aliases.add("cat");
-			Main.instance.getConfig().addDefault("aliases.ocelot", aliases);
-			aliases.clear();
+			List<String> rabbit = new ArrayList<>();
+			rabbit.add("bunny");
+			Main.instance.getConfig().addDefault("aliases.rabbit", rabbit);
 
-			aliases.add("bunny");
-			Main.instance.getConfig().addDefault("aliases.rabbit", aliases);
-			aliases.clear();
+			List<String> fireworks = new ArrayList<>();
+			fireworks.add("FireworksRocketEntity");
+			fireworks.add("fireworks");
+			Main.instance.getConfig().addDefault("aliases.fireworks_rocket", fireworks);
 
-			aliases.add("FireworksRocketEntity");
-			aliases.add("fireworks");
-			Main.instance.getConfig().addDefault("aliases.fireworks_rocket", aliases);
-			aliases.clear();
-
-			aliases.add("XPOrb");
-			aliases.add("xp");
-			Main.instance.getConfig().addDefault("aliases.xp_orb", aliases);
-			aliases.clear();
+			List<String> xp = new ArrayList<>();
+			xp.add("XPOrb");
+			xp.add("xp");
+			Main.instance.getConfig().addDefault("aliases.xp_orb", xp);
 		}
 
 		ConfigurationSection frequency = Main.instance.getConfig().getConfigurationSection("frequency");
