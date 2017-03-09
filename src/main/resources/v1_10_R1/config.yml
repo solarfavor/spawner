@@ -2,55 +2,55 @@
 
 # Valid entities
 valid_entities:
-- Creeper
-- Skeleton
-- Spider
-- Giant
-- Zombie
-- Slime
-- Ghast
-- PigZombie
-- Enderman
-- CaveSpider
-- Silverfish
-- Blaze
-- LavaSlime
-- EnderDragon
-- WitherBoss
 - Bat
-- Witch
-- Pig
-- Sheep
-- Cow
+- Blaze
+- CaveSpider
 - Chicken
-- Squid
-- Wolf
-- MushroomCow
-- SnowMan
-- Ozelot
-- VillagerGolem
-- Horse
-- Villager
-- FireworksRocketEntity
-- Guardian
-- Endermite
-- Rabbit
-- Shulker
-- PolarBear
-- XPOrb
-- Vindicator
-- Vex
-- Evoker
-- Mule
+- Cow
+- Creeper
 - Donkey
-- ZombieHorse
-- SkeletonHorse
-- ZombieVillager
-- Husk
-- WitherSkeleton
 - ElderGuardian
-- Stray
+- EnderDragon
+- Enderman
+- Endermite
+- Evoker
+- FireworksRocketEntity
+- Ghast
+- Giant
+- Guardian
+- Horse
+- Husk
+- LavaSlime
 - Llama
+- Mule
+- MushroomCow
+- Ozelot
+- Pig
+- PigZombie
+- PolarBear
+- Rabbit
+- Sheep
+- Shulker
+- Silverfish
+- Skeleton
+- SkeletonHorse
+- Slime
+- SnowMan
+- Spider
+- Squid
+- Stray
+- Vex
+- Villager
+- VillagerGolem
+- Vindicator
+- Witch
+- WitherBoss
+- WitherSkeleton
+- Wolf
+- XPOrb
+- Zombie
+- ZombieHorse
+- ZombieVillager
 
 # Aliases
 aliases:
@@ -59,8 +59,8 @@ aliases:
     VillagerGolem:
         - irongolem
         - golem
-    Horse:
-        - entityhorse
+    EntityHorse:
+        - horse
     Ozelot:
         - ocelot
         - cat

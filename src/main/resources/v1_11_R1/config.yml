@@ -2,73 +2,82 @@
 
 # Valid entities
 valid_entities:
-- Creeper
-- Skeleton
-- Spider
-- Giant
-- Zombie
-- Slime
-- Ghast
-- PigZombie
-- Enderman
-- CaveSpider
-- Silverfish
-- Blaze
-- LavaSlime
-- EnderDragon
-- WitherBoss
-- Bat
-- Witch
-- Pig
-- Sheep
-- Cow
-- Chicken
-- Squid
-- Wolf
-- MushroomCow
-- SnowMan
-- Ozelot
-- VillagerGolem
-- Horse
-- Villager
-- FireworksRocketEntity
-- Guardian
-- Endermite
-- Rabbit
-- Shulker
-- PolarBear
-- XPOrb
-- Vindicator
-- Vex
-- Evoker
-- Mule
-- Donkey
-- ZombieHorse
-- SkeletonHorse
-- ZombieVillager
-- Husk
-- WitherSkeleton
-- ElderGuardian
-- Stray
-- Llama
+- area_effect_cloud
+- bat
+- blaze
+- boat
+- cave_spider
+- chest_minecart
+- chicken
+- cow
+- creeper
+- donkey
+- elder_guardian
+- ender_dragon
+- enderman
+- endermite
+- evocation_illager
+- fireworks_rocket
+- ghast
+- giant
+- guardian
+- hopper_minecart
+- horse
+- husk
+- llama
+- magma_cube
+- minecart
+- mooshroom
+- mule
+- ocelot
+- pig
+- polar_bear
+- rabbit
+- sheep
+- shulker
+- silverfish
+- skeleton
+- skeleton_horse
+- slime
+- snowman
+- spawner_minecart
+- spider
+- squid
+- stray
+- tnt_minecart
+- vex
+- villager
+- villager_golem
+- vindication_illager
+- witch
+- wither
+- wither_skeleton
+- wolf
+- xp_orb
+- zombie
+- zombie_horse
+- zombie_pigman
+- zombie_villager
 
 # Aliases
 aliases:
-    WitherBoss:
-        - wither
+    wither:
+        - WitherBoss
     VillagerGolem:
         - irongolem
         - golem
     Horse:
         - entityhorse
-    Ozelot:
-        - ocelot
+    ocelot:
+        - Ozelot
         - cat
     Rabbit:
         - bunny
-    FireworksRocketEntity:
+    fireworks_rocket:
+        - FireworksRocketEntity
         - fireworks
-    XPOrb:
+    xp_orb:
+        - XPOrb
         - xp
 
 # Preventing spawners being destroyed by explosions.
@@ -86,55 +95,62 @@ luck: 100
 
 # The frequency that spawns from spawners are successful.
 frequency:
-    creeper: 100
-    skeleton: 100
-    spider: 100
-    giant: 100
-    zombie: 100
-    slime: 100
-    ghast: 100
-    pigzombie: 100
-    enderman: 100
-    cavespider: 100
-    silverfish: 100
-    blaze: 100
-    lavaslime: 100
-    enderdragon: 100
-    witherboss: 100
+    area_effect_cloud: 100
     bat: 100
-    witch: 100
-    pig: 50
-    sheep: 100
-    cow: 100
+    blaze: 100
+    boat: 100
+    cave_spider: 100
+    chest_minecart: 100
     chicken: 100
-    squid: 100
-    wolf: 100
-    mushroomcow: 100
-    snowman: 100
-    ozelot: 100
-    villagergolem: 100
-    horse: 100
-    villager: 100
-    fireworksrocketentity: 100
-    guardian: 100
-    endermite: 100
-    rabbit: 100
-    shulker: 100
-    polarbear: 100
-    xporb: 100
-    vindicator: 100
-    vex: 100
-    evoker: 100
-    mule: 100
+    cow: 100
+    creeper: 100
     donkey: 100
-    zombiehorse: 100
-    skeletonhorse: 100
-    zombievillager: 100
+    elder_guardian: 100
+    ender_dragon: 100
+    enderman: 100
+    endermite: 100
+    evocation_illager: 100
+    fireworks_rocket: 100
+    ghast: 100
+    giant: 100
+    guardian: 100
+    hopper_minecart: 100
+    horse: 100
     husk: 100
-    witherskeleton: 100
-    elderguardian: 100
-    stray: 100
     llama: 100
+    magma_cube: 100
+    minecart: 100
+    mooshroom: 100
+    mule: 100
+    ocelot: 100
+    pig: 100
+    polar_bear: 100
+    rabbit: 100
+    sheep: 100
+    shulker: 100
+    silverfish: 100
+    skeleton: 100
+    skeleton_horse: 100
+    slime: 100
+    snowman: 100
+    spawner_minecart: 100
+    spider: 100
+    squid: 100
+    stray: 100
+    tnt_minecart: 100
+    vex: 100
+    villager: 100
+    villager_golem: 100
+    vindication_illager: 100
+    witch: 100
+    wither: 100
+    wither_skeleton: 100
+    wolf: 100
+    xp_orb: 100
+    zombie: 100
+    zombie_horse: 100
+    zombie_pigman: 100
+    zombie_villager: 100
 
 # Spawner drops
 #
@@ -155,55 +171,62 @@ frequency:
 #        silk: false
 #
 drops:
-    Creeper: []
-    Skeleton: []
-    Spider: []
-    Giant: []
-    Zombie: []
-    Slime: []
-    Ghast: []
-    PigZombie: []
-    Enderman: []
-    CaveSpider: []
-    Silverfish: []
-    Blaze: []
-    LavaSlime: []
-    EnderDragon: []
-    WitherBoss: []
-    Bat: []
-    Witch: []
-    Pig: []
-    Sheep: []
-    Cow: []
-    Chicken: []
-    Squid: []
-    Wolf: []
-    MushroomCow: []
-    SnowMan: []
-    Ozelot: []
-    VillagerGolem: []
-    Horse: []
-    Villager: []
-    FireworksRocketEntity: []
-    Guardian: []
-    Endermite: []
-    Rabbit: []
-    Shulker: []
-    PolarBear: []
-    XPOrb: []
-    Vindicator: []
-    Vex: []
-    Evoker: []
-    Mule: []
-    Donkey: []
-    ZombieHorse: []
-    SkeletonHorse: []
-    ZombieVillager: []
-    Husk: []
-    WitherSkeleton: []
-    ElderGuardian: []
-    Stray: []
-    Llama: []
+    area_effect_cloud: []
+    bat: []
+    blaze: []
+    boat: []
+    cave_spider: []
+    chest_minecart: []
+    chicken: []
+    cow: []
+    creeper: []
+    donkey: []
+    elder_guardian: []
+    ender_dragon: []
+    enderman: []
+    endermite: []
+    evocation_illager: []
+    fireworks_rocket: []
+    ghast: []
+    giant: []
+    guardian: []
+    hopper_minecart: []
+    horse: []
+    husk: []
+    llama: []
+    magma_cube: []
+    minecart: []
+    mooshroom: []
+    mule: []
+    ocelot: []
+    pig: []
+    polar_bear: []
+    rabbit: []
+    sheep: []
+    shulker: []
+    silverfish: []
+    skeleton: []
+    skeleton_horse: []
+    slime: []
+    snowman: []
+    spawner_minecart: []
+    spider: []
+    squid: []
+    stray: []
+    tnt_minecart: []
+    vex: []
+    villager: []
+    villager_golem: []
+    vindication_illager: []
+    witch: []
+    wither: []
+    wither_skeleton: []
+    wolf: []
+    xp_orb: []
+    zombie: []
+    zombie_horse: []
+    zombie_pigman: []
+    zombie_villager: []
 
 # Place spawners directly into player inventories when broken?
 # true or false
