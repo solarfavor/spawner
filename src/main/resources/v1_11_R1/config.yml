@@ -2,12 +2,10 @@
 
 # Valid entities
 valid_entities:
-- area_effect_cloud
 - bat
 - blaze
 - boat
 - cave_spider
-- chest_minecart
 - chicken
 - cow
 - creeper
@@ -21,12 +19,10 @@ valid_entities:
 - ghast
 - giant
 - guardian
-- hopper_minecart
 - horse
 - husk
 - llama
 - magma_cube
-- minecart
 - mooshroom
 - mule
 - ocelot
@@ -40,11 +36,9 @@ valid_entities:
 - skeleton_horse
 - slime
 - snowman
-- spawner_minecart
 - spider
 - squid
 - stray
-- tnt_minecart
 - vex
 - villager
 - villager_golem
@@ -95,12 +89,10 @@ luck: 100
 
 # The frequency that spawns from spawners are successful.
 frequency:
-    area_effect_cloud: 100
     bat: 100
     blaze: 100
     boat: 100
     cave_spider: 100
-    chest_minecart: 100
     chicken: 100
     cow: 100
     creeper: 100
@@ -114,12 +106,10 @@ frequency:
     ghast: 100
     giant: 100
     guardian: 100
-    hopper_minecart: 100
     horse: 100
     husk: 100
     llama: 100
     magma_cube: 100
-    minecart: 100
     mooshroom: 100
     mule: 100
     ocelot: 100
@@ -133,11 +123,9 @@ frequency:
     skeleton_horse: 100
     slime: 100
     snowman: 100
-    spawner_minecart: 100
     spider: 100
     squid: 100
     stray: 100
-    tnt_minecart: 100
     vex: 100
     villager: 100
     villager_golem: 100
@@ -171,12 +159,10 @@ frequency:
 #        silk: false
 #
 drops:
-    area_effect_cloud: []
     bat: []
     blaze: []
     boat: []
     cave_spider: []
-    chest_minecart: []
     chicken: []
     cow: []
     creeper: []
@@ -190,12 +176,10 @@ drops:
     ghast: []
     giant: []
     guardian: []
-    hopper_minecart: []
     horse: []
     husk: []
     llama: []
     magma_cube: []
-    minecart: []
     mooshroom: []
     mule: []
     ocelot: []
@@ -209,11 +193,9 @@ drops:
     skeleton_horse: []
     slime: []
     snowman: []
-    spawner_minecart: []
     spider: []
     squid: []
     stray: []
-    tnt_minecart: []
     vex: []
     villager: []
     villager_golem: []
