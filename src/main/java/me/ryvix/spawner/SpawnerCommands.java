@@ -68,7 +68,7 @@ public class SpawnerCommands implements CommandExecutor {
 				if (sender.hasPermission("spawner.get")) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player.getUniqueId(), 20);
-					if (target.getType() == Material.MOB_SPAWNER) {
+					if (target != null && target.getType() == Material.MOB_SPAWNER) {
 						EntityType spawnerType = SpawnerFunctions.getSpawner(target);
 						if (spawnerType == null) {
 							Main.instance.getLangHandler().sendMessage(sender, Main.instance.getLangHandler().getText("InvalidSpawner"));
@@ -131,7 +131,7 @@ public class SpawnerCommands implements CommandExecutor {
 				if (sender.hasPermission("spawner.set.all") || sender.hasPermission("spawner.set." + SpawnerFunctions.convertAlias(args[0]).toLowerCase())) {
 					Player player = (Player) sender;
 					Block target = SpawnerFunctions.findSpawnerBlock(player.getUniqueId(), 20);
-					if (target.getType() == Material.MOB_SPAWNER) {
+					if (target != null && target.getType() == Material.MOB_SPAWNER) {
 						// set type of spawner player is targeting
 
 						// setSpawner does it's own isValidEntity
