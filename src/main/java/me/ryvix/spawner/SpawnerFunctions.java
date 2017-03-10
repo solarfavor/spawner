@@ -241,6 +241,9 @@ public class SpawnerFunctions {
 			blockToCheck = bit.next();
 			if (blockToCheck.getType() == Material.MOB_SPAWNER && blockToCheck.getType() != Material.AIR) {
 				return blockToCheck;
+			} else if(!blockToCheck.getType().isTransparent()) {
+				// A non transparent block was found so don't let the player see through it.
+				return null;
 			}
 		}
 
@@ -305,7 +308,8 @@ public class SpawnerFunctions {
 	 * @return EntityType
 	 */
 	public static EntityType getSpawnerType(String arg) {
-		return EntityType.fromName(arg);
+		EntityType type = EntityType.fromName(convertAlias(arg));
+		return type;
 	}
 
 	/**
