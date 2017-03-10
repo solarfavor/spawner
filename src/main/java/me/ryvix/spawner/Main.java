@@ -37,9 +37,9 @@ public class Main extends JavaPlugin {
 
 	public static Main instance;
 
-	private String version;
+	private static String version;
 
-	private Configuration config;
+	private static Configuration config;
 
 	private NMS nmsHandler;
 	private Config configHandler;
@@ -217,42 +217,42 @@ public class Main extends JavaPlugin {
 	}
 
 	public static Configuration getSpawnerConfig() {
-		return instance.config;
+		return config;
 	}
 
 	public static void setSpawnerConfig(Configuration cfg) {
-		instance.config = cfg;
+		config = cfg;
 	}
 
 	public Config getConfigHandler() {
-		return instance.configHandler;
+		return this.configHandler;
 	}
 
 	public void setConfigHandler(Config configHandler) {
-		instance.configHandler = configHandler;
+		this.configHandler = configHandler;
 	}
 
 	public Language getLangHandler() {
-		return instance.langHandler;
+		return this.langHandler;
 	}
 
 	public void setLangHandler(Language langHandler) {
-		instance.langHandler = langHandler;
+		this.langHandler = langHandler;
 	}
 
 	public NMS getNmsHandler() {
-		return instance.nmsHandler;
+		return this.nmsHandler;
 	}
 
 	public void setNmsHandler(NMS nmsHandler) {
-		instance.nmsHandler = nmsHandler;
+		this.nmsHandler = nmsHandler;
 	}
 
 	public void setVersion(String ver) {
-		instance.version = ver;
+		version = ver;
 	}
 
 	public String getVersion() {
-		return instance.version;
+		return version;
 	}
 }
