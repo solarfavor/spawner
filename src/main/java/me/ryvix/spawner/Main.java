@@ -33,15 +33,13 @@ import me.ryvix.spawner.metrics.Metrics;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public class Main extends JavaPlugin {
 
 	public static Main instance;
 
-	private static String version;
+	private String version;
 
-	private static Configuration config;
+	private Configuration config;
 
 	private NMS nmsHandler;
 	private Config configHandler;
@@ -134,131 +132,127 @@ public class Main extends JavaPlugin {
 	 * @link https://hub.spigotmc.org/stash/projects/SPIGOT/repos/bukkit/browse/src/main/java/org/bukkit/entity/EntityType.java
 	 */
 	private void loadEntityMap() {
-		EntityMap.addMap("Item", "item");
-		EntityMap.addMap("XPOrb", "xp_orb");
-		EntityMap.addMap("area_effect_cloud", "area_effect_cloud");
-		EntityMap.addMap("elder_guardian", "elder_guardian");
-		EntityMap.addMap("wither_skeleton", "wither_skeleton");
-		EntityMap.addMap("stray", "stray");
-		EntityMap.addMap("egg", "egg");
-		EntityMap.addMap("LeashKnot", "leash_knot");
-		EntityMap.addMap("Painting", "painting");
-		EntityMap.addMap("Arrow", "arrow");
-		EntityMap.addMap("Snowball", "snowball");
-		EntityMap.addMap("Fireball", "fireball");
-		EntityMap.addMap("SmallFireball", "small_fireball");
-		EntityMap.addMap("ThrownEnderpearl", "ender_pearl");
-		EntityMap.addMap("EyeOfEnderSignal", "eye_of_ender_signal");
-		EntityMap.addMap("potion", "potion");
-		EntityMap.addMap("ThrownExpBottle", "xp_bottle");
-		EntityMap.addMap("ItemFrame", "item_frame");
-		EntityMap.addMap("WitherSkull", "wither_skull");
-		EntityMap.addMap("PrimedTnt", "tnt");
-		EntityMap.addMap("FallingSand", "falling_block");
-		EntityMap.addMap("FireworksRocketEntity", "fireworks_rocket");
-		EntityMap.addMap("husk", "husk");
-		EntityMap.addMap("SpectralArrow", "spectral_arrow");
-		EntityMap.addMap("ShulkerBullet", "shulker_bullet");
-		EntityMap.addMap("DragonFireball", "dragon_fireball");
-		EntityMap.addMap("zombie_villager", "zombie_villager");
-		EntityMap.addMap("skeleton_horse", "skeleton_horse");
-		EntityMap.addMap("zombie_horse", "zombie_horse");
 		EntityMap.addMap("ArmorStand", "armor_stand");
-		EntityMap.addMap("donkey", "donkey");
-		EntityMap.addMap("mule", "mule");
-		EntityMap.addMap("evocation_fangs", "evocation_fangs");
-		EntityMap.addMap("evocation_illager", "evocation_illager");
-		EntityMap.addMap("vex", "vex");
-		EntityMap.addMap("vindication_illager", "vindication_illager");
-		EntityMap.addMap("MinecartCommandBlock", "commandblock_minecart");
+		EntityMap.addMap("Arrow", "arrow");
+		EntityMap.addMap("Bat", "bat");
+		EntityMap.addMap("Blaze", "blaze");
 		EntityMap.addMap("Boat", "boat");
-		EntityMap.addMap("MinecartRideable", "minecart");
+		EntityMap.addMap("CaveSpider", "cave_spider");
+		EntityMap.addMap("Chicken", "chicken");
+		EntityMap.addMap("Cow", "cow");
+		EntityMap.addMap("Creeper", "creeper");
+		EntityMap.addMap("DragonFireball", "dragon_fireball");
+		EntityMap.addMap("EnderCrystal", "ender_crystal");
+		EntityMap.addMap("EnderDragon", "ender_dragon");
+		EntityMap.addMap("Enderman", "enderman");
+		EntityMap.addMap("Endermite", "endermite");
+		EntityMap.addMap("EntityHorse", "horse");
+		EntityMap.addMap("EyeOfEnderSignal", "eye_of_ender_signal");
+		EntityMap.addMap("FallingSand", "falling_block");
+		EntityMap.addMap("Fireball", "fireball");
+		EntityMap.addMap("FireworksRocketEntity", "fireworks_rocket");
+		EntityMap.addMap("Ghast", "ghast");
+		EntityMap.addMap("Giant", "giant");
+		EntityMap.addMap("Guardian", "guardian");
+		EntityMap.addMap("Item", "item");
+		EntityMap.addMap("ItemFrame", "item_frame");
+		EntityMap.addMap("LavaSlime", "magma_cube");
+		EntityMap.addMap("LeashKnot", "leash_knot");
 		EntityMap.addMap("MinecartChest", "chest_minecart");
+		EntityMap.addMap("MinecartCommandBlock", "commandblock_minecart");
 		EntityMap.addMap("MinecartFurnace", "chest_minecart");
-		EntityMap.addMap("MinecartTNT", "tnt_minecart");
 		EntityMap.addMap("MinecartHopper", "hopper_minecart");
 		EntityMap.addMap("MinecartMobSpawner", "spawner_minecart");
-		EntityMap.addMap("Creeper", "creeper");
-		EntityMap.addMap("Skeleton", "skeleton");
-		EntityMap.addMap("Spider", "spider");
-		EntityMap.addMap("Giant", "giant");
-		EntityMap.addMap("Zombie", "zombie");
-		EntityMap.addMap("Slime", "slime");
-		EntityMap.addMap("Ghast", "ghast");
-		EntityMap.addMap("PigZombie", "zombie_pigman");
-		EntityMap.addMap("Enderman", "enderman");
-		EntityMap.addMap("CaveSpider", "cave_spider");
-		EntityMap.addMap("Silverfish", "silverfish");
-		EntityMap.addMap("Blaze", "blaze");
-		EntityMap.addMap("LavaSlime", "magma_cube");
-		EntityMap.addMap("EnderDragon", "ender_dragon");
-		EntityMap.addMap("WitherBoss", "wither");
-		EntityMap.addMap("Bat", "bat");
-		EntityMap.addMap("Witch", "witch");
-		EntityMap.addMap("Endermite", "endermite");
-		EntityMap.addMap("Guardian", "guardian");
-		EntityMap.addMap("Shulker", "shulker");
-		EntityMap.addMap("Pig", "pig");
-		EntityMap.addMap("Sheep", "sheep");
-		EntityMap.addMap("Cow", "cow");
-		EntityMap.addMap("Chicken", "chicken");
-		EntityMap.addMap("Squid", "squid");
-		EntityMap.addMap("Wolf", "wolf");
+		EntityMap.addMap("MinecartRideable", "minecart");
+		EntityMap.addMap("MinecartTNT", "tnt_minecart");
 		EntityMap.addMap("MushroomCow", "mooshroom");
-		EntityMap.addMap("SnowMan", "snowman");
 		EntityMap.addMap("Ozelot", "ocelot");
-		EntityMap.addMap("VillagerGolem", "villager_golem");
-		EntityMap.addMap("EntityHorse", "horse");
-		EntityMap.addMap("Rabbit", "rabbit");
+		EntityMap.addMap("Painting", "painting");
+		EntityMap.addMap("Pig", "pig");
+		EntityMap.addMap("PigZombie", "zombie_pigman");
 		EntityMap.addMap("PolarBear", "polar_bear");
-		EntityMap.addMap("llama", "llama");
-		EntityMap.addMap("llama_spit", "llama_spit");
-		EntityMap.addMap("Villager", "villager");
-		EntityMap.addMap("EnderCrystal", "ender_crystal");
+		EntityMap.addMap("PrimedTnt", "tnt");
+		EntityMap.addMap("Rabbit", "rabbit");
+		EntityMap.addMap("Sheep", "sheep");
+		EntityMap.addMap("Shulker", "shulker");
+		EntityMap.addMap("ShulkerBullet", "shulker_bullet");
+		EntityMap.addMap("Silverfish", "silverfish");
+		EntityMap.addMap("Skeleton", "skeleton");
+		EntityMap.addMap("Slime", "slime");
+		EntityMap.addMap("SmallFireball", "small_fireball");
+		EntityMap.addMap("SnowMan", "snowman");
+		EntityMap.addMap("Snowball", "snowball");
+		EntityMap.addMap("SpectralArrow", "spectral_arrow");
+		EntityMap.addMap("Spider", "spider");
+		EntityMap.addMap("Squid", "squid");
+		EntityMap.addMap("ThrownEnderpearl", "ender_pearl");
+		EntityMap.addMap("ThrownExpBottle", "xp_bottle");
 		EntityMap.addMap("TippedArrow", "TippedArrow");
+		EntityMap.addMap("Villager", "villager");
+		EntityMap.addMap("VillagerGolem", "villager_golem");
+		EntityMap.addMap("Witch", "witch");
+		EntityMap.addMap("WitherBoss", "wither");
+		EntityMap.addMap("WitherSkull", "wither_skull");
+		EntityMap.addMap("Wolf", "wolf");
+		EntityMap.addMap("XPOrb", "xp_orb");
+		EntityMap.addMap("Zombie", "zombie");
+		EntityMap.addMap("egg", "egg");
+		EntityMap.addMap("potion", "potion");
+		EntityMap.addMap("", "area_effect_cloud");
+		EntityMap.addMap("", "donkey");
+		EntityMap.addMap("", "elder_guardian");
+		EntityMap.addMap("", "evocation_fangs");
+		EntityMap.addMap("", "evocation_illager");
+		EntityMap.addMap("", "husk");
+		EntityMap.addMap("", "llama");
+		EntityMap.addMap("", "llama_spit");
+		EntityMap.addMap("", "mule");
+		EntityMap.addMap("", "skeleton_horse");
+		EntityMap.addMap("", "stray");
+		EntityMap.addMap("", "vex");
+		EntityMap.addMap("", "vindication_illager");
+		EntityMap.addMap("", "wither_skeleton");
+		EntityMap.addMap("", "zombie_horse");
+		EntityMap.addMap("", "zombie_villager");
 	}
 
 	public static Configuration getSpawnerConfig() {
-		return config;
+		return instance.config;
 	}
 
-	public static void setSpawnerConfig(Configuration config) {
-		Main.config = config;
+	public static void setSpawnerConfig(Configuration cfg) {
+		instance.config = cfg;
 	}
 
 	public Config getConfigHandler() {
-		return configHandler;
+		return instance.configHandler;
 	}
 
 	public void setConfigHandler(Config configHandler) {
-		this.configHandler = configHandler;
+		instance.configHandler = configHandler;
 	}
 
 	public Language getLangHandler() {
-		return langHandler;
+		return instance.langHandler;
 	}
 
 	public void setLangHandler(Language langHandler) {
-		this.langHandler = langHandler;
+		instance.langHandler = langHandler;
 	}
 
 	public NMS getNmsHandler() {
-		return nmsHandler;
+		return instance.nmsHandler;
 	}
 
 	public void setNmsHandler(NMS nmsHandler) {
-		this.nmsHandler = nmsHandler;
-	}
-
-	public static File spawnerGetDataFolder() {
-		return instance.getDataFolder();
+		instance.nmsHandler = nmsHandler;
 	}
 
 	public void setVersion(String ver) {
-		version = ver;
+		instance.version = ver;
 	}
 
 	public String getVersion() {
-		return version;
+		return instance.version;
 	}
 }
